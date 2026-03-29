@@ -48,6 +48,11 @@ const KEYBOARD_LAYOUTS = {
     ["a", "s", "d", "f", "g", "h", "j", "k", "l", "î", "ș", "ț"],
     ["z", "x", "c", "v", "b", "n", "m"],
   ],
+  fr: [
+    ["a", "z", "e", "r", "t", "y", "u", "i", "o", "p", "é", "è"],
+    ["q", "s", "d", "f", "g", "h", "j", "k", "l", "m", "à", "ç"],
+    ["w", "x", "c", "v", "b", "n", "ê", "î", "ô", "ù"],
+  ],
 };
 
 function decodeExcelText(value) {
@@ -140,7 +145,10 @@ function normalizeHeaderValue(value) {
 }
 
 function normalizeChar(char) {
-  return String(char ?? "").toLocaleLowerCase("it-IT");
+  return String(char ?? "")
+    .toLocaleLowerCase("it-IT")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 function getUniqueLetters(text) {

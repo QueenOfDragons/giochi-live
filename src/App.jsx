@@ -36,6 +36,7 @@ export default function App() {
             >
               <option value="it">Italiano</option>
               <option value="en">English</option>
+              <option value="fr">Français</option>
               <option value="ro">Română</option>
             </select>
           </div>

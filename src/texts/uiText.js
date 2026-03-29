@@ -145,4 +145,65 @@ export const UI_TEXT = {
       next: "Înainte",
     },
   },
+  fr: {
+    home: {
+      title: "Jeux en direct",
+      subtitle: "Choisissez un jeu et jouez avec votre communauté",
+      languageLabel: "Langue",
+      open: "Ouvrir",
+      backToMenu: "← Retour au menu"
+    },
+
+    games: {
+      hangmanTitle: "Jeu du pendu",
+      hangmanDesc: "Devinez le mot ou la phrase avec l'aide de l'indice"
+    },
+
+    hangman: {
+      title: "Devinez le mot ou la phrase",
+      liveGame: "Jeu style live",
+      clue: "Indice",
+      hearts: "cœurs",
+
+      easy: "Facile",
+      medium: "Moyen",
+      hard: "Difficile",
+
+      errors: "Erreurs",
+      won: "Gagné",
+      lost: "Perdu",
+
+      try: "Essayer",
+      next: "Suivant",
+
+      showSolution: "Afficher la solution",
+      hideSolution: "Masquer la solution",
+
+      restart: "Recommencer",
+      random: "Aléatoire",
+      import: "Importer",
+      downloadTemplate: "Télécharger modèle",
+
+      fullscreenEnter: "Plein écran",
+      fullscreenExit: "Quitter",
+
+      soundOn: "Son ON",
+      soundOff: "Son OFF",
+
+      showPanels: "Afficher panneaux",
+      hidePanels: "Masquer panneaux",
+
+      letterPlaceholder: "Lettre",
+      longLetterPlaceholder: "Entrez une lettre",
+
+      addItemTitle: "Ajouter mot ou phrase",
+      itemPlaceholder: "Mot ou phrase",
+      cluePlaceholder: "Indice",
+      addAndPlay: "Ajouter et jouer",
+
+      archiveTitle: "Archives live",
+      roundLabel: "Manche",
+      hiddenSolution: "solution cachée"
+    }
+  }
 };
