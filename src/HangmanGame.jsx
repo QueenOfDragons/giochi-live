@@ -436,12 +436,12 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
 function SolutionRow({ masked, showAnswer }) {
   const total = masked.length;
 
-  const boxClass =
-    total >= 18
-      ? "h-9 w-5 text-[12px]"
-      : total >= 14
-        ? "h-11 w-6 text-[15px]"
-        : "h-14 w-10 text-xl sm:h-16 sm:w-12 sm:text-2xl";
+const boxClass =
+  total >= 20
+    ? "h-10 w-5 text-[14px]"
+    : total >= 15
+      ? "h-12 w-7 text-[18px]"
+      : "h-16 w-12 text-2xl sm:h-20 sm:w-14 sm:text-3xl";
 
   const spaceClass =
     total >= 18
@@ -481,7 +481,7 @@ function SolutionRow({ masked, showAnswer }) {
                   : { scale: 1 }
               }
               transition={{ duration: 0.2 }}
-              className={`flex items-center justify-center rounded-lg border border-gray-300 bg-white text-black font-extrabold uppercase tracking-wider shadow-md ${boxClass}`}
+              className={`flex items-center justify-center rounded-lg border border-gray-300 bg-white text-black font-extrabold uppercase tracking-widest shadow-md ${boxClass}`}
             >
               {displayValue}
             </motion.div>
