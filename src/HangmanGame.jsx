@@ -495,6 +495,7 @@ function SolutionRow({ masked, showAnswer }) {
 function Keyboard({ guessed, wrong, onGuess, disabled, rows }) {
   const guessedSet = new Set(guessed);
   const wrongSet = new Set(wrong);
+
   return (
     <div className="rounded-3xl border border-white/10 bg-black/20 p-2.5">
       <div className="space-y-1">
@@ -504,18 +505,21 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows }) {
               const isGuessed = guessedSet.has(key);
               const isWrong = wrongSet.has(key);
               const isUsed = isGuessed || isWrong;
+
               const stateClass = isGuessed
                 ? "border-emerald-400/50 bg-emerald-500/20 text-emerald-200"
                 : isWrong
                   ? "border-rose-400/50 bg-rose-500/20 text-rose-200"
                   : "border-white/10 bg-white/5 text-slate-200 hover:bg-white/10";
+
               return (
                 <button
                   key={key}
                   type="button"
                   disabled={disabled || isUsed}
                   onClick={() => onGuess(key)}
-                  className={`flex h-7 w-7 items-center justify-center rounded-lg border text-[11px] font-semibold uppercase transition sm:h-8 sm:w-8 sm:text-xs ${stateClass} ${disabled || isUsed ? "cursor-default" : ""}`}                >
+                  className={`flex h-7 w-7 items-center justify-center rounded-lg border text-[11px] font-semibold uppercase transition sm:h-8 sm:w-8 sm:text-xs ${stateClass} ${disabled || isUsed ? "cursor-default" : ""}`}
+                >
                   {key}
                 </button>
               );
@@ -523,6 +527,7 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows }) {
           </div>
         ))}
       </div>
+
       <div className="mt-2 rounded-2xl border border-white/10 bg-slate-900/70 p-2 shadow-inner">
         <div className="mx-auto h-2 w-16 rounded-t-full border border-slate-600/70 bg-slate-700/70" />
         <div className="mt-1 h-1 rounded-full bg-slate-800" />
@@ -1003,9 +1008,6 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
             />
 
             <div className="mt-2 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-2.5 text-center">
-              <div className="mb-1 text-[10px] uppercase tracking-[0.18em] text-pink-200/80">
-                {t.hangman.clue}
-              </div>
               <div className="text-[13px] font-semibold leading-snug sm:text-sm">
                 {renderHintWithEmoji(currentItem.hint)}
               </div>
