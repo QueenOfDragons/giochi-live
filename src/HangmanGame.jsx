@@ -34,20 +34,20 @@ const LETTER_REGEX = /[A-Za-zÀ-ÖØ-öø-ÿ]/;
 
 const KEYBOARD_LAYOUTS = {
   it: [
-    ["a","b","c","d","e","f","g","h","i","l","m","n","o"],
-    ["p","q","r","s","t","u","v","z","à","è","é","ì","ò","ù"]
+    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o"],
+    ["p", "q", "r", "s", "t", "u", "v", "z", "à", "è", "é", "ì", "ò", "ù"]
   ],
   en: [
-    ["a","b","c","d","e","f","g","h","i","j","k","l","m"],
-    ["n","o","p","q","r","s","t","u","v","w","x","y","z"]
+    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"],
+    ["n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
   ],
   ro: [
-    ["a","b","c","d","e","f","g","h","i","j","k","l","m"],
-    ["n","o","p","q","r","s","t","u","v","z","ă","â","î","ș","ț"]
+    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"],
+    ["n", "o", "p", "q", "r", "s", "t", "u", "v", "z", "ă", "â", "î", "ș", "ț"]
   ],
   fr: [
-    ["a","b","c","d","e","f","g","h","i","j","k","l","m"],
-    ["n","o","p","q","r","s","t","u","v","w","x","y","z","à","â","ç","é","è","ê","ë","î","ï","ô","ù","û"]
+    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"],
+    ["n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "à", "â", "ç", "é", "è", "ê", "ë", "î", "ï", "ô", "ù", "û"]
   ]
 };
 
@@ -436,12 +436,12 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
 function SolutionRow({ masked, showAnswer }) {
   const total = masked.length;
 
-const boxClass =
-  total >= 20
-    ? "h-10 w-5 text-[14px]"
-    : total >= 15
-      ? "h-12 w-7 text-[18px]"
-      : "h-16 w-12 text-2xl sm:h-20 sm:w-14 sm:text-3xl";
+  const boxClass =
+    total >= 20
+      ? "h-10 w-5 text-[14px]"
+      : total >= 15
+        ? "h-12 w-7 text-[18px]"
+        : "h-16 w-12 text-2xl sm:h-20 sm:w-14 sm:text-3xl";
 
   const spaceClass =
     total >= 18
@@ -496,7 +496,7 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows }) {
   const guessedSet = new Set(guessed);
   const wrongSet = new Set(wrong);
   return (
-    <div className="rounded-3xl border border-white/10 bg-black/20 p-3">
+    <div className="rounded-3xl border border-white/10 bg-black/20 p-2.5">
       <div className="space-y-1">
         {rows.map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-center gap-1">
@@ -515,8 +515,7 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows }) {
                   type="button"
                   disabled={disabled || isUsed}
                   onClick={() => onGuess(key)}
-                  className={`flex h-7 w-7 items-center justify-center rounded-lg border text-[11px] font-semibold uppercase transition sm:h-8 sm:w-8 sm:text-sm ${stateClass} ${disabled || isUsed ? "cursor-default" : ""}`}
-                >
+                  className={`flex h-7 w-7 items-center justify-center rounded-lg border text-[11px] font-semibold uppercase transition sm:h-8 sm:w-8 sm:text-xs ${stateClass} ${disabled || isUsed ? "cursor-default" : ""}`}                >
                   {key}
                 </button>
               );
@@ -524,9 +523,9 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows }) {
           </div>
         ))}
       </div>
-      <div className="mt-3 rounded-2xl border border-white/10 bg-slate-900/70 p-2.5 shadow-inner">
-        <div className="mx-auto h-2.5 w-20 rounded-t-full border border-slate-600/70 bg-slate-700/70" />
-        <div className="mt-1 h-1.5 rounded-full bg-slate-800" />
+      <div className="mt-2 rounded-2xl border border-white/10 bg-slate-900/70 p-2 shadow-inner">
+        <div className="mx-auto h-2 w-16 rounded-t-full border border-slate-600/70 bg-slate-700/70" />
+        <div className="mt-1 h-1 rounded-full bg-slate-800" />
       </div>
     </div>
   );
@@ -1003,13 +1002,12 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               t={t}
             />
 
-            <div className="mt-3 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4 text-center">
-              <div className="mb-1 text-[11px] uppercase tracking-[0.22em] text-pink-200/80">{t.hangman.clue}</div>
-              <div className="text-sm font-semibold leading-relaxed sm:text-base">
-                {renderHintWithEmoji(currentItem.hint)}
+            <div className="mt-2 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-2.5 text-center">
+              <div className="mb-1 text-[10px] uppercase tracking-[0.18em] text-pink-200/80">
+                {t.hangman.clue}
               </div>
-              <div className="mt-2 text-[11px] text-slate-300">
-                {getDifficultyLabel(currentItem.difficulty)} • {maxHearts} {t.hangman.hearts}
+              <div className="text-[13px] font-semibold leading-snug sm:text-sm">
+                {renderHintWithEmoji(currentItem.hint)}
               </div>
             </div>
 
@@ -1055,7 +1053,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               })}
             </div>
 
-            <div className="mt-2 text-center text-[11px] text-slate-400">
+            <div className="mt-1.5 text-center text-[10px] text-slate-400">
               {status === "playing"
                 ? `${t.hangman.errors} ${wrong.length}/${maxHearts}`
                 : status === "won"
@@ -1155,28 +1153,23 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                 />
               </div>
 
-              <div className="mb-6 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="mb-2 text-sm text-slate-300">{t.hangman.clue}</p>
-                    <p
-                      className="text-xl font-semibold leading-relaxed md:text-2xl"
-                      style={{
-                        fontFamily:
-                          '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI", sans-serif',
-                      }}
-                      dangerouslySetInnerHTML={{
-                        __html: twemoji.parse(currentItem.hint, {
-                          folder: "svg",
-                          ext: ".svg",
-                          className: "twemoji-small",
-                        }),
-                      }}
-                    />
-                  </div>
-                  <div className="whitespace-nowrap rounded-2xl bg-black/20 px-3 py-2 text-sm">
-                    {getDifficultyLabel(currentItem.difficulty)} • {maxHearts} {t.hangman.hearts}
-                  </div>
+              <div className="mb-5 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4">
+                <div>
+                  <p className="mb-2 text-sm text-slate-300">{t.hangman.clue}</p>
+                  <p
+                    className="text-lg font-semibold leading-relaxed md:text-xl"
+                    style={{
+                      fontFamily:
+                        '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI", sans-serif',
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: twemoji.parse(currentItem.hint, {
+                        folder: "svg",
+                        ext: ".svg",
+                        className: "twemoji-small",
+                      }),
+                    }}
+                  />
                 </div>
               </div>
 
@@ -1287,8 +1280,9 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               </div>
             </div>
           </div>
-        )}
-      </div>
-    </div>
+        )
+        }
+      </div >
+    </div >
   );
 }
