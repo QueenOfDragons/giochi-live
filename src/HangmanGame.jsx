@@ -515,7 +515,7 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows }) {
                   type="button"
                   disabled={disabled || isUsed}
                   onClick={() => onGuess(key)}
-                  className={`flex h-8 w-8 items-center justify-center rounded-lg border text-xs font-semibold uppercase transition sm:h-9 sm:w-9 sm:text-sm ${stateClass} ${disabled || isUsed ? "cursor-default" : ""}`}
+                  className={`flex h-7 w-7 items-center justify-center rounded-lg border text-[11px] font-semibold uppercase transition sm:h-8 sm:w-8 sm:text-sm ${stateClass} ${disabled || isUsed ? "cursor-default" : ""}`}
                 >
                   {key}
                 </button>
