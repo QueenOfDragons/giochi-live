@@ -497,9 +497,9 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows }) {
   const wrongSet = new Set(wrong);
   return (
     <div className="rounded-3xl border border-white/10 bg-black/20 p-3">
-      <div className="space-y-1.5">
+      <div className="space-y-1">
         {rows.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex justify-center gap-1.5">
+          <div key={rowIndex} className="flex justify-center gap-1">
             {row.map((key) => {
               const isGuessed = guessedSet.has(key);
               const isWrong = wrongSet.has(key);
