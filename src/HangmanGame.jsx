@@ -262,13 +262,15 @@ function CuteRobotFace({ state = "idle" }) {
 }
 
 function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
-  const phase1 = Math.max(1, maxHearts - 6);
-  const phase2 = Math.max(2, maxHearts - 5);
-  const phase3 = Math.max(3, maxHearts - 4);
-  const phase4 = Math.max(4, maxHearts - 3);
-  const phase5 = Math.max(5, maxHearts - 2);
-  const phase6 = Math.max(6, maxHearts - 1);
-  const phase7 = maxHearts;
+  const step = maxHearts / 7;
+
+  const phase1 = step * 1;
+  const phase2 = step * 2;
+  const phase3 = step * 3;
+  const phase4 = step * 4;
+  const phase5 = step * 5;
+  const phase6 = step * 6;
+  const phase7 = step * 7;
 
   const bodyVisible = wrongCount < phase5;
   const leftArmVisible = wrongCount < phase1;
@@ -792,7 +794,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
       setHeartBurstIndex(lostIndex);
       setBoardShake(true);
       setFlashMode("wrong");
-      playTone(180, 0.22, "sawtooth");
+      playTone(150, 0.28, "sawtooth");
       const shakeTimer = window.setTimeout(() => setBoardShake(false), 420);
       const burstTimer = window.setTimeout(() => setHeartBurstIndex(null), 650);
       const flashTimer = window.setTimeout(() => setFlashMode("none"), 300);
@@ -982,7 +984,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
       <div className={`relative z-10 mx-auto ${compactMode ? "max-w-3xl" : "max-w-6xl"}`}>
         {compactMode ? (
-          <motion.div animate={boardShake ? { x: [0, -6, 6, -4, 4, -2, 2, 0] } : { x: 0 }} transition={{ duration: 0.35 }} className="flex h-full flex-col rounded-[28px] border border-white/10 bg-white/5 p-3 shadow-2xl backdrop-blur-sm sm:p-4">
+          <motion.div animate={boardShake ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }} transition={{ duration: 0.35 }} className="flex h-full flex-col rounded-[28px] border border-white/10 bg-white/5 p-3 shadow-2xl backdrop-blur-sm sm:p-4">
             <div className="flex justify-center mb-2">
               <button
                 onClick={onBack}
@@ -1119,7 +1121,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
           </motion.div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
-            <motion.div animate={boardShake ? { x: [0, -8, 8, -6, 6, -2, 2, 0] } : { x: 0 }} transition={{ duration: 0.4 }} className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl backdrop-blur-sm md:p-8">
+            <motion.div animate={boardShake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }} transition={{ duration: 0.4 }} className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl backdrop-blur-sm md:p-8">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="text-sm uppercase tracking-[0.25em] text-pink-300/80">
