@@ -34,20 +34,20 @@ const LETTER_REGEX = /[A-Za-zÀ-ÖØ-öø-ÿ]/;
 
 const KEYBOARD_LAYOUTS = {
   it: [
-    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o"],
-    ["p", "q", "r", "s", "t", "u", "v", "z", "à", "è", "é", "ì", "ò", "ù"]
+    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],
+    ["q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "à", "è", "é", "ì", "ò", "ù"]
   ],
   en: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"],
     ["n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
   ],
   ro: [
-    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"],
-    ["n", "o", "p", "q", "r", "s", "t", "u", "v", "z", "ă", "â", "î", "ș", "ț"]
+    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+    ["p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ă", "â", "î", "ș", "ț"]
   ],
   fr: [
-    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"],
-    ["n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "à", "â", "ç", "é", "è", "ê", "ë", "î", "ï", "ô", "ù", "û"]
+    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s"],
+    ["t", "u", "v", "w", "x", "y", "z", "à", "â", "ç", "é", "è", "ê", "ë", "î", "ï", "ô", "ù", "û"]
   ]
 };
 
@@ -434,61 +434,71 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
   );
 }
 
-
 function SolutionRow({ masked, showAnswer }) {
   const total = masked.length;
 
-  const boxClass =
-    total >= 20
-      ? "h-10 w-5 text-[14px]"
-      : total >= 15
-        ? "h-12 w-7 text-[18px]"
-        : "h-16 w-12 text-2xl sm:h-20 sm:w-14 sm:text-3xl";
+  const displayItems = masked.map((item) => {
+    if (item.type === "space") return item;
 
-  const spaceClass =
-    total >= 18
-      ? "w-1.5"
-      : total >= 14
-        ? "w-2"
-        : "w-3 sm:w-4";
+    const displayValue =
+      showAnswer && item.type === "letter" ? item.hidden : item.value;
+
+    return {
+      ...item,
+      displayValue,
+      isVisible: item.type === "letter" && item.value,
+    };
+  });
+
+  let boxClass =
+    "flex h-10 w-8 items-center justify-center rounded-lg border border-gray-300 bg-white text-black font-extrabold uppercase tracking-wide shadow-md";
+
+  let spaceClass = "w-2";
+  let rowClass = "flex flex-wrap justify-center gap-1";
+
+  if (total >= 22) {
+    boxClass =
+      "flex h-8 w-6 items-center justify-center rounded-lg border border-gray-300 bg-white text-black text-sm font-extrabold uppercase tracking-normal shadow-md";
+    spaceClass = "w-1.5";
+    rowClass = "flex flex-wrap justify-center gap-0.5";
+  } else if (total >= 16) {
+    boxClass =
+      "flex h-9 w-7 items-center justify-center rounded-lg border border-gray-300 bg-white text-black text-base font-extrabold uppercase tracking-normal shadow-md";
+    spaceClass = "w-1.5";
+    rowClass = "flex flex-wrap justify-center gap-0.5";
+  }
 
   return (
-    <div className="overflow-hidden pb-1">
-      <div className="flex flex-wrap justify-center gap-1">
-        {masked.map((item) => {
-          if (item.type === "space") {
-            return <div key={item.key} className={spaceClass} />;
-          }
+    <div className="overflow-hidden py-1">
+      <div className="flex min-h-[88px] items-center justify-center">
+        <div className={rowClass}>
+          {displayItems.map((item) => {
+            if (item.type === "space") {
+              return <div key={item.key} className={spaceClass} />;
+            }
 
-          const displayValue =
-            showAnswer && item.type === "letter" ? item.hidden : item.value;
-
-          const isVisible = item.type === "letter" && item.value;
-
-          return (
-            <motion.div
-              style={
-                isVisible
-                  ? {
-                    textShadow: "0 0 8px rgba(0,0,0,0.2)",
-                    transform: "scale(1.05)",
-                  }
-                  : {}
-              }
-              key={item.key}
-              initial={false}
-              animate={
-                item.type === "letter" && item.value
-                  ? { scale: [1, 1.06, 1] }
-                  : { scale: 1 }
-              }
-              transition={{ duration: 0.2 }}
-              className={`flex items-center justify-center rounded-lg border border-gray-300 bg-white text-black font-extrabold uppercase tracking-widest shadow-md ${boxClass}`}
-            >
-              {displayValue}
-            </motion.div>
-          );
-        })}
+            return (
+              <motion.div
+                key={item.key}
+                initial={false}
+                animate={
+                  item.type === "letter" && item.value
+                    ? { scale: [1, 1.05, 1] }
+                    : { scale: 1 }
+                }
+                transition={{ duration: 0.2 }}
+                style={
+                  item.isVisible
+                    ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" }
+                    : {}
+                }
+                className={boxClass}
+              >
+                {item.displayValue}
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -1077,12 +1087,12 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               <input
                 ref={inputRef}
                 value={inputValue}
-                onChange={(event) => setInputValue(event.target.value.slice(0, 1))}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && inputValue) {
-                    e.preventDefault();
-                    handleGuess(inputValue);
-                    setInputValue("");
+                onChange={(e) => {
+                  const val = e.target.value.slice(-1); // prende solo l’ultima lettera
+                  setInputValue("");
+
+                  if (val) {
+                    handleGuess(val);
                   }
                 }}
                 placeholder={t.hangman.letterPlaceholder}
@@ -1204,16 +1214,16 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                   <input
                     ref={inputRef}
                     value={inputValue}
-                    onChange={(event) => setInputValue(event.target.value.slice(0, 1))}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && inputValue) {
-                        e.preventDefault();
-                        handleGuess(inputValue);
-                        setInputValue("");
+                    onChange={(e) => {
+                      const val = e.target.value.slice(-1); // prende solo l’ultima lettera
+                      setInputValue("");
+
+                      if (val) {
+                        handleGuess(val);
                       }
                     }}
-                    placeholder={t.hangman.longLetterPlaceholder}
-                    className="flex-1 rounded-2xl border border-white/10 bg-black/20 px-4 py-3 outline-none focus:border-pink-400"
+                    placeholder={t.hangman.letterPlaceholder}
+                    className="flex-1 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-sm outline-none focus:border-pink-400"
                   />
                 </div>
                 <button
