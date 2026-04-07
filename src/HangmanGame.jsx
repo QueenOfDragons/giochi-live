@@ -367,7 +367,7 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
           exitRotate={20}
         >
           <div className="absolute inset-0 rounded-[16px] border-[2px] border-sky-400 bg-gradient-to-br from-orange-200 to-orange-300 shadow-md" />
-          F <div className="absolute left-1/2 top-[5px] -translate-x-1/2 text-[9px] font-black tracking-wide text-black sm:text-[11px]">
+          <div className="absolute left-1/2 top-[5px] -translate-x-1/2 text-[9px] font-black tracking-wide text-black sm:text-[11px]">
             LV
           </div>
           <div className="absolute left-[7px] top-[17px] h-2 w-[28px] rounded-full bg-orange-200/85 sm:top-[20px] sm:w-[32px]" />
@@ -712,6 +712,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
   const audioContextRef = useRef(null);
   const previousWrongCountRef = useRef(0);
   const autoNextTimerRef = useRef(null);
+  const usedIndexesRef = useRef(new Set([0]));
 
   const currentItem = items[currentIndex] || DEFAULT_ITEMS[0];
   const maxHearts = DIFFICULTY_HEARTS[currentItem.difficulty] || 8;
@@ -780,12 +781,30 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
       window.clearTimeout(autoNextTimerRef.current);
       autoNextTimerRef.current = null;
     }
+
     if (items.length <= 1) {
       resetRound();
       return;
     }
-    let next = currentIndex;
-    while (next === currentIndex) next = Math.floor(Math.random() * items.length);
+
+    const used = usedIndexesRef.current;
+
+    let availableIndexes = items
+      .map((_, i) => i)
+      .filter((i) => !used.has(i));
+
+    if (availableIndexes.length === 0) {
+      used.clear();
+      used.add(currentIndex);
+      availableIndexes = items
+        .map((_, i) => i)
+        .filter((i) => i !== currentIndex);
+    }
+
+    const next =
+      availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+
+    used.add(next);
     setCurrentIndex(next);
     clearRoundState();
   };
@@ -853,6 +872,12 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
     return () => document.removeEventListener("fullscreenchange", onFsChange);
   }, []);
 
+  useEffect(() => {
+    if (items.length > 0 && usedIndexesRef.current.size === 0) {
+      usedIndexesRef.current = new Set([currentIndex]);
+    }
+  }, [items, currentIndex]);
+
   const handleGuess = (raw) => {
     if (!raw || status !== "playing") return;
     const value = normalizeChar(raw[0]);
@@ -892,9 +917,14 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
     const cleanText = customText.trim();
     const cleanHint = customHint.trim();
     if (!cleanText || !cleanHint) return;
+
     const newItem = { text: cleanText, hint: cleanHint, difficulty: customDifficulty };
+    const newIndex = items.length;
+
     setItems((prev) => [...prev, newItem]);
-    setCurrentIndex(items.length);
+    setCurrentIndex(newIndex);
+    usedIndexesRef.current.add(newIndex);
+
     setCustomText("");
     setCustomHint("");
     setCustomDifficulty("Media");
@@ -947,6 +977,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
       if (parsed.length > 0) {
         setItems(parsed);
         setCurrentIndex(0);
+        usedIndexesRef.current = new Set([0]);
         clearRoundState();
         console.log(`Import riuscito: ${parsed.length} righe caricate.`);
       } else {
