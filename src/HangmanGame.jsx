@@ -235,13 +235,12 @@ function CuteRobotFace({ state = "idle" }) {
 
       <div className="absolute bottom-[9px] flex w-full justify-center">
         <div
-          className={`border-b-[3px] border-sky-700 ${
-            isSad
-              ? "h-2 w-5 rounded-b-full border-t-0 border-b-2"
-              : isHappy
-                ? "h-3 w-6 rounded-b-full border-t-0 border-b-2"
-                : "h-2 w-5 rounded-b-full border-t-0 border-b-2"
-          }`}
+          className={`border-b-[3px] border-sky-700 ${isSad
+            ? "h-2 w-5 rounded-b-full border-t-0 border-b-2"
+            : isHappy
+              ? "h-3 w-6 rounded-b-full border-t-0 border-b-2"
+              : "h-2 w-5 rounded-b-full border-t-0 border-b-2"
+            }`}
         />
       </div>
 
@@ -797,8 +796,10 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
             <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} t={t} />
 
-            <div className="mt-2 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-2.5 text-center">
-              <div className="text-[13px] font-semibold leading-snug sm:text-sm">{renderHintWithEmoji(currentItem.hint)}</div>
+            <div className="mt-2 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-3 text-center">
+              <div className="text-[16px] sm:text-lg font-semibold leading-snug tracking-wide">
+                {renderHintWithEmoji(currentItem.hint)}
+              </div>
             </div>
 
             <div className="mt-3 flex items-center justify-center gap-1.5">
@@ -845,7 +846,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               <div className="mb-5 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4">
                 <div>
                   <p className="mb-2 text-sm text-slate-300">{t.hangman.clue}</p>
-                  <p className="text-lg font-semibold leading-relaxed md:text-xl" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI", sans-serif' }} dangerouslySetInnerHTML={{ __html: twemoji.parse(currentItem.hint, { folder: "svg", ext: ".svg", className: "twemoji-small" }) }} />
+                  <p className="text-xl md:text-2xl font-semibold leading-relaxed tracking-wide" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI", sans-serif' }} dangerouslySetInnerHTML={{ __html: twemoji.parse(currentItem.hint, { folder: "svg", ext: ".svg", className: "twemoji-small" }) }} />
                 </div>
               </div>
 
