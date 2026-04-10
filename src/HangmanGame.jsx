@@ -29,44 +29,50 @@ const DIFFICULTY_HEARTS = {
   Difficile: 10,
 };
 
-const ALLOWED_DIFFICULTIES = ["Facile", "Media", "Difficile"];
 const LETTER_REGEX = /[A-Za-zÀ-ÖØ-öø-ÿ]/;
 
 const KEYBOARD_LAYOUTS = {
   it: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],
-    ["q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "à", "è", "é", "ì", "ò", "ù"]
+    ["q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "à", "è", "é", "ì", "ò", "ù"],
   ],
   en: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"],
-    ["n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+    ["n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
   ],
   ro: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-    ["p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ă", "â", "î", "ș", "ț"]
+    ["p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ă", "â", "î", "ș", "ț"],
   ],
   fr: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s"],
-    ["t", "u", "v", "w", "x", "y", "z", "à", "â", "ç", "é", "è", "ê", "ë", "î", "ï", "ô", "ù", "û"]
-  ]
+    ["t", "u", "v", "w", "x", "y", "z", "à", "â", "ç", "é", "è", "ê", "ë", "î", "ï", "ô", "ù", "û"],
+  ],
 };
 
 function decodeExcelText(value) {
   return String(value ?? "")
-    .replace(/_x([0-9A-Fa-f]{4})_/g, (_, hex) =>
-      String.fromCharCode(parseInt(hex, 16))
-    )
+    .replace(/_x([0-9A-Fa-f]{4})_/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
     .trim();
 }
 
 function normalizeDifficultyLabel(value) {
   const d = String(value ?? "").trim().toLowerCase();
 
-  if (["facile", "easy", "ușor", "usor"].includes(d)) return "Facile";
-  if (["media", "medium", "mediu"].includes(d)) return "Media";
+  if (["facile", "easy", "ușor", "usor", "facile_fr"].includes(d)) return "Facile";
+  if (["media", "medium", "mediu", "moyen"].includes(d)) return "Media";
   if (["difficile", "hard", "dificil"].includes(d)) return "Difficile";
 
   return "Media";
+}
+
+function normalizeHeaderValue(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
 }
 
 function parseImportedRows(rows) {
@@ -74,10 +80,8 @@ function parseImportedRows(rows) {
 
   const header = rows[0].map((v) => normalizeHeaderValue(v));
 
-  const findColumnIndex = (header, keywords) => {
-    return header.findIndex((h) =>
-      keywords.some((k) => h.includes(k))
-    );
+  const findColumnIndex = (headerRow, keywords) => {
+    return headerRow.findIndex((h) => keywords.some((k) => h.includes(k)));
   };
 
   const textIdx = findColumnIndex(header, [
@@ -91,6 +95,7 @@ function parseImportedRows(rows) {
     "cuvant",
     "expresie",
     "raspuns",
+    "mot",
   ]);
 
   const hintIdx = findColumnIndex(header, [
@@ -102,6 +107,7 @@ function parseImportedRows(rows) {
     "indicazione",
     "indiciu",
     "ajutor",
+    "indice",
   ]);
 
   const difficultyIdx = findColumnIndex(header, [
@@ -110,6 +116,7 @@ function parseImportedRows(rows) {
     "livello",
     "level",
     "dificultate",
+    "niveau",
   ]);
 
   if (textIdx === -1 || hintIdx === -1) {
@@ -122,22 +129,14 @@ function parseImportedRows(rows) {
     .map((row) => ({
       text: decodeExcelText(row?.[textIdx] ?? ""),
       hint: decodeExcelText(row?.[hintIdx] ?? ""),
-      difficulty: decodeExcelText(difficultyIdx >= 0 ? row?.[difficultyIdx] ?? "Media" : "Media") || "Media",
+      difficulty:
+        decodeExcelText(difficultyIdx >= 0 ? row?.[difficultyIdx] ?? "Media" : "Media") || "Media",
     }))
     .filter((item) => item.text && item.hint)
     .map((item) => ({
       ...item,
       difficulty: normalizeDifficultyLabel(item.difficulty),
     }));
-}
-
-function normalizeHeaderValue(value) {
-  return String(value ?? "")
-    .normalize("NFD") // rimuove accenti
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "");
 }
 
 function normalizeChar(char) {
@@ -177,10 +176,14 @@ function runSelfChecks() {
     ["", "vuoto", "Media"],
     ["Amore tossico", "Ti distrugge… ma torni sempre 😶", "Nope"],
   ]);
+
   console.assert(parsed.length === 2, "Import: numero righe valide errato");
   console.assert(parsed[0].difficulty === "Facile", "Import: difficulty valida persa");
   console.assert(parsed[1].difficulty === "Media", "Import: fallback difficulty non applicato");
-  console.assert(DIFFICULTY_HEARTS.Difficile > DIFFICULTY_HEARTS.Facile, "Difficulty hearts: difficile deve avere più cuori di facile");
+  console.assert(
+    DIFFICULTY_HEARTS.Difficile > DIFFICULTY_HEARTS.Facile,
+    "Difficulty hearts: difficile deve avere più cuori di facile"
+  );
 
   const masked = maskCharacters("Ciao!", new Set(["c", "a"]));
   console.assert(masked[0].value === "C", "Mask: C non visibile");
@@ -189,7 +192,15 @@ function runSelfChecks() {
 
 if (typeof window !== "undefined") runSelfChecks();
 
-function RobotPiece({ show, className = "", children, exitY = 120, exitRotate = 28, exitScale = 0.7, duration = 0.35 }) {
+function RobotPiece({
+  show,
+  className = "",
+  children,
+  exitY = 120,
+  exitRotate = 28,
+  exitScale = 0.7,
+  duration = 0.35,
+}) {
   return (
     <AnimatePresence>
       {show ? (
@@ -213,48 +224,38 @@ function CuteRobotFace({ state = "idle" }) {
 
   return (
     <div className="relative flex h-full w-full items-center justify-center rounded-full border-[2px] border-sky-400 bg-gradient-to-br from-orange-200 to-orange-300">
-
-      {/* occhi */}
       <div className="absolute top-[14px] flex gap-3">
         {[0, 1].map((i) => (
           <motion.div
             key={i}
-            animate={
-              isHappy
-                ? { scaleY: [1, 0.4, 1] }
-                : { scaleY: [1, 0.1, 1] }
-            }
+            animate={isHappy ? { scaleY: [1, 0.4, 1] } : { scaleY: [1, 0.1, 1] }}
             transition={{
               duration: isHappy ? 0.6 : 2.5,
               repeat: Infinity,
-              repeatDelay: isHappy ? 0.8 : 2
+              repeatDelay: isHappy ? 0.8 : 2,
             }}
             className="relative h-2.5 w-2.5 rounded-full bg-sky-800"
           >
-            {!isSad && (
-              <div className="absolute top-[1px] left-[1px] h-1 w-1 rounded-full bg-white" />
-            )}
+            {!isSad && <div className="absolute left-[1px] top-[1px] h-1 w-1 rounded-full bg-white" />}
           </motion.div>
         ))}
       </div>
 
-      {/* bocca */}
-      <div className="absolute bottom-[9px] flex justify-center w-full">
+      <div className="absolute bottom-[9px] flex w-full justify-center">
         <div
           className={`
-      border-b-[3px] border-sky-700
-      ${isSad ? "w-5 h-2 border-t-0 border-b-2 rounded-b-full" : ""}
-      ${isHappy ? "w-6 h-3 border-t-0 border-b-2 rounded-b-full" : ""}
-      ${!isSad && !isHappy ? "w-5 h-2 border-t-0 border-b-2 rounded-b-full" : ""}
-    `}
+            border-b-[3px] border-sky-700
+            ${isSad ? "h-2 w-5 rounded-b-full border-t-0 border-b-2" : ""}
+            ${isHappy ? "h-3 w-6 rounded-b-full border-t-0 border-b-2" : ""}
+            ${!isSad && !isHappy ? "h-2 w-5 rounded-b-full border-t-0 border-b-2" : ""}
+          `}
         />
       </div>
 
-      {/* guanciotte win */}
       {isHappy && (
         <>
-          <div className="absolute left-[6px] bottom-[10px] h-2 w-2 rounded-full bg-pink-300 opacity-80" />
-          <div className="absolute right-[6px] bottom-[10px] h-2 w-2 rounded-full bg-pink-300 opacity-80" />
+          <div className="absolute bottom-[10px] left-[6px] h-2 w-2 rounded-full bg-pink-300 opacity-80" />
+          <div className="absolute bottom-[10px] right-[6px] h-2 w-2 rounded-full bg-pink-300 opacity-80" />
         </>
       )}
     </div>
@@ -356,7 +357,8 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
         />
         <RobotPiece
           show={earsVisible}
-          className="absolute right-[9px] top-[28px] h-3.5 w-3.5 rounded-full border-[2px] border-sky-500 bg-sky-300 sm:right-[11px] sm:top-[33px]" exitY={70}
+          className="absolute right-[9px] top-[28px] h-3.5 w-3.5 rounded-full border-[2px] border-sky-500 bg-sky-300 sm:right-[11px] sm:top-[33px]"
+          exitY={70}
           exitRotate={25}
         />
 
@@ -374,40 +376,32 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
           <div className="absolute bottom-[6px] left-1/2 h-2 w-6 -translate-x-1/2 rounded-full bg-cyan-300/70 sm:w-7" />
         </RobotPiece>
 
-        {/* Braccio sinistro */}
-        <RobotPiece
-          show={leftArmVisible}
-          className={leftArmOuter}
-          exitY={80}
-          exitRotate={-34}
-        >
+        <RobotPiece show={leftArmVisible} className={leftArmOuter} exitY={80} exitRotate={-34}>
           <div className="absolute left-[14px] top-[3px] h-3 w-3 rounded-full border-[2px] border-sky-600 bg-sky-400" />
           <div
-            className={`absolute left-[9px] top-[8px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[14px] rotate-[8deg]" : "w-[12px] rotate-[22deg]"
-              }`}
+            className={`absolute left-[9px] top-[8px] h-2 rounded-full bg-sky-300 ${
+              isWon ? "w-[14px] rotate-[8deg]" : "w-[12px] rotate-[22deg]"
+            }`}
           />
           <div
-            className={`absolute left-[3px] top-[16px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[12px] -rotate-[28deg]" : "w-[10px] rotate-[30deg]"
-              }`}
+            className={`absolute left-[3px] top-[16px] h-2 rounded-full bg-sky-300 ${
+              isWon ? "w-[12px] -rotate-[28deg]" : "w-[10px] rotate-[30deg]"
+            }`}
           />
           <div className="absolute left-0 top-[22px] h-4.5 w-4.5 rounded-full border-[2px] border-sky-600 bg-cyan-300" />
         </RobotPiece>
 
-        {/* Braccio destro */}
-        <RobotPiece
-          show={rightArmVisible}
-          className={rightArmOuter}
-          exitY={80}
-          exitRotate={34}
-        >
+        <RobotPiece show={rightArmVisible} className={rightArmOuter} exitY={80} exitRotate={34}>
           <div className="absolute right-[14px] top-[3px] h-3 w-3 rounded-full border-[2px] border-sky-600 bg-sky-400" />
           <div
-            className={`absolute right-[9px] top-[8px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[14px] -rotate-[8deg]" : "w-[12px] -rotate-[22deg]"
-              }`}
+            className={`absolute right-[9px] top-[8px] h-2 rounded-full bg-sky-300 ${
+              isWon ? "w-[14px] -rotate-[8deg]" : "w-[12px] -rotate-[22deg]"
+            }`}
           />
           <div
-            className={`absolute right-[3px] top-[16px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[12px] rotate-[28deg]" : "w-[10px] -rotate-[30deg]"
-              }`}
+            className={`absolute right-[3px] top-[16px] h-2 rounded-full bg-sky-300 ${
+              isWon ? "w-[12px] rotate-[28deg]" : "w-[10px] -rotate-[30deg]"
+            }`}
           />
           <div className="absolute right-0 top-[22px] h-4.5 w-4.5 rounded-full border-[2px] border-sky-600 bg-cyan-300" />
         </RobotPiece>
@@ -440,8 +434,7 @@ function SolutionRow({ masked, showAnswer }) {
   const displayItems = masked.map((item) => {
     if (item.type === "space") return item;
 
-    const displayValue =
-      showAnswer && item.type === "letter" ? item.hidden : item.value;
+    const displayValue = showAnswer && item.type === "letter" ? item.hidden : item.value;
 
     return {
       ...item,
@@ -452,7 +445,6 @@ function SolutionRow({ masked, showAnswer }) {
 
   let boxClass =
     "flex h-10 w-8 items-center justify-center rounded-lg border border-gray-300 bg-white text-black font-extrabold uppercase tracking-wide shadow-md";
-
   let spaceClass = "w-2";
   let rowClass = "flex flex-wrap justify-center gap-1";
 
@@ -481,17 +473,9 @@ function SolutionRow({ masked, showAnswer }) {
               <motion.div
                 key={item.key}
                 initial={false}
-                animate={
-                  item.type === "letter" && item.value
-                    ? { scale: [1, 1.05, 1] }
-                    : { scale: 1 }
-                }
+                animate={item.type === "letter" && item.value ? { scale: [1, 1.05, 1] } : { scale: 1 }}
                 transition={{ duration: 0.2 }}
-                style={
-                  item.isVisible
-                    ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" }
-                    : {}
-                }
+                style={item.isVisible ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" } : {}}
                 className={boxClass}
               >
                 {item.displayValue}
@@ -690,6 +674,7 @@ function renderHintWithEmoji(text) {
 
 export default function HangmanGame({ onBack, selectedLanguage }) {
   const t = UI_TEXT[selectedLanguage];
+
   const [items, setItems] = useState(DEFAULT_ITEMS);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [guessed, setGuessed] = useState(() => new Set());
@@ -711,15 +696,25 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
   const fileInputRef = useRef(null);
   const audioContextRef = useRef(null);
   const previousWrongCountRef = useRef(0);
-  const autoNextTimerRef = useRef(null);
-  const usedIndexesRef = useRef(new Set([0]));
+  const remainingIndexesRef = useRef([]);
+  const usedIndexesRef = useRef(new Set());
 
   const currentItem = items[currentIndex] || DEFAULT_ITEMS[0];
   const maxHearts = DIFFICULTY_HEARTS[currentItem.difficulty] || 8;
 
   const uniqueLetters = useMemo(() => getUniqueLetters(currentItem.text), [currentItem.text]);
   const masked = useMemo(() => maskCharacters(currentItem.text, guessed), [currentItem.text, guessed]);
-  const guessedCount = uniqueLetters.filter((l) => guessed.has(l)).length;
+
+  const buildRemainingPool = (itemsLength, excludeIndex = null) => {
+    const indexes = Array.from({ length: itemsLength }, (_, i) => i).filter((i) => i !== excludeIndex);
+
+    for (let i = indexes.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
+    }
+
+    return indexes;
+  };
 
   const getDifficultyLabel = (difficulty) => {
     switch (difficulty) {
@@ -736,18 +731,24 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
   const playTone = (frequency, duration = 0.12, type = "sine") => {
     if (!soundOn || typeof window === "undefined") return;
+
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (!AudioCtx) return;
+
       if (!audioContextRef.current) audioContextRef.current = new AudioCtx();
       const ctx = audioContextRef.current;
+
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+
       osc.type = type;
       osc.frequency.value = frequency;
       gain.gain.value = 0.035;
+
       osc.connect(gain);
       gain.connect(ctx.destination);
+
       osc.start();
       osc.stop(ctx.currentTime + duration);
     } catch (error) {
@@ -768,43 +769,29 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
   };
 
   const resetRound = () => {
-    if (autoNextTimerRef.current) {
-      window.clearTimeout(autoNextTimerRef.current);
-      autoNextTimerRef.current = null;
-    }
     clearRoundState();
     inputRef.current?.focus();
   };
 
   const nextRandom = () => {
-    if (autoNextTimerRef.current) {
-      window.clearTimeout(autoNextTimerRef.current);
-      autoNextTimerRef.current = null;
-    }
-
     if (items.length <= 1) {
       resetRound();
       return;
     }
 
-    const used = usedIndexesRef.current;
-
-    let availableIndexes = items
-      .map((_, i) => i)
-      .filter((i) => !used.has(i));
-
-    if (availableIndexes.length === 0) {
-      used.clear();
-      used.add(currentIndex);
-      availableIndexes = items
-        .map((_, i) => i)
-        .filter((i) => i !== currentIndex);
+    if (remainingIndexesRef.current.length === 0) {
+      usedIndexesRef.current = new Set([currentIndex]);
+      remainingIndexesRef.current = buildRemainingPool(items.length, currentIndex);
     }
 
-    const next =
-      availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+    const next = remainingIndexesRef.current.shift();
 
-    used.add(next);
+    if (next === undefined) {
+      resetRound();
+      return;
+    }
+
+    usedIndexesRef.current.add(next);
     setCurrentIndex(next);
     clearRoundState();
   };
@@ -817,23 +804,35 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
   }, [guessed, uniqueLetters, wrong.length, maxHearts]);
 
   useEffect(() => {
+    if (items.length > 0) {
+      usedIndexesRef.current = new Set([currentIndex]);
+      remainingIndexesRef.current = buildRemainingPool(items.length, currentIndex);
+    }
+  }, []);
+
+  useEffect(() => {
     const prevWrong = previousWrongCountRef.current;
+
     if (wrong.length > prevWrong) {
       const lostIndex = maxHearts - wrong.length;
       setHeartBurstIndex(lostIndex);
       setBoardShake(true);
       setFlashMode("wrong");
       playTone(150, 0.28, "sawtooth");
+
       const shakeTimer = window.setTimeout(() => setBoardShake(false), 420);
       const burstTimer = window.setTimeout(() => setHeartBurstIndex(null), 650);
       const flashTimer = window.setTimeout(() => setFlashMode("none"), 300);
+
       previousWrongCountRef.current = wrong.length;
+
       return () => {
         window.clearTimeout(shakeTimer);
         window.clearTimeout(burstTimer);
         window.clearTimeout(flashTimer);
       };
     }
+
     previousWrongCountRef.current = wrong.length;
     return undefined;
   }, [wrong.length, maxHearts]);
@@ -844,23 +843,16 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
       playTone(720, 0.08, "triangle");
       const extraTone = window.setTimeout(() => playTone(860, 0.12, "triangle"), 90);
       const resetFlash = window.setTimeout(() => setFlashMode("none"), 700);
+
       return () => {
         window.clearTimeout(extraTone);
         window.clearTimeout(resetFlash);
       };
     }
+
     if (status === "lost") playTone(120, 0.35, "square");
     return undefined;
   }, [status]);
-
-  useEffect(() => {
-    return () => {
-      if (autoNextTimerRef.current) {
-        window.clearTimeout(autoNextTimerRef.current);
-        autoNextTimerRef.current = null;
-      }
-    };
-  }, []);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -872,30 +864,21 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
     return () => document.removeEventListener("fullscreenchange", onFsChange);
   }, []);
 
-  useEffect(() => {
-    if (items.length > 0 && usedIndexesRef.current.size === 0) {
-      usedIndexesRef.current = new Set([currentIndex]);
-    }
-  }, [items, currentIndex]);
-
   const handleGuess = (raw) => {
     if (!raw || status !== "playing") return;
+
     const value = normalizeChar(raw[0]);
     if (!LETTER_REGEX.test(value)) return;
     if (guessed.has(value) || wrong.includes(value)) return;
+
     const exists = uniqueLetters.includes(value);
+
     if (exists) {
       playTone(740, 0.1, "triangle");
       setGuessed((prev) => new Set([...prev, value]));
     } else {
       setWrong((prev) => [...prev, value]);
     }
-  };
-
-  const onSubmitLetter = (event) => {
-    event.preventDefault();
-    handleGuess(inputValue);
-    setInputValue("");
   };
 
   const downloadTemplateFile = () => {
@@ -920,10 +903,13 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
     const newItem = { text: cleanText, hint: cleanHint, difficulty: customDifficulty };
     const newIndex = items.length;
+    const newItemsLength = items.length + 1;
 
     setItems((prev) => [...prev, newItem]);
     setCurrentIndex(newIndex);
-    usedIndexesRef.current.add(newIndex);
+
+    usedIndexesRef.current = new Set([newIndex]);
+    remainingIndexesRef.current = buildRemainingPool(newItemsLength, newIndex);
 
     setCustomText("");
     setCustomHint("");
@@ -933,9 +919,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
   const handleImportFile = async (event) => {
     const file = event.target.files?.[0];
-    if (!file) {
-      return;
-    }
+    if (!file) return;
 
     try {
       const fileName = file.name.toLowerCase();
@@ -948,22 +932,26 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
           type: "string",
           FS: text.includes(";") ? ";" : ",",
         });
+
         const firstSheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[firstSheetName];
+
         const rows = XLSX.utils.sheet_to_json(sheet, {
           header: 1,
           raw: false,
           defval: "",
         });
-        parsed = parseImportedRows(rows);
 
+        parsed = parseImportedRows(rows);
       } else {
         const buffer = await file.arrayBuffer();
         const workbook = XLSX.read(buffer, { type: "array" });
         const firstSheetName = workbook.SheetNames.includes("Import_WebApp")
           ? "Import_WebApp"
           : workbook.SheetNames[0];
+
         const sheet = workbook.Sheets[firstSheetName];
+
         const rows = XLSX.utils.sheet_to_json(sheet, {
           header: 1,
           raw: false,
@@ -971,13 +959,13 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
         });
 
         parsed = parseImportedRows(rows);
-
       }
 
       if (parsed.length > 0) {
         setItems(parsed);
         setCurrentIndex(0);
         usedIndexesRef.current = new Set([0]);
+        remainingIndexesRef.current = buildRemainingPool(parsed.length, 0);
         clearRoundState();
         console.log(`Import riuscito: ${parsed.length} righe caricate.`);
       } else {
@@ -1003,37 +991,54 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
   const activeHearts = maxHearts - wrong.length;
   const hearts = Array.from({ length: maxHearts }, (_, i) => i < activeHearts);
+  const canGoNext = status !== "playing" || showAnswer;
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 p-4 text-slate-100 md:p-8">
-
       <style>{`
-      img.twemoji-small {
-        height: 0.9em;
-        width: 0.9em;
-        vertical-align: -0.12em;
-        display: inline-block;
-      }
-    `}</style>
+        img.twemoji-small {
+          height: 0.9em;
+          width: 0.9em;
+          vertical-align: -0.12em;
+          display: inline-block;
+        }
+      `}</style>
 
       <AnimatePresence>
-        {flashMode === "wrong" ? <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.16 }} exit={{ opacity: 0 }} className="pointer-events-none absolute inset-0 z-0 bg-red-500" /> : null}
+        {flashMode === "wrong" ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.16 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none absolute inset-0 z-0 bg-red-500"
+          />
+        ) : null}
       </AnimatePresence>
+
       <AnimatePresence>
-        {flashMode === "won" ? <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.14 }} exit={{ opacity: 0 }} className="pointer-events-none absolute inset-0 z-0 bg-emerald-400" /> : null}
+        {flashMode === "won" ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.14 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none absolute inset-0 z-0 bg-emerald-400"
+          />
+        ) : null}
       </AnimatePresence>
 
       <div className={`relative z-10 mx-auto ${compactMode ? "max-w-3xl" : "max-w-6xl"}`}>
         {compactMode ? (
-          <motion.div animate={boardShake ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }} transition={{ duration: 0.35 }} className="flex h-full flex-col rounded-[28px] border border-white/10 bg-white/5 p-3 shadow-2xl backdrop-blur-sm sm:p-4">
-            <div className="flex justify-center mb-2">
-              <button
-                onClick={onBack}
-                className="text-xs text-slate-400 hover:text-white transition"
-              >
+          <motion.div
+            animate={boardShake ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }}
+            transition={{ duration: 0.35 }}
+            className="flex h-full flex-col rounded-[28px] border border-white/10 bg-white/5 p-3 shadow-2xl backdrop-blur-sm sm:p-4"
+          >
+            <div className="mb-2 flex justify-center">
+              <button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">
                 {t.home.backToMenu}
               </button>
             </div>
+
             <TopControls
               onReset={resetRound}
               onRandom={nextRandom}
@@ -1064,22 +1069,16 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                   <motion.div
                     key={idx}
                     initial={false}
-                    animate={
-                      alive
-                        ? { scale: 1, opacity: 1 }
-                        : { scale: 1, opacity: 0.35 }
-                    }
+                    animate={alive ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 0.35 }}
                     transition={{ duration: 0.2 }}
-                    className={`relative rounded-2xl border px-2 py-1 ${alive
-                      ? "border-rose-400/50 bg-rose-500/20"
-                      : "border-slate-700 bg-slate-800"
-                      }`}
+                    className={`relative rounded-2xl border px-2 py-1 ${
+                      alive ? "border-rose-400/50 bg-rose-500/20" : "border-slate-700 bg-slate-800"
+                    }`}
                   >
                     <Heart
-                      className={`h-4 w-4 ${alive
-                        ? "fill-rose-400 text-rose-300"
-                        : "text-slate-500"
-                        }`}
+                      className={`h-4 w-4 ${
+                        alive ? "fill-rose-400 text-rose-300" : "text-slate-500"
+                      }`}
                     />
 
                     <AnimatePresence>
@@ -1107,7 +1106,12 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
             </div>
 
             <div className="mt-2 flex justify-center">
-              <RobotArena wrongCount={wrong.length} maxHearts={maxHearts} isLost={status === "lost"} isWon={status === "won"} />
+              <RobotArena
+                wrongCount={wrong.length}
+                maxHearts={maxHearts}
+                isLost={status === "lost"}
+                isWon={status === "won"}
+              />
             </div>
 
             <div className="mt-2 rounded-3xl border border-white/10 bg-slate-900/60 p-2.5">
@@ -1119,12 +1123,9 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                 ref={inputRef}
                 value={inputValue}
                 onChange={(e) => {
-                  const val = e.target.value.slice(-1); // prende solo l’ultima lettera
+                  const val = e.target.value.slice(-1);
                   setInputValue("");
-
-                  if (val) {
-                    handleGuess(val);
-                  }
+                  if (val) handleGuess(val);
                 }}
                 placeholder={t.hangman.letterPlaceholder}
                 className="flex-1 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-sm outline-none focus:border-pink-400"
@@ -1141,15 +1142,17 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               <button
                 type="button"
                 onClick={nextRandom}
-                disabled={status === "playing"}
-                className={`rounded-2xl px-3 py-2.5 text-sm font-semibold transition ${status === "playing"
-                  ? "cursor-not-allowed bg-white/5 text-slate-500"
-                  : "bg-emerald-500/80 text-white hover:bg-emerald-500"
-                  }`}
+                disabled={!canGoNext}
+                className={`rounded-2xl px-3 py-2.5 text-sm font-semibold transition ${
+                  !canGoNext
+                    ? "cursor-not-allowed bg-white/5 text-slate-500"
+                    : "bg-emerald-500/80 text-white hover:bg-emerald-500"
+                }`}
               >
                 {t.hangman.next}
               </button>
             </div>
+
             <div className="mt-2 flex-1">
               <Keyboard
                 guessed={guessed}
@@ -1162,25 +1165,23 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
           </motion.div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
-            <motion.div animate={boardShake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }} transition={{ duration: 0.4 }} className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl backdrop-blur-sm md:p-8">
+            <motion.div
+              animate={boardShake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }}
+              transition={{ duration: 0.4 }}
+              className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl backdrop-blur-sm md:p-8"
+            >
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.25em] text-pink-300/80">
-                    {t.hangman.liveGame}
-                  </p>
-                  <h1 className="text-2xl font-bold md:text-4xl">
-                    {t.hangman.title}
-                  </h1>
+                  <p className="text-sm uppercase tracking-[0.25em] text-pink-300/80">{t.hangman.liveGame}</p>
+                  <h1 className="text-2xl font-bold md:text-4xl">{t.hangman.title}</h1>
                 </div>
-                {/* BOTTONE BACK */}
-                <div className="flex justify-center mb-2">
-                  <button
-                    onClick={onBack}
-                    className="text-xs text-slate-400 hover:text-white transition"
-                  >
+
+                <div className="mb-2 flex justify-center">
+                  <button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">
                     {t.home.backToMenu}
                   </button>
                 </div>
+
                 <TopControls
                   onReset={resetRound}
                   onRandom={nextRandom}
@@ -1221,11 +1222,28 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               <div className="mb-3 flex flex-wrap gap-2">
                 {hearts.map((alive, idx) => {
                   const isBurst = heartBurstIndex === idx;
+
                   return (
-                    <motion.div key={idx} initial={false} animate={alive ? { scale: [1, 1.08, 1] } : { scale: 1, opacity: 0.45 }} transition={{ duration: 0.35 }} className={`relative rounded-2xl border px-3 py-2 ${alive ? "border-rose-400/40 bg-rose-500/15" : "border-slate-700 bg-slate-800 opacity-40"}`}>
+                    <motion.div
+                      key={idx}
+                      initial={false}
+                      animate={alive ? { scale: [1, 1.08, 1] } : { scale: 1, opacity: 0.45 }}
+                      transition={{ duration: 0.35 }}
+                      className={`relative rounded-2xl border px-3 py-2 ${
+                        alive ? "border-rose-400/40 bg-rose-500/15" : "border-slate-700 bg-slate-800 opacity-40"
+                      }`}
+                    >
                       <Heart className={`h-5 w-5 ${alive ? "fill-rose-400 text-rose-300" : "text-slate-500"}`} />
                       <AnimatePresence>
-                        {isBurst ? <motion.div initial={{ scale: 0.4, opacity: 0.9 }} animate={{ scale: 1.8, opacity: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} className="absolute inset-0 rounded-2xl border-2 border-rose-300" /> : null}
+                        {isBurst ? (
+                          <motion.div
+                            initial={{ scale: 0.4, opacity: 0.9 }}
+                            animate={{ scale: 1.8, opacity: 0 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="absolute inset-0 rounded-2xl border-2 border-rose-300"
+                          />
+                        ) : null}
                       </AnimatePresence>
                     </motion.div>
                   );
@@ -1233,7 +1251,12 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               </div>
 
               <div className="mb-4 flex justify-center">
-                <RobotArena wrongCount={wrong.length} maxHearts={maxHearts} isLost={status === "lost"} isWon={status === "won"} />
+                <RobotArena
+                  wrongCount={wrong.length}
+                  maxHearts={maxHearts}
+                  isLost={status === "lost"}
+                  isWon={status === "won"}
+                />
               </div>
 
               <div className="mb-5 rounded-3xl border border-white/10 bg-black/20 p-4">
@@ -1246,17 +1269,15 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                     ref={inputRef}
                     value={inputValue}
                     onChange={(e) => {
-                      const val = e.target.value.slice(-1); // prende solo l’ultima lettera
+                      const val = e.target.value.slice(-1);
                       setInputValue("");
-
-                      if (val) {
-                        handleGuess(val);
-                      }
+                      if (val) handleGuess(val);
                     }}
-                    placeholder={t.hangman.letterPlaceholder}
+                    placeholder={t.hangman.longLetterPlaceholder}
                     className="flex-1 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-sm outline-none focus:border-pink-400"
                   />
                 </div>
+
                 <button
                   onClick={() => setShowAnswer((prev) => !prev)}
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-4 py-3 transition hover:bg-white/15"
@@ -1268,11 +1289,12 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                 <button
                   type="button"
                   onClick={nextRandom}
-                  disabled={status === "playing"}
-                  className={`rounded-2xl px-4 py-3 font-semibold transition ${status === "playing"
-                    ? "cursor-not-allowed bg-white/5 text-slate-500"
-                    : "bg-emerald-500/80 text-white hover:bg-emerald-500"
-                    }`}
+                  disabled={!canGoNext}
+                  className={`rounded-2xl px-4 py-3 font-semibold transition ${
+                    !canGoNext
+                      ? "cursor-not-allowed bg-white/5 text-slate-500"
+                      : "bg-emerald-500/80 text-white hover:bg-emerald-500"
+                  }`}
                 >
                   {t.hangman.next}
                 </button>
@@ -1293,8 +1315,21 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl">
                 <h2 className="mb-4 text-xl font-bold">{t.hangman.addItemTitle}</h2>
                 <div className="space-y-3">
-                  <input value={customText} onChange={(event) => setCustomText(event.target.value)} placeholder={t.hangman.itemPlaceholder} className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 outline-none focus:border-pink-400" />
-                  <textarea value={customHint} onChange={(event) => setCustomHint(event.target.value)} placeholder={t.hangman.cluePlaceholder} rows={4} className="w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-4 py-3 outline-none focus:border-pink-400" />
+                  <input
+                    value={customText}
+                    onChange={(event) => setCustomText(event.target.value)}
+                    placeholder={t.hangman.itemPlaceholder}
+                    className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 outline-none focus:border-pink-400"
+                  />
+
+                  <textarea
+                    value={customHint}
+                    onChange={(event) => setCustomHint(event.target.value)}
+                    placeholder={t.hangman.cluePlaceholder}
+                    rows={4}
+                    className="w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-4 py-3 outline-none focus:border-pink-400"
+                  />
+
                   <select
                     value={customDifficulty}
                     onChange={(event) => setCustomDifficulty(event.target.value)}
@@ -1304,7 +1339,13 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                     <option value="Media">{t.hangman.medium}</option>
                     <option value="Difficile">{t.hangman.hard}</option>
                   </select>
-                  <button onClick={addCustomItem} className="w-full rounded-2xl bg-emerald-500/80 px-4 py-3 font-semibold hover:bg-emerald-500">{t.hangman.addAndPlay}</button>
+
+                  <button
+                    onClick={addCustomItem}
+                    className="w-full rounded-2xl bg-emerald-500/80 px-4 py-3 font-semibold hover:bg-emerald-500"
+                  >
+                    {t.hangman.addAndPlay}
+                  </button>
                 </div>
               </div>
 
@@ -1312,7 +1353,20 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                 <h2 className="mb-4 text-xl font-bold">{t.hangman.archiveTitle}</h2>
                 <div className="max-h-[320px] space-y-2 overflow-auto pr-1">
                   {items.map((item, idx) => (
-                    <button key={`${idx}-${item.difficulty}`} onClick={() => { setCurrentIndex(idx); clearRoundState(); }} className={`w-full rounded-2xl border px-4 py-3 text-left transition ${idx === currentIndex ? "border-pink-400/40 bg-pink-500/15" : "border-white/10 bg-black/20 hover:bg-white/10"}`}>
+                    <button
+                      key={`${idx}-${item.difficulty}`}
+                      onClick={() => {
+                        setCurrentIndex(idx);
+                        usedIndexesRef.current = new Set([idx]);
+                        remainingIndexesRef.current = buildRemainingPool(items.length, idx);
+                        clearRoundState();
+                      }}
+                      className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
+                        idx === currentIndex
+                          ? "border-pink-400/40 bg-pink-500/15"
+                          : "border-white/10 bg-black/20 hover:bg-white/10"
+                      }`}
+                    >
                       <div className="font-semibold">
                         {t.hangman.roundLabel} {idx + 1}
                       </div>
@@ -1325,9 +1379,8 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               </div>
             </div>
           </div>
-        )
-        }
-      </div >
-    </div >
+        )}
+      </div>
+    </div>
   );
 }
