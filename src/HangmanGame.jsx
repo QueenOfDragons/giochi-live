@@ -84,6 +84,10 @@ function parseImportedRows(rows) {
     return headerRow.findIndex((h) => keywords.some((k) => h.includes(k)));
   };
 
+  const activateRandomMode = () => {
+    setPlayMode("random");
+    nextRandom();
+  };
   const textIdx = findColumnIndex(header, [
     "text",
     "parola",
@@ -379,14 +383,12 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
         <RobotPiece show={leftArmVisible} className={leftArmOuter} exitY={80} exitRotate={-34}>
           <div className="absolute left-[14px] top-[3px] h-3 w-3 rounded-full border-[2px] border-sky-600 bg-sky-400" />
           <div
-            className={`absolute left-[9px] top-[8px] h-2 rounded-full bg-sky-300 ${
-              isWon ? "w-[14px] rotate-[8deg]" : "w-[12px] rotate-[22deg]"
-            }`}
+            className={`absolute left-[9px] top-[8px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[14px] rotate-[8deg]" : "w-[12px] rotate-[22deg]"
+              }`}
           />
           <div
-            className={`absolute left-[3px] top-[16px] h-2 rounded-full bg-sky-300 ${
-              isWon ? "w-[12px] -rotate-[28deg]" : "w-[10px] rotate-[30deg]"
-            }`}
+            className={`absolute left-[3px] top-[16px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[12px] -rotate-[28deg]" : "w-[10px] rotate-[30deg]"
+              }`}
           />
           <div className="absolute left-0 top-[22px] h-4.5 w-4.5 rounded-full border-[2px] border-sky-600 bg-cyan-300" />
         </RobotPiece>
@@ -394,14 +396,12 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
         <RobotPiece show={rightArmVisible} className={rightArmOuter} exitY={80} exitRotate={34}>
           <div className="absolute right-[14px] top-[3px] h-3 w-3 rounded-full border-[2px] border-sky-600 bg-sky-400" />
           <div
-            className={`absolute right-[9px] top-[8px] h-2 rounded-full bg-sky-300 ${
-              isWon ? "w-[14px] -rotate-[8deg]" : "w-[12px] -rotate-[22deg]"
-            }`}
+            className={`absolute right-[9px] top-[8px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[14px] -rotate-[8deg]" : "w-[12px] -rotate-[22deg]"
+              }`}
           />
           <div
-            className={`absolute right-[3px] top-[16px] h-2 rounded-full bg-sky-300 ${
-              isWon ? "w-[12px] rotate-[28deg]" : "w-[10px] -rotate-[30deg]"
-            }`}
+            className={`absolute right-[3px] top-[16px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[12px] rotate-[28deg]" : "w-[10px] -rotate-[30deg]"
+              }`}
           />
           <div className="absolute right-0 top-[22px] h-4.5 w-4.5 rounded-full border-[2px] border-sky-600 bg-cyan-300" />
         </RobotPiece>
@@ -691,6 +691,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
   const [boardShake, setBoardShake] = useState(false);
   const [flashMode, setFlashMode] = useState("none");
   const [compactMode, setCompactMode] = useState(true);
+  const [playMode, setPlayMode] = useState("sequential");
 
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -771,6 +772,25 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
   const resetRound = () => {
     clearRoundState();
     inputRef.current?.focus();
+  };
+
+  const nextSequential = () => {
+    if (items.length <= 1) {
+      resetRound();
+      return;
+    }
+
+    const next = currentIndex + 1 < items.length ? currentIndex + 1 : 0;
+    setCurrentIndex(next);
+    clearRoundState();
+  };
+
+  const goNext = () => {
+    if (playMode === "random") {
+      nextRandom();
+    } else {
+      nextSequential();
+    }
   };
 
   const nextRandom = () => {
@@ -964,6 +984,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
       if (parsed.length > 0) {
         setItems(parsed);
         setCurrentIndex(0);
+        setPlayMode("sequential");
         usedIndexesRef.current = new Set([0]);
         remainingIndexesRef.current = buildRemainingPool(parsed.length, 0);
         clearRoundState();
@@ -1041,7 +1062,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
             <TopControls
               onReset={resetRound}
-              onRandom={nextRandom}
+              onRandom={activateRandomMode}
               onImport={() => fileInputRef.current?.click()}
               onDownloadTemplate={downloadTemplateFile}
               onFullscreen={toggleFullscreen}
@@ -1071,14 +1092,12 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                     initial={false}
                     animate={alive ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 0.35 }}
                     transition={{ duration: 0.2 }}
-                    className={`relative rounded-2xl border px-2 py-1 ${
-                      alive ? "border-rose-400/50 bg-rose-500/20" : "border-slate-700 bg-slate-800"
-                    }`}
+                    className={`relative rounded-2xl border px-2 py-1 ${alive ? "border-rose-400/50 bg-rose-500/20" : "border-slate-700 bg-slate-800"
+                      }`}
                   >
                     <Heart
-                      className={`h-4 w-4 ${
-                        alive ? "fill-rose-400 text-rose-300" : "text-slate-500"
-                      }`}
+                      className={`h-4 w-4 ${alive ? "fill-rose-400 text-rose-300" : "text-slate-500"
+                        }`}
                     />
 
                     <AnimatePresence>
@@ -1141,13 +1160,12 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
               <button
                 type="button"
-                onClick={nextRandom}
+                onClick={goNext}
                 disabled={!canGoNext}
-                className={`rounded-2xl px-3 py-2.5 text-sm font-semibold transition ${
-                  !canGoNext
-                    ? "cursor-not-allowed bg-white/5 text-slate-500"
-                    : "bg-emerald-500/80 text-white hover:bg-emerald-500"
-                }`}
+                className={`rounded-2xl px-3 py-2.5 text-sm font-semibold transition ${!canGoNext
+                  ? "cursor-not-allowed bg-white/5 text-slate-500"
+                  : "bg-emerald-500/80 text-white hover:bg-emerald-500"
+                  }`}
               >
                 {t.hangman.next}
               </button>
@@ -1229,9 +1247,8 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                       initial={false}
                       animate={alive ? { scale: [1, 1.08, 1] } : { scale: 1, opacity: 0.45 }}
                       transition={{ duration: 0.35 }}
-                      className={`relative rounded-2xl border px-3 py-2 ${
-                        alive ? "border-rose-400/40 bg-rose-500/15" : "border-slate-700 bg-slate-800 opacity-40"
-                      }`}
+                      className={`relative rounded-2xl border px-3 py-2 ${alive ? "border-rose-400/40 bg-rose-500/15" : "border-slate-700 bg-slate-800 opacity-40"
+                        }`}
                     >
                       <Heart className={`h-5 w-5 ${alive ? "fill-rose-400 text-rose-300" : "text-slate-500"}`} />
                       <AnimatePresence>
@@ -1288,13 +1305,12 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
                 <button
                   type="button"
-                  onClick={nextRandom}
+                  onClick={goNext}
                   disabled={!canGoNext}
-                  className={`rounded-2xl px-4 py-3 font-semibold transition ${
-                    !canGoNext
-                      ? "cursor-not-allowed bg-white/5 text-slate-500"
-                      : "bg-emerald-500/80 text-white hover:bg-emerald-500"
-                  }`}
+                  className={`rounded-2xl px-4 py-3 font-semibold transition ${!canGoNext
+                    ? "cursor-not-allowed bg-white/5 text-slate-500"
+                    : "bg-emerald-500/80 text-white hover:bg-emerald-500"
+                    }`}
                 >
                   {t.hangman.next}
                 </button>
@@ -1357,15 +1373,15 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                       key={`${idx}-${item.difficulty}`}
                       onClick={() => {
                         setCurrentIndex(idx);
+                        setPlayMode("sequential");
                         usedIndexesRef.current = new Set([idx]);
                         remainingIndexesRef.current = buildRemainingPool(items.length, idx);
                         clearRoundState();
                       }}
-                      className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
-                        idx === currentIndex
-                          ? "border-pink-400/40 bg-pink-500/15"
-                          : "border-white/10 bg-black/20 hover:bg-white/10"
-                      }`}
+                      className={`w-full rounded-2xl border px-4 py-3 text-left transition ${idx === currentIndex
+                        ? "border-pink-400/40 bg-pink-500/15"
+                        : "border-white/10 bg-black/20 hover:bg-white/10"
+                        }`}
                     >
                       <div className="font-semibold">
                         {t.hangman.roundLabel} {idx + 1}
