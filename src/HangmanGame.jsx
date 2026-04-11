@@ -395,7 +395,7 @@ function SolutionRow({ masked, showAnswer }) {
   if (total >= 26) {
     boxClass =
       "flex h-[46px] w-[24px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[22px] font-extrabold uppercase leading-none shadow-md";
-    wordGapClass = "gap-1.5";
+    wordGapClass = "gap-4";
     letterGapClass = "gap-[3px]";
   } else if (total >= 20) {
     boxClass =
@@ -409,7 +409,10 @@ function SolutionRow({ masked, showAnswer }) {
       <div className="flex min-h-[92px] items-center justify-center">
         <div className={`flex max-w-full flex-wrap justify-center ${wordGapClass} gap-y-3`}>
           {words.map((word, wordIndex) => (
-            <div key={wordIndex} className={`flex ${letterGapClass}`}>
+            <div
+              key={wordIndex}
+              className={`flex ${letterGapClass} px-2 py-1 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm`}
+            >
               {word.map((item) => (
                 <motion.div
                   key={item.key}
