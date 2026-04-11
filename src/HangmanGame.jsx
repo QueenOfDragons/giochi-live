@@ -352,39 +352,86 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
 }
 
 function SolutionRow({ masked, showAnswer }) {
-  const total = masked.length;
   const displayItems = masked.map((item) => {
     if (item.type === "space") return item;
-    const displayValue = showAnswer && item.type === "letter" ? item.hidden : item.value;
-    return { ...item, displayValue, isVisible: item.type === "letter" && item.value };
+
+    const displayValue =
+      showAnswer && item.type === "letter" ? item.hidden : item.value;
+
+    return {
+      ...item,
+      displayValue,
+      isVisible: item.type === "letter" && item.value,
+    };
   });
 
-  let boxClass = "flex h-10 w-8 items-center justify-center rounded-lg border border-gray-300 bg-white text-black font-extrabold uppercase tracking-wide shadow-md";
-  let spaceClass = "w-2";
-  let rowClass = "flex flex-wrap justify-center gap-1";
+  // Raggruppa per parole, così il wrap avviene tra parole e non in mezzo
+  const words = [];
+  let currentWord = [];
 
-  if (total >= 22) {
-    boxClass = "flex h-8 w-6 items-center justify-center rounded-lg border border-gray-300 bg-white text-black text-sm font-extrabold uppercase tracking-normal shadow-md";
-    spaceClass = "w-1.5";
-    rowClass = "flex flex-wrap justify-center gap-0.5";
-  } else if (total >= 16) {
-    boxClass = "flex h-9 w-7 items-center justify-center rounded-lg border border-gray-300 bg-white text-black text-base font-extrabold uppercase tracking-normal shadow-md";
-    spaceClass = "w-1.5";
-    rowClass = "flex flex-wrap justify-center gap-0.5";
+  displayItems.forEach((item) => {
+    if (item.type === "space") {
+      if (currentWord.length > 0) {
+        words.push(currentWord);
+        currentWord = [];
+      }
+    } else {
+      currentWord.push(item);
+    }
+  });
+
+  if (currentWord.length > 0) {
+    words.push(currentWord);
+  }
+
+  const total = displayItems.length;
+
+  let boxClass =
+    "flex h-[56px] w-[30px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[28px] font-extrabold uppercase leading-none shadow-md";
+
+  let wordGapClass = "gap-2";
+  let letterGapClass = "gap-1";
+
+  if (total >= 26) {
+    boxClass =
+      "flex h-[46px] w-[24px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[22px] font-extrabold uppercase leading-none shadow-md";
+    wordGapClass = "gap-1.5";
+    letterGapClass = "gap-[3px]";
+  } else if (total >= 20) {
+    boxClass =
+      "flex h-[50px] w-[26px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[24px] font-extrabold uppercase leading-none shadow-md";
+    wordGapClass = "gap-1.5";
+    letterGapClass = "gap-[4px]";
   }
 
   return (
     <div className="overflow-hidden py-1">
-      <div className="flex min-h-[88px] items-center justify-center">
-        <div className={rowClass}>
-          {displayItems.map((item) => {
-            if (item.type === "space") return <div key={item.key} className={spaceClass} />;
-            return (
-              <motion.div key={item.key} initial={false} animate={item.type === "letter" && item.value ? { scale: [1, 1.05, 1] } : { scale: 1 }} transition={{ duration: 0.2 }} style={item.isVisible ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" } : {}} className={boxClass}>
-                {item.displayValue}
-              </motion.div>
-            );
-          })}
+      <div className="flex min-h-[92px] items-center justify-center">
+        <div className={`flex max-w-full flex-wrap justify-center ${wordGapClass} gap-y-2`}>
+          {words.map((word, wordIndex) => (
+            <div key={wordIndex} className={`flex ${letterGapClass}`}>
+              {word.map((item) => (
+                <motion.div
+                  key={item.key}
+                  initial={false}
+                  animate={
+                    item.type === "letter" && item.value
+                      ? { scale: [1, 1.05, 1] }
+                      : { scale: 1 }
+                  }
+                  transition={{ duration: 0.2 }}
+                  style={
+                    item.isVisible
+                      ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" }
+                      : {}
+                  }
+                  className={boxClass}
+                >
+                  {item.displayValue}
+                </motion.div>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </div>
