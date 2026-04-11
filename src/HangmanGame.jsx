@@ -902,31 +902,34 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               {status === "playing" ? `${t.hangman.errors} ${wrong.length}/${maxHearts}` : status === "won" ? t.hangman.won : t.hangman.lost}
             </div>
 
-            <div className="mt-2 flex items-center justify-center gap-4">
-              <RobotArena
-                wrongCount={wrong.length}
-                maxHearts={maxHearts}
-                isLost={status === "lost"}
-                isWon={status === "won"}
-              />
+            <div className="mt-2 flex w-full items-center justify-between">
+              <div className="flex-1" />
 
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-1 justify-center">
+                <RobotArena
+                  wrongCount={wrong.length}
+                  maxHearts={maxHearts}
+                  isLost={status === "lost"}
+                  isWon={status === "won"}
+                />
+              </div>
+
+              <div className="flex flex-1 flex-col items-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAnswer((prev) => !prev)}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 px-2.5 py-1.5 text-[11px] transition hover:bg-white/15"
+                  className="rounded-lg bg-white/10 p-2 transition hover:bg-white/15"
                 >
                   {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  {showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}
                 </button>
 
                 <button
                   type="button"
                   onClick={goNext}
                   disabled={!canGoNext}
-                  className={`rounded-xl px-2.5 py-1.5 text-[11px] font-semibold transition ${!canGoNext
-                      ? "cursor-not-allowed bg-white/5 text-slate-500"
-                      : "bg-emerald-500/80 text-white hover:bg-emerald-500"
+                  className={`rounded-lg px-2.5 py-1.5 text-[11px] font-semibold transition ${!canGoNext
+                    ? "cursor-not-allowed bg-white/5 text-slate-500"
+                    : "bg-emerald-500/80 text-white hover:bg-emerald-500"
                     }`}
                 >
                   {t.hangman.next}
@@ -973,8 +976,44 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                 })}
               </div>
 
-              <div className="mb-4 flex justify-center"><RobotArena wrongCount={wrong.length} maxHearts={maxHearts} isLost={status === "lost"} isWon={status === "won"} /></div>
-              <div className="mb-5 rounded-3xl border border-white/10 bg-black/20 p-4"><SolutionRow masked={masked} showAnswer={showAnswer} /></div>
+              <div className="mb-4 flex w-full items-center justify-between">
+                <div className="flex-1" />
+
+                <div className="flex flex-1 justify-center">
+                  <RobotArena
+                    wrongCount={wrong.length}
+                    maxHearts={maxHearts}
+                    isLost={status === "lost"}
+                    isWon={status === "won"}
+                  />
+                </div>
+
+                <div className="flex flex-1 flex-col items-end gap-2.5">
+                  <button
+                    onClick={() => setShowAnswer((prev) => !prev)}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 text-xs transition hover:bg-white/15"
+                  >
+                    {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={goNext}
+                    disabled={!canGoNext}
+                    className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${!canGoNext
+                        ? "cursor-not-allowed bg-white/5 text-slate-500"
+                        : "bg-emerald-500/80 text-white hover:bg-emerald-500"
+                      }`}
+                  >
+                    {t.hangman.next}
+                  </button>
+                </div>
+              </div>
+
+              <div className="mb-4 rounded-3xl border border-white/10 bg-black/20 p-3">
+                <SolutionRow masked={masked} showAnswer={showAnswer} />
+              </div>
               <div className="rounded-3xl border border-white/10 bg-black/20 p-4"><Keyboard guessed={[...guessed]} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} /></div>
             </motion.div>
 
