@@ -389,7 +389,7 @@ function SolutionRow({ masked, showAnswer }) {
   let boxClass =
     "flex h-[56px] w-[30px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[28px] font-extrabold uppercase leading-none shadow-md";
 
-  let wordGapClass = "gap-2";
+  let wordGapClass = "gap-3";
   let letterGapClass = "gap-1";
 
   if (total >= 26) {
@@ -407,7 +407,7 @@ function SolutionRow({ masked, showAnswer }) {
   return (
     <div className="overflow-hidden py-1">
       <div className="flex min-h-[92px] items-center justify-center">
-        <div className={`flex max-w-full flex-wrap justify-center ${wordGapClass} gap-y-2`}>
+        <div className={`flex max-w-full flex-wrap justify-center ${wordGapClass} gap-y-3`}>
           {words.map((word, wordIndex) => (
             <div key={wordIndex} className={`flex ${letterGapClass}`}>
               {word.map((item) => (
