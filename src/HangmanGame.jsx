@@ -902,50 +902,41 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               {status === "playing" ? `${t.hangman.errors} ${wrong.length}/${maxHearts}` : status === "won" ? t.hangman.won : t.hangman.lost}
             </div>
 
-            <div className="mt-2 flex justify-center"><RobotArena wrongCount={wrong.length} maxHearts={maxHearts} isLost={status === "lost"} isWon={status === "won"} /></div>
-            <div className="mb-4 flex justify-center gap-4">
-              <button
-                onClick={() => setShowAnswer((prev) => !prev)}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm transition hover:bg-white/15"
-              >
-                {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                {showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}
-              </button>
+            <div className="mt-2 flex items-center justify-center gap-4">
+              <RobotArena
+                wrongCount={wrong.length}
+                maxHearts={maxHearts}
+                isLost={status === "lost"}
+                isWon={status === "won"}
+              />
 
-              <button
-                type="button"
-                onClick={goNext}
-                disabled={!canGoNext}
-                className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${!canGoNext
-                    ? "cursor-not-allowed bg-white/5 text-slate-500"
-                    : "bg-emerald-500/80 text-white hover:bg-emerald-500"
-                  }`}
-              >
-                {t.hangman.next}
-              </button>
-            </div>
-            <div className="mt-2 flex justify-center gap-3">
-              <button
-                type="button"
-                onClick={() => setShowAnswer((prev) => !prev)}
-                className="rounded-xl bg-white/10 px-3 py-1.5 text-xs transition hover:bg-white/15"
-              >
-                {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAnswer((prev) => !prev)}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 px-2.5 py-1.5 text-[11px] transition hover:bg-white/15"
+                >
+                  {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}
+                </button>
 
-              <button
-                type="button"
-                onClick={goNext}
-                disabled={!canGoNext}
-                className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition ${!canGoNext
-                  ? "cursor-not-allowed bg-white/5 text-slate-500"
-                  : "bg-emerald-500/80 text-white hover:bg-emerald-500"
-                  }`}
-              >
-                {t.hangman.next}
-              </button>
+                <button
+                  type="button"
+                  onClick={goNext}
+                  disabled={!canGoNext}
+                  className={`rounded-xl px-2.5 py-1.5 text-[11px] font-semibold transition ${!canGoNext
+                      ? "cursor-not-allowed bg-white/5 text-slate-500"
+                      : "bg-emerald-500/80 text-white hover:bg-emerald-500"
+                    }`}
+                >
+                  {t.hangman.next}
+                </button>
+              </div>
             </div>
-            <div className="mt-2 rounded-3xl border border-white/10 bg-slate-900/60 p-2.5"><SolutionRow masked={masked} showAnswer={showAnswer} /></div>
+
+            <div className="mt-2 rounded-3xl border border-white/10 bg-slate-900/60 p-2.5">
+              <SolutionRow masked={masked} showAnswer={showAnswer} />
+            </div>
 
             <div className="mt-2 flex-1"><Keyboard guessed={guessed} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} /></div>
           </motion.div>
