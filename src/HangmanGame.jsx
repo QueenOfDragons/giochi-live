@@ -450,15 +450,25 @@ function SolutionRow({ masked, showAnswer }) {
                     initial={false}
                     animate={
                       item.type === "letter" && item.value
-                        ? { scale: [1, 1.05, 1] }
-                        : { scale: 1 }
+                        ? {
+                          rotateX: [90, 0],
+                          scale: [1, 1.06, 1],
+                        }
+                        : {
+                          rotateX: 0,
+                          scale: 1,
+                        }
                     }
-                    transition={{ duration: 0.2 }}
-                    style={
-                      item.isVisible
+                    transition={{
+                      duration: 0.35,
+                      ease: "easeOut",
+                    }}
+                    style={{
+                      transformStyle: "preserve-3d",
+                      ...(item.isVisible
                         ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" }
-                        : {}
-                    }
+                        : {}),
+                    }}
                     className={boxClass}
                   >
                     {item.displayValue}
