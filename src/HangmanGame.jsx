@@ -414,15 +414,34 @@ function SolutionRow({ masked, showAnswer }) {
             );
 
             return (
-              <div
+              <motion.div
                 key={wordIndex}
+                initial={false}
+                animate={
+                  isWordComplete
+                    ? {
+                        boxShadow: [
+                          "0 0 8px rgba(34,197,94,0.35)",
+                          "0 0 16px rgba(34,197,94,0.65)",
+                          "0 0 8px rgba(34,197,94,0.35)",
+                        ],
+                        scale: [1, 1.02, 1],
+                      }
+                    : {
+                        boxShadow: "0 0 6px rgba(34,211,238,0.3)",
+                        scale: 1,
+                      }
+                }
+                transition={{
+                  duration: isWordComplete ? 1.2 : 0.2,
+                  repeat: isWordComplete ? Infinity : 0,
+                }}
                 className={`
                   flex ${letterGapClass} px-2 py-1 rounded-xl border
-                  transition-all duration-300
                   ${
                     isWordComplete
-                      ? "border-emerald-400 bg-emerald-500/10 shadow-[0_0_12px_rgba(34,197,94,0.6)]"
-                      : "border-cyan-300/40 bg-white/10 shadow-[0_0_6px_rgba(34,211,238,0.3)]"
+                      ? "border-emerald-400 bg-emerald-500/10"
+                      : "border-cyan-300/40 bg-white/10"
                   }
                 `}
               >
@@ -446,7 +465,7 @@ function SolutionRow({ masked, showAnswer }) {
                     {item.displayValue}
                   </motion.div>
                 ))}
-              </div>
+              </motion.div>
             );
           })}
         </div>
