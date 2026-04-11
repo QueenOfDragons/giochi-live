@@ -772,23 +772,22 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
   useEffect(() => {
     const onKeyDown = (event) => {
-      if (status !== "playing") return;
       if (event.ctrlKey || event.metaKey || event.altKey) return;
+      if (status !== "playing") return;
 
       const key = event.key;
 
-      // ignora tasti speciali tipo Shift, Enter, ArrowLeft ecc.
-      if (key.length !== 1) return;
+      if (!key || key.length !== 1) return;
 
       handleGuess(key);
     };
 
-    window.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keydown", onKeyDown);
 
     return () => {
-      window.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keydown", onKeyDown);
     };
-  }, [status, guessed, wrong, uniqueLetters]);
+  }, [status, guessed, wrong]);
 
   const downloadTemplateFile = () => {
     const templateRows = [
