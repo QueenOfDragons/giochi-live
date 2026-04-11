@@ -400,7 +400,7 @@ function SolutionRow({ masked, showAnswer }) {
   } else if (total >= 20) {
     boxClass =
       "flex h-[50px] w-[26px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[24px] font-extrabold uppercase leading-none shadow-md";
-    wordGapClass = "gap-1.5";
+    wordGapClass = "gap-3";
     letterGapClass = "gap-[4px]";
   }
 
@@ -408,33 +408,47 @@ function SolutionRow({ masked, showAnswer }) {
     <div className="overflow-hidden py-1">
       <div className="flex min-h-[92px] items-center justify-center">
         <div className={`flex max-w-full flex-wrap justify-center ${wordGapClass} gap-y-3`}>
-          {words.map((word, wordIndex) => (
-            <div
-              key={wordIndex}
-              className={`flex ${letterGapClass} px-2 py-1 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm`}
-            >
-              {word.map((item) => (
-                <motion.div
-                  key={item.key}
-                  initial={false}
-                  animate={
-                    item.type === "letter" && item.value
-                      ? { scale: [1, 1.05, 1] }
-                      : { scale: 1 }
+          {words.map((word, wordIndex) => {
+            const isWordComplete = word.every(
+              (item) => item.type !== "letter" || item.value
+            );
+
+            return (
+              <div
+                key={wordIndex}
+                className={`
+                  flex ${letterGapClass} px-2 py-1 rounded-xl border
+                  transition-all duration-300
+                  ${
+                    isWordComplete
+                      ? "border-emerald-400 bg-emerald-500/10 shadow-[0_0_12px_rgba(34,197,94,0.6)]"
+                      : "border-cyan-300/40 bg-white/10 shadow-[0_0_6px_rgba(34,211,238,0.3)]"
                   }
-                  transition={{ duration: 0.2 }}
-                  style={
-                    item.isVisible
-                      ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" }
-                      : {}
-                  }
-                  className={boxClass}
-                >
-                  {item.displayValue}
-                </motion.div>
-              ))}
-            </div>
-          ))}
+                `}
+              >
+                {word.map((item) => (
+                  <motion.div
+                    key={item.key}
+                    initial={false}
+                    animate={
+                      item.type === "letter" && item.value
+                        ? { scale: [1, 1.05, 1] }
+                        : { scale: 1 }
+                    }
+                    transition={{ duration: 0.2 }}
+                    style={
+                      item.isVisible
+                        ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" }
+                        : {}
+                    }
+                    className={boxClass}
+                  >
+                    {item.displayValue}
+                  </motion.div>
+                ))}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
