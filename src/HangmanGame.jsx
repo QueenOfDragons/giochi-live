@@ -770,6 +770,26 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
     }
   };
 
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (status !== "playing") return;
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+      const key = event.key;
+
+      // ignora tasti speciali tipo Shift, Enter, ArrowLeft ecc.
+      if (key.length !== 1) return;
+
+      handleGuess(key);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [status, guessed, wrong, uniqueLetters]);
+
   const downloadTemplateFile = () => {
     const templateRows = [
       ["Text", "Hint", "Difficulty"],
@@ -1002,8 +1022,8 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                     onClick={goNext}
                     disabled={!canGoNext}
                     className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${!canGoNext
-                        ? "cursor-not-allowed bg-white/5 text-slate-500"
-                        : "bg-emerald-500/80 text-white hover:bg-emerald-500"
+                      ? "cursor-not-allowed bg-white/5 text-slate-500"
+                      : "bg-emerald-500/80 text-white hover:bg-emerald-500"
                       }`}
                   >
                     {t.hangman.next}
