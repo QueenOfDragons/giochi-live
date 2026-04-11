@@ -220,7 +220,7 @@ function CuteRobotFace({ state = "idle" }) {
 
   return (
     <div className="relative flex h-full w-full items-center justify-center rounded-full border-[2px] border-sky-400 bg-gradient-to-br from-orange-200 to-orange-300">
-      <div className="absolute top-[14px] flex gap-3">
+      <div className="absolute top-[14px] flex gap-4">
         {[0, 1].map((i) => (
           <motion.div
             key={i}
@@ -389,7 +389,7 @@ function SolutionRow({ masked, showAnswer }) {
   let boxClass =
     "flex h-[56px] w-[30px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[28px] font-extrabold uppercase leading-none shadow-md";
 
-  let wordGapClass = "gap-3";
+  let wordGapClass = "gap-4";
   let letterGapClass = "gap-1";
 
   if (total >= 26) {
@@ -881,7 +881,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
         ) : (
           <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
             <motion.div animate={boardShake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }} transition={{ duration: 0.4 }} className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl backdrop-blur-sm md:p-8">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <p className="text-sm uppercase tracking-[0.25em] text-pink-300/80">{t.hangman.liveGame}</p>
                   <h1 className="text-2xl font-bold md:text-4xl">{t.hangman.title}</h1>
@@ -915,7 +915,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               <div className="mb-5 rounded-3xl border border-white/10 bg-black/20 p-4"><SolutionRow masked={masked} showAnswer={showAnswer} /></div>
 
               <div className="mb-4 grid items-end gap-4 md:grid-cols-[1fr_auto_auto]">
-                <div className="flex gap-3"><input ref={inputRef} value={inputValue} onChange={(e) => { const val = e.target.value.slice(-1); setInputValue(""); if (val) handleGuess(val); }} placeholder={t.hangman.longLetterPlaceholder} className="flex-1 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-sm outline-none focus:border-pink-400" /></div>
+                <div className="flex gap-4"><input ref={inputRef} value={inputValue} onChange={(e) => { const val = e.target.value.slice(-1); setInputValue(""); if (val) handleGuess(val); }} placeholder={t.hangman.longLetterPlaceholder} className="flex-1 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-sm outline-none focus:border-pink-400" /></div>
                 <button onClick={() => setShowAnswer((prev) => !prev)} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-4 py-3 transition hover:bg-white/15">{showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}{showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}</button>
                 <button type="button" onClick={goNext} disabled={!canGoNext} className={`rounded-2xl px-4 py-3 font-semibold transition ${!canGoNext ? "cursor-not-allowed bg-white/5 text-slate-500" : "bg-emerald-500/80 text-white hover:bg-emerald-500"}`}>{t.hangman.next}</button>
               </div>
