@@ -46,6 +46,17 @@ export const UI_TEXT = {
       downloadTemplate: "Scarica template",
       next: "Avanti",
     },
+    secretword: {
+  title: "Parola Segreta",
+  subtitle: "Indovina la parola",
+  restart: "Reset",
+  random: "Random",
+  next: "Avanti",
+  length: "Lunghezza",
+  attempts: "Tentativi",
+  won: "Hai indovinato",
+  lost: "Parola",
+},
   },
 
   en: {
@@ -95,6 +106,17 @@ export const UI_TEXT = {
       downloadTemplate: "Download template",
       next: "Next",
     },
+    secretword: {
+  title: "Secret Word",
+  subtitle: "Guess the word",
+  restart: "Reset",
+  random: "Random",
+  next: "Next",
+  length: "Length",
+  attempts: "Attempts",
+  won: "You guessed it",
+  lost: "Word",
+},
   },
 
   ro: {
@@ -144,6 +166,17 @@ export const UI_TEXT = {
       downloadTemplate: "Descarcă șablonul",
       next: "Înainte",
     },
+    secretword: {
+  title: "Cuvânt Secret",
+  subtitle: "Ghicește cuvântul",
+  restart: "Reset",
+  random: "Random",
+  next: "Următor",
+  length: "Lungime",
+  attempts: "Încercări",
+  won: "Ai ghicit",
+  lost: "Cuvântul",
+},
   },
   fr: {
     home: {
@@ -204,6 +237,17 @@ export const UI_TEXT = {
       archiveTitle: "Archives live",
       roundLabel: "Manche",
       hiddenSolution: "solution cachée"
-    }
+    },
+    secretword: {
+  title: "Mot Secret",
+  subtitle: "Devine le mot",
+  restart: "Reset",
+  random: "Aléatoire",
+  next: "Suivant",
+  length: "Longueur",
+  attempts: "Essais",
+  won: "Trouvé",
+  lost: "Mot",
+}
   }
 };

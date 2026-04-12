@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import HangmanGame from "./HangmanGame";
+import SecretWordGame from "./SecretWordGame";
 import { UI_TEXT } from "./texts/uiText";
 
 export default function App() {
@@ -14,6 +15,15 @@ export default function App() {
   if (selectedGame === "hangman") {
     return (
       <HangmanGame
+        onBack={() => setSelectedGame(null)}
+        selectedLanguage={selectedLanguage}
+      />
+    );
+  }
+
+  if (selectedGame === "secretword") {
+    return (
+      <SecretWordGame
         onBack={() => setSelectedGame(null)}
         selectedLanguage={selectedLanguage}
       />
@@ -47,10 +57,10 @@ export default function App() {
             onClick={() => setSelectedGame("hangman")}
             className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-xl transition duration-200 hover:scale-[1.02] hover:bg-white/10"
           >
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
+            <div className="absolute inset-0 rounded-3xl bg-linear-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
 
             <div className="relative z-10 flex flex-col items-start">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-fuchsia-500 text-2xl shadow-lg">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-cyan-400 to-fuchsia-500 text-2xl shadow-lg">
                 🤖
               </div>
 
@@ -67,6 +77,18 @@ export default function App() {
               </div>
             </div>
           </button>
+          <button
+  onClick={() => setSelectedGame("secretword")}
+  className="rounded-2xl border border-white/10 bg-white/5 p-6 text-left hover:bg-white/10 transition"
+>
+  <div className="text-xl font-semibold">Parola Segreta</div>
+  <div className="text-sm text-slate-400 mt-1">
+    Trova la parola, con lunghezza da 5 a 11 lettere
+  </div>
+  <div className="mt-4 inline-flex rounded-xl bg-cyan-500/80 px-4 py-2 text-sm font-semibold">
+    {t.home.open}
+  </div>
+</button>
         </div>
       </div>
     </div>
