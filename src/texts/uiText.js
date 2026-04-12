@@ -10,6 +10,10 @@ export const UI_TEXT = {
     games: {
       hangmanTitle: "Indovina la parola o la frase",
       hangmanDesc: "Gioco con indizi, cuori e tastiera interattiva",
+      SecretWordTitle: "Parola Segreta",
+      SecretWordDesc: "Trova la parola, con lunghezza da 5 a 11 lettere",
+      MasterMindTitle: "🧠 Mastermind",
+      MasterMindDesc: "Indovina la combinazione di colori",
     },
     hangman: {
       restart: "Ricomincia",
@@ -70,6 +74,10 @@ export const UI_TEXT = {
     games: {
       hangmanTitle: "Guess the word or phrase",
       hangmanDesc: "Game with clues, hearts and interactive keyboard",
+      SecretWordTitle: "Secret Word",
+      SecretWordDesc: "Find the word, from 5 to 11 letters",
+      MasterMindTitle: "🧠 Mastermind",
+      MasterMindDesc: "Find the correct color combination",
     },
     hangman: {
       restart: "Restart",
