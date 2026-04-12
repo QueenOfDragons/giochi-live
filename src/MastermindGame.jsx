@@ -73,10 +73,12 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
   };
 
   const removeLast = () => {
+    if (status !== "playing") return;
     setCurrent((prev) => prev.slice(0, -1));
   };
 
   const submit = () => {
+    if (status !== "playing") return;
     if (current.length !== length) return;
 
     const result = evaluateGuess(current, solution);
@@ -86,11 +88,13 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
 
     if (result.correct === length) {
       setStatus("won");
+      setCurrent([]);
       return;
     }
 
     if (newAttempts.length >= maxAttempts) {
       setStatus("lost");
+      setCurrent([]);
       return;
     }
 
@@ -121,9 +125,8 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
             <button
               key={n}
               onClick={() => reset(n)}
-              className={`px-3 py-1 rounded ${
-                colorCount === n ? "bg-cyan-500" : "bg-white/10"
-              }`}
+              className={`px-3 py-1 rounded ${colorCount === n ? "bg-cyan-500" : "bg-white/10"
+                }`}
             >
               {n}
             </button>
@@ -190,13 +193,28 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
         {/* stato */}
         <div className="text-center mb-4">
           {status === "won" && "Hai vinto 🎉"}
-          {status === "lost" && "Hai perso 😈"}
+
+          {status === "lost" && (
+            <div className="space-y-2">
+              <div>Hai perso 😈</div>
+              <div className="text-sm text-slate-300">Soluzione:</div>
+              <div className="flex justify-center gap-2">
+                {solution.map((c, i) => (
+                  <div key={i} className={`h-8 w-8 rounded-full ${COLORS[c]}`} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-center">
           <button
             onClick={next}
-            className="bg-emerald-500 px-4 py-2 rounded flex items-center gap-2"
+            disabled={status === "playing"}
+            className={`px-4 py-2 rounded flex items-center gap-2 ${status === "playing"
+                ? "bg-white/10 text-slate-500 cursor-not-allowed"
+                : "bg-emerald-500 text-white"
+              }`}
           >
             <ArrowRight size={16} />
             Avanti
