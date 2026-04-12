@@ -110,16 +110,13 @@ export default function App() {
             onClick={() => setSelectedGame("mastermind")}
             className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 transition"
           >
-            <div className="text-xl font-semibold flex items-center gap-2">
-              🧠 Mastermind
-            </div>
             <div className="text-xl font-bold text-white">
               {t.games.MasterMindTitle}
             </div>
             <div className="mt-2 text-sm leading-relaxed text-slate-300">
                 {t.games.MasterMindDesc}
             </div>
-              <div className="mt-4 inline-flex rounded-xl bg-cyan-500/80 px-4 py-2 text-sm font-semibold">
+            <div className="mt-4 inline-flex rounded-xl bg-cyan-500/80 px-4 py-2 text-sm font-semibold">
               {t.home.open}
             </div>
           </button>
