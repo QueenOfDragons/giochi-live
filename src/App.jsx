@@ -94,8 +94,16 @@ export default function App() {
             <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${t.games.secretwordOverlay} opacity-0 transition duration-200 group-hover:opacity-80`} />
 
             <div className="relative z-10 flex flex-col items-start">
-              <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.secretwordIconBg} text-2xl shadow-lg`}>
-                {t.games.secretwordIcon}
+              <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.secretwordIconBg} shadow-lg transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_18px_rgba(132,204,22,0.45)]`}>
+                <div className="flex gap-1">
+                  {t.games.secretwordIconCells.map((cellClass, index) => (
+                    <div
+                      key={index}
+                      className={`h-3.5 w-3.5 rounded-sm ${cellClass} transition duration-200 group-hover:-translate-y-0.5`}
+                      style={{ transitionDelay: `${index * 70}ms` }}
+                    />
+                  ))}
+                </div>
               </div>
 
               <div className="text-xl font-bold text-white">
@@ -119,8 +127,16 @@ export default function App() {
             <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${t.games.mastermindOverlay} opacity-0 transition duration-200 group-hover:opacity-80`} />
 
             <div className="relative z-10 flex flex-col items-start">
-              <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.mastermindIconBg} text-2xl shadow-lg`}>
-                {t.games.mastermindIcon}
+              <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.mastermindIconBg} shadow-lg transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_18px_rgba(168,85,247,0.45)]`}>
+                <div className="grid grid-cols-2 gap-1">
+                  {t.games.mastermindIconDots.map((dotClass, index) => (
+                    <div
+                      key={index}
+                      className={`h-3.5 w-3.5 rounded-full ${dotClass} transition duration-200 group-hover:scale-110`}
+                      style={{ transitionDelay: `${index * 70}ms` }}
+                    />
+                  ))}
+                </div>
               </div>
 
               <div className="text-xl font-bold text-white">
