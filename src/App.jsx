@@ -66,10 +66,10 @@ export default function App() {
             onClick={() => setSelectedGame("hangman")}
             className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-xl transition duration-200 hover:scale-[1.02] hover:bg-white/10"
           >
-            <div className="absolute inset-0 rounded-3xl bg-linear-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
 
             <div className="relative z-10 flex flex-col items-start">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-cyan-400 to-fuchsia-500 text-2xl shadow-lg">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-fuchsia-500 text-2xl shadow-lg">
                 🤖
               </div>
 
@@ -86,41 +86,65 @@ export default function App() {
               </div>
             </div>
           </button>
+
           <button
             onClick={() => setSelectedGame("secretword")}
-            className="rounded-2xl border border-white/10 bg-white/5 p-6 text-left hover:bg-white/10 transition"
+            className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-xl transition duration-200 hover:scale-[1.02] hover:bg-white/10"
           >
-            <div className="flex gap-1">
-              <div className="h-3 w-3 bg-green-500" />
-              <div className="h-3 w-3 bg-yellow-400" />
-              <div className="h-3 w-3 bg-gray-500" />
-            </div>
-            <div className="text-xl font-bold text-white">
-              {t.games.SecretWordTitle}
-            </div>
-            <div className="mt-2 text-sm leading-relaxed text-slate-300">
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
+
+            <div className="relative z-10 flex flex-col items-start">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-fuchsia-500 shadow-lg">
+                <div className="flex gap-1">
+                  <div className="h-3.5 w-3.5 rounded-sm bg-green-500" />
+                  <div className="h-3.5 w-3.5 rounded-sm bg-yellow-400" />
+                  <div className="h-3.5 w-3.5 rounded-sm bg-slate-500" />
+                </div>
+              </div>
+
+              <div className="text-xl font-bold text-white">
+                {t.games.SecretWordTitle}
+              </div>
+
+              <div className="mt-2 text-sm leading-relaxed text-slate-300">
                 {t.games.SecretWordDesc}
-            </div>
-            <div className="mt-4 inline-flex rounded-xl bg-cyan-500/80 px-4 py-2 text-sm font-semibold">
-              {t.home.open}
+              </div>
+
+              <div className="mt-5 inline-flex items-center rounded-xl bg-cyan-500/80 px-4 py-2 text-sm font-semibold text-white transition group-hover:bg-cyan-500">
+                {t.home.open}
+              </div>
             </div>
           </button>
 
           <button
             onClick={() => setSelectedGame("mastermind")}
-            className="rounded-2xl border border-white/10 bg-white/5 p-6 text-left hover:bg-white/10 transition"
+            className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-xl transition duration-200 hover:scale-[1.02] hover:bg-white/10"
           >
-            <div className="text-xl font-bold text-white">
-              {t.games.MasterMindTitle}
-            </div>
-            <div className="mt-2 text-sm leading-relaxed text-slate-300">
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
+
+            <div className="relative z-10 flex flex-col items-start">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-fuchsia-500 shadow-lg">
+                <div className="grid grid-cols-2 gap-1">
+                  <div className="h-3.5 w-3.5 rounded-full bg-red-500" />
+                  <div className="h-3.5 w-3.5 rounded-full bg-blue-500" />
+                  <div className="h-3.5 w-3.5 rounded-full bg-green-500" />
+                  <div className="h-3.5 w-3.5 rounded-full bg-yellow-400" />
+                </div>
+              </div>
+
+              <div className="text-xl font-bold text-white">
+                {t.games.MasterMindTitle}
+              </div>
+
+              <div className="mt-2 text-sm leading-relaxed text-slate-300">
                 {t.games.MasterMindDesc}
-            </div>
-            <div className="mt-4 inline-flex rounded-xl bg-cyan-500/80 px-4 py-2 text-sm font-semibold">
-              {t.home.open}
+              </div>
+
+              <div className="mt-5 inline-flex items-center rounded-xl bg-cyan-500/80 px-4 py-2 text-sm font-semibold text-white transition group-hover:bg-cyan-500">
+                {t.home.open}
+              </div>
             </div>
           </button>
-
         </div>
       </div>
     </div>
