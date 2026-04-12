@@ -12,16 +12,19 @@ games: {
   hangmanDesc: "Indovina la parola o frase con un indizio",
   hangmanIcon: "🤖",
   hangmanIconBg: "from-cyan-400 to-fuchsia-500",
+  hangmanOverlay: "from-fuchsia-500/20 via-transparent to-cyan-500/20",
 
   secretwordTitle: "Parola Segreta",
   secretwordDesc: "Trova la parola con tentativi limitati",
   secretwordIcon: "🟩",
   secretwordIconBg: "from-emerald-400 to-lime-500",
+  secretwordOverlay: "from-emerald-500/20 via-transparent to-lime-500/20",
 
   mastermindTitle: "Mastermind",
   mastermindDesc: "Indovina la combinazione di colori",
   mastermindIcon: "🧠",
   mastermindIconBg: "from-violet-400 to-pink-500",
+  mastermindOverlay: "from-violet-500/20 via-transparent to-pink-500/20",  
 },
     hangman: {
       restart: "Ricomincia",
@@ -84,16 +87,19 @@ games: {
   hangmanDesc: "Guess the word or phrase with a clue",
   hangmanIcon: "🤖",
   hangmanIconBg: "from-cyan-400 to-fuchsia-500",
+  hangmanOverlay: "from-fuchsia-500/20 via-transparent to-cyan-500/20",
 
   secretwordTitle: "Secret Word",
   secretwordDesc: "Find the word with limited attempts",
   secretwordIcon: "🟩",
   secretwordIconBg: "from-emerald-400 to-lime-500",
+  secretwordOverlay: "from-emerald-500/20 via-transparent to-lime-500/20",
 
   mastermindTitle: "Mastermind",
   mastermindDesc: "Guess the color combination",
   mastermindIcon: "🧠",
   mastermindIconBg: "from-violet-400 to-pink-500",
+  mastermindOverlay: "from-violet-500/20 via-transparent to-pink-500/20",
 },
     hangman: {
       restart: "Restart",

@@ -66,7 +66,7 @@ export default function App() {
             onClick={() => setSelectedGame("hangman")}
             className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-xl transition duration-200 hover:scale-[1.02] hover:bg-white/10"
           >
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
+            <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${t.games.hangmanOverlay} opacity-0 transition duration-200 group-hover:opacity-80`} />
 
             <div className="relative z-10 flex flex-col items-start">
               <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.hangmanIconBg} text-2xl shadow-lg`}>
@@ -91,7 +91,7 @@ export default function App() {
             onClick={() => setSelectedGame("secretword")}
             className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-xl transition duration-200 hover:scale-[1.02] hover:bg-white/10"
           >
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
+            <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${t.games.secretwordOverlay} opacity-0 transition duration-200 group-hover:opacity-80`} />
 
             <div className="relative z-10 flex flex-col items-start">
               <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.secretwordIconBg} text-2xl shadow-lg`}>
@@ -116,7 +116,7 @@ export default function App() {
             onClick={() => setSelectedGame("mastermind")}
             className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-xl transition duration-200 hover:scale-[1.02] hover:bg-white/10"
           >
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
+            <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${t.games.mastermindOverlay} opacity-0 transition duration-200 group-hover:opacity-80`} />
 
             <div className="relative z-10 flex flex-col items-start">
               <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.mastermindIconBg} text-2xl shadow-lg`}>
