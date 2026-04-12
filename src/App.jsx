@@ -69,7 +69,7 @@ export default function App() {
             <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${t.games.hangmanOverlay} opacity-0 transition duration-200 group-hover:opacity-80`} />
 
             <div className="relative z-10 flex flex-col items-start">
-              <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.hangmanIconBg} text-2xl shadow-lg`}>
+              <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.hangmanIconBg} text-2xl shadow-lg transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_18px_rgba(34,211,238,0.45)]`}>
                 {t.games.hangmanIcon}
               </div>
 
@@ -95,7 +95,8 @@ export default function App() {
 
             <div className="relative z-10 flex flex-col items-start">
               <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.secretwordIconBg} shadow-lg transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_18px_rgba(132,204,22,0.45)]`}>
-                <div className="flex gap-1">
+
+                <div className="flex gap-1 bg-black/20 px-2 py-1 rounded-lg">
                   {t.games.secretwordIconCells.map((cellClass, index) => (
                     <div
                       key={index}
@@ -104,8 +105,8 @@ export default function App() {
                     />
                   ))}
                 </div>
-              </div>
 
+              </div>
               <div className="text-xl font-bold text-white">
                 {t.games.secretwordTitle}
               </div>

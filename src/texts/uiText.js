@@ -93,7 +93,7 @@ export const UI_TEXT = {
       secretwordDesc: "Find the word with limited attempts",
       secretwordIconBg: "from-emerald-400 to-lime-500",
       secretwordOverlay: "from-emerald-500/20 via-transparent to-lime-500/20",
-      secretwordIconCells: ["bg-green-500", "bg-yellow-400", "bg-slate-500"],
+      secretwordIconCells: ["bg-emerald-600", "bg-yellow-400", "bg-slate-500"],
 
       mastermindTitle: "Mastermind",
       mastermindDesc: "Guess the color combination",
