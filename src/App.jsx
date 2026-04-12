@@ -69,7 +69,7 @@ export default function App() {
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
 
             <div className="relative z-10 flex flex-col items-start">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-fuchsia-500 text-2xl shadow-lg">
+              <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.hangmanIconBg} text-2xl shadow-lg`}>
                 {t.games.hangmanIcon}
               </div>
 
@@ -94,7 +94,7 @@ export default function App() {
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
 
             <div className="relative z-10 flex flex-col items-start">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-fuchsia-500 text-2xl shadow-lg">
+              <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.secretwordIconBg} text-2xl shadow-lg`}>
                 {t.games.secretwordIcon}
               </div>
 
@@ -119,7 +119,7 @@ export default function App() {
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-fuchsia-500/10 via-transparent to-cyan-500/10 opacity-0 transition duration-200 group-hover:opacity-100" />
 
             <div className="relative z-10 flex flex-col items-start">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-fuchsia-500 text-2xl shadow-lg">
+              <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${t.games.mastermindIconBg} text-2xl shadow-lg`}>
                 {t.games.mastermindIcon}
               </div>
 
