@@ -25,6 +25,7 @@ export const UI_TEXT = {
       mastermindIconBg: "from-violet-400 to-pink-500",
       mastermindOverlay: "from-violet-500/20 via-transparent to-pink-500/20",
       mastermindIconDots: ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-400"],
+      
     },
     hangman: {
       restart: "Ricomincia",
