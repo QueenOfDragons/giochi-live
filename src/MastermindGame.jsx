@@ -143,13 +143,30 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
                 ))}
               </div>
 
+              {/* risultato tentativo:
+                  verde = colore giusto al posto giusto
+                  giallo = colore giusto al posto sbagliato
+                  grigio = nessun risultato
+              */}
               <div className="flex gap-1">
-                {Array.from({ length: row.result.correct }).map((_, i) => (
-                  <div key={`c-${i}`} className="h-3 w-3 bg-black rounded-full" />
-                ))}
-                {Array.from({ length: row.result.present }).map((_, i) => (
-                  <div key={`p-${i}`} className="h-3 w-3 bg-white rounded-full" />
-                ))}
+                {row.result.correct === 0 && row.result.present === 0 ? (
+                  <div className="text-xs text-slate-400">0</div>
+                ) : (
+                  <>
+                    {Array.from({ length: row.result.correct }).map((_, i) => (
+                      <div
+                        key={`c-${i}`}
+                        className="h-3 w-3 rounded-full bg-green-500 border border-white/20"
+                      />
+                    ))}
+                    {Array.from({ length: row.result.present }).map((_, i) => (
+                      <div
+                        key={`p-${i}`}
+                        className="h-3 w-3 rounded-full bg-yellow-400 border border-white/20"
+                      />
+                    ))}
+                  </>
+                )}
               </div>
             </div>
           ))}
@@ -204,8 +221,8 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
               onClick={() => addColor(i)}
               disabled={status !== "playing" || current.length >= length}
               className={`h-10 w-10 rounded-full ${c} ${status !== "playing" || current.length >= length
-                  ? "opacity-40 cursor-not-allowed"
-                  : ""
+                ? "opacity-40 cursor-not-allowed"
+                : ""
                 }`}
             />
           ))}
