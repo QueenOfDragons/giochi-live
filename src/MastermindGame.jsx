@@ -156,25 +156,42 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
         </div>
 
         {/* riga corrente */}
-        <div className="flex justify-center gap-2 mb-4">
-          {Array.from({ length }).map((_, i) => (
-            <div
-              key={i}
-              className="h-8 w-8 rounded-full border border-white/20 flex items-center justify-center"
-            >
-              {current[i] !== undefined && (
-                <div className={`h-6 w-6 rounded-full ${COLORS[current[i]]}`} />
-              )}
-            </div>
-          ))}
-        </div>
+        {status === "playing" && (
+          <div className="flex justify-center gap-2 mb-4">
+            {Array.from({ length }).map((_, i) => (
+              <div
+                key={i}
+                className="h-8 w-8 rounded-full border border-white/20 flex items-center justify-center"
+              >
+                {current[i] !== undefined && (
+                  <div className={`h-6 w-6 rounded-full ${COLORS[current[i]]}`} />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* bottoni */}
         <div className="flex justify-center gap-3 mb-4">
-          <button onClick={removeLast} className="bg-white/10 px-3 py-2 rounded">
+          <button
+            onClick={removeLast}
+            disabled={status !== "playing"}
+            className={`px-3 py-2 rounded ${status !== "playing"
+              ? "bg-white/5 text-slate-500 cursor-not-allowed"
+              : "bg-white/10"
+              }`}
+          >
             ⌫
           </button>
-          <button onClick={submit} className="bg-cyan-500 px-4 py-2 rounded">
+
+          <button
+            onClick={submit}
+            disabled={status !== "playing" || current.length !== length}
+            className={`px-4 py-2 rounded ${status !== "playing" || current.length !== length
+              ? "bg-white/5 text-slate-500 cursor-not-allowed"
+              : "bg-cyan-500 text-white"
+              }`}
+          >
             OK
           </button>
         </div>
@@ -185,7 +202,11 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
             <button
               key={i}
               onClick={() => addColor(i)}
-              className={`h-10 w-10 rounded-full ${c}`}
+              disabled={status !== "playing" || current.length >= length}
+              className={`h-10 w-10 rounded-full ${c} ${status !== "playing" || current.length >= length
+                  ? "opacity-40 cursor-not-allowed"
+                  : ""
+                }`}
             />
           ))}
         </div>
@@ -212,8 +233,8 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
             onClick={next}
             disabled={status === "playing"}
             className={`px-4 py-2 rounded flex items-center gap-2 ${status === "playing"
-                ? "bg-white/10 text-slate-500 cursor-not-allowed"
-                : "bg-emerald-500 text-white"
+              ? "bg-white/10 text-slate-500 cursor-not-allowed"
+              : "bg-emerald-500 text-white"
               }`}
           >
             <ArrowRight size={16} />
