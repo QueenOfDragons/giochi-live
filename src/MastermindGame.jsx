@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RotateCcw, ArrowRight } from "lucide-react";
+import { RotateCcw, ArrowRight, Heart } from "lucide-react";
 import { UI_TEXT } from "./texts/uiText";
 
 // ─── Definizione colori con nome ed iniziale per ogni lingua ───────────────
@@ -123,8 +123,8 @@ function ColorBall({ colorDef, size = "lg", onClick, disabled = false, initial, 
   );
 }
 
-// ─── Pallino risultato (verde/giallo/grigio) ───────────────────────────────
-function ResultDot({ type }) {
+// ─── Pallino risultato con effetto "chiodo" ──────────────────────────────
+function ResultDot({ type, delay = 0 }) {
   const cls =
     type === "correct"
       ? "bg-emerald-400 shadow-emerald-400/60"
@@ -133,9 +133,15 @@ function ResultDot({ type }) {
       : "bg-slate-600";
   return (
     <motion.div
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+      initial={{ scale: 0, y: -18, opacity: 0 }}
+      animate={{ scale: 1, y: 0, opacity: 1 }}
+      transition={{
+        delay,
+        type: "spring",
+        stiffness: 500,
+        damping: 18,
+        mass: 0.6,
+      }}
       className={`h-4 w-4 rounded-full shadow-md ${cls}`}
     />
   );
@@ -173,7 +179,7 @@ function AttemptRow({ attempt, lang, attemptNumber }) {
 
       <div className="grid grid-cols-2 gap-1 ml-1">
         {dots.map((type, i) => (
-          <ResultDot key={i} type={type} />
+          <ResultDot key={i} type={type} delay={i * 0.08} />
         ))}
       </div>
 
@@ -505,12 +511,30 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
           </div>
         </div>
 
-        {/* Contatore tentativi */}
-        <div className="mb-1 text-center text-xs text-slate-400">
+        {/* Cuoricini + contatore tentativi */}
+        <div className="mb-2 flex flex-col items-center gap-1.5">
+          <div className="flex items-center gap-1">
+            {Array.from({ length: MAX_ATTEMPTS }, (_, i) => {
+              const used = i < attempts.length;
+              return (
+                <motion.div
+                  key={i}
+                  initial={false}
+                  animate={used ? { scale: 1, opacity: 0.3 } : { scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                  className={`rounded-lg border px-1 py-0.5 ${
+                    used ? "border-slate-700 bg-slate-800" : "border-rose-400/50 bg-rose-500/20"
+                  }`}
+                >
+                  <Heart className={`h-3 w-3 ${used ? "text-slate-600" : "fill-rose-400 text-rose-300"}`} />
+                </motion.div>
+              );
+            })}
+          </div>
           {status === "playing"
-            ? `Tentativo ${attempts.length + 1} / ${MAX_ATTEMPTS}`
+            ? <span className="text-[10px] text-slate-500">{attempts.length} / {MAX_ATTEMPTS}</span>
             : status === "won"
-            ? <span className="text-emerald-400 font-bold text-base">{t.mastermind?.won || "You won 🎉"}</span>
+            ? <span className="text-emerald-400 font-bold text-sm">{t.mastermind?.won || "You won 🎉"}</span>
             : null
           }
         </div>
