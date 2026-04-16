@@ -38,20 +38,20 @@ const COLOR_DEFS = [
     labels: { it: "Giallo", en: "Yellow", fr: "Jaune",  ro: "Galben" },
   },
   {
-    id: "purple",
-    bg: "bg-violet-500",
-    shadow: "shadow-violet-500/60",
-    ring: "ring-violet-300",
-    hex: "#8b5cf6",
-    labels: { it: "Viola",  en: "Purple", fr: "Violet", ro: "Violet" },
+    id: "cyan",
+    bg: "bg-cyan-400",
+    shadow: "shadow-cyan-400/60",
+    ring: "ring-cyan-200",
+    hex: "#22d3ee",
+    labels: { it: "Ciano",     en: "Cyan",   fr: "Cyan",   ro: "Cyan"    },
   },
   {
-    id: "pink",
-    bg: "bg-pink-500",
-    shadow: "shadow-pink-500/60",
-    ring: "ring-pink-300",
-    hex: "#ec4899",
-    labels: { it: "Rosa",   en: "Pink",   fr: "Rose",   ro: "Roz"    },
+    id: "orange",
+    bg: "bg-orange-500",
+    shadow: "shadow-orange-500/60",
+    ring: "ring-orange-300",
+    hex: "#f97316",
+    labels: { it: "Arancione", en: "Orange", fr: "Orange", ro: "Portocaliu" },
   },
 ];
 
@@ -247,20 +247,38 @@ function EmptyRow() {
 // ─── Legenda colori ───────────────────────────────────────────────────────
 function ColorLegend({ colorCount, lang }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
-      <div className="flex flex-wrap justify-center gap-2">
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 space-y-3">
+
+      {/* Pallini + nomi */}
+      <div className="flex flex-wrap justify-center gap-3">
         {COLOR_DEFS.slice(0, colorCount).map((c) => {
           const label = c.labels[lang] || c.labels.en;
+          const initial = label.charAt(0).toUpperCase();
           return (
-            <div key={c.id} className="flex items-center gap-1.5">
-              <div className={`h-5 w-5 rounded-full ${c.bg} shadow-sm flex items-center justify-center`}>
-                <span className="text-[9px] font-black text-white/90">{label.charAt(0).toUpperCase()}</span>
+            <div key={c.id} className="flex flex-col items-center gap-1">
+              <div className={`h-9 w-9 rounded-full ${c.bg} shadow-md ${c.shadow} flex items-center justify-center`}>
+                <span className="text-sm font-black text-white/90" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>
+                  {initial}
+                </span>
               </div>
-              <span className="text-xs text-slate-300">{label}</span>
+              <span className="text-[11px] font-semibold text-slate-200">{label}</span>
             </div>
           );
         })}
       </div>
+
+      {/* Spiegazione puntini risultato */}
+      <div className="border-t border-white/10 pt-2.5 flex justify-center gap-6">
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-4 rounded-full bg-emerald-400 shadow-md shadow-emerald-400/50" />
+          <span className="text-xs text-slate-300"><span className="text-emerald-400 font-bold">Verde</span> = colore e posizione giusti</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-4 rounded-full bg-amber-300 shadow-md shadow-amber-300/50" />
+          <span className="text-xs text-slate-300"><span className="text-amber-300 font-bold">Giallo</span> = colore giusto, posizione sbagliata</span>
+        </div>
+      </div>
+
     </div>
   );
 }
@@ -342,8 +360,8 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
 
       {/* Sfondo decorativo vivace */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-violet-600/20 blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-pink-600/20 blur-3xl" />
+        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-cyan-600/20 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-orange-600/20 blur-3xl" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-48 w-48 rounded-full bg-cyan-500/10 blur-3xl" />
       </div>
 
@@ -376,7 +394,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
           <button onClick={onBack} className="text-xs text-slate-400 hover:text-white transition">
             {t.home.backToMenu}
           </button>
-          <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-violet-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
             Mastermind
           </h1>
           <button
@@ -397,7 +415,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
               onClick={() => reset(n)}
               className={`h-8 w-8 rounded-xl text-sm font-bold transition ${
                 colorCount === n
-                  ? "bg-gradient-to-br from-violet-500 to-pink-500 text-white shadow-lg shadow-violet-500/30"
+                  ? "bg-gradient-to-br from-cyan-500 to-orange-500 text-white shadow-lg shadow-cyan-500/30"
                   : "bg-white/10 text-slate-300 hover:bg-white/15"
               }`}
             >
@@ -427,9 +445,11 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
                 </div>
               ))}
             </div>
-            <div className="ml-1 text-[10px] text-slate-500 leading-tight">
-              <div className="text-emerald-400">✓ pos</div>
-              <div className="text-amber-300">~ col</div>
+            <div className="ml-1 grid grid-cols-2 gap-1">
+              <div className="h-3 w-3 rounded-full bg-emerald-400" title="colore e posizione giusti" />
+              <div className="h-3 w-3 rounded-full bg-amber-300" title="colore giusto, posizione sbagliata" />
+              <div className="h-3 w-3 rounded-full bg-slate-600" />
+              <div className="h-3 w-3 rounded-full bg-slate-600" />
             </div>
           </div>
 
@@ -503,7 +523,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
                 <ColorBall
                   key={colorDef.id}
                   colorDef={colorDef}
-                  size="lg"
+                  size="md"
                   onClick={() => addColor(i)}
                   disabled={current.length >= CODE_LENGTH}
                   lang={lang}
@@ -537,7 +557,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
                 className={`rounded-2xl px-6 py-2.5 text-sm font-bold transition shadow-lg ${
                   current.length !== CODE_LENGTH
                     ? "bg-white/5 text-slate-600 cursor-not-allowed"
-                    : "bg-gradient-to-r from-violet-500 to-pink-500 text-white shadow-violet-500/30"
+                    : "bg-gradient-to-r from-cyan-500 to-orange-500 text-white shadow-cyan-500/30"
                 }`}
               >
                 ✓ OK
