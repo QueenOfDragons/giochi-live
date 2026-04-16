@@ -25,21 +25,6 @@ export const UI_TEXT = {
       numbergameIconBg: "from-orange-400 to-yellow-400",
       numbergameOverlay: "from-orange-500/20 via-transparent to-yellow-500/20",
 
-      numbergameTitle: "Guess the Number",
-      numbergameDesc: "Higher, lower… find the secret number!",
-      numbergameIconBg: "from-orange-400 to-yellow-400",
-      numbergameOverlay: "from-orange-500/20 via-transparent to-yellow-500/20",
-
-      numbergameTitle: "Devine le Nombre",
-      numbergameDesc: "Plus haut, plus bas… trouve le nombre secret !",
-      numbergameIconBg: "from-orange-400 to-yellow-400",
-      numbergameOverlay: "from-orange-500/20 via-transparent to-yellow-500/20",
-
-      numbergameTitle: "Ghicește Numărul",
-      numbergameDesc: "Mai mare, mai mic… găsește numărul secret!",
-      numbergameIconBg: "from-orange-400 to-yellow-400",
-      numbergameOverlay: "from-orange-500/20 via-transparent to-yellow-500/20",
-
       mastermindTitle: "Mastermind",
       mastermindDesc: "Indovina la combinazione di colori",
       mastermindIconBg: "from-violet-400 to-pink-500",
@@ -139,6 +124,11 @@ export const UI_TEXT = {
       secretwordIconBg: "from-cyan-400 to-fuchsia-500",
       secretwordOverlay: "from-fuchsia-500/20 via-transparent to-cyan-500/20",
       secretwordIconCells: ["bg-emerald-600", "bg-yellow-400", "bg-slate-500"],
+
+      numbergameTitle: "Guess the Number",
+      numbergameDesc: "Higher, lower… find the secret number!",
+      numbergameIconBg: "from-orange-400 to-yellow-400",
+      numbergameOverlay: "from-orange-500/20 via-transparent to-yellow-500/20",
 
       mastermindTitle: "Mastermind",
       mastermindDesc: "Guess the color combination",
@@ -240,6 +230,11 @@ export const UI_TEXT = {
       secretwordOverlay: "from-fuchsia-500/20 via-transparent to-cyan-500/20",
       secretwordIconCells: ["bg-green-500", "bg-yellow-400", "bg-slate-500"],
 
+      numbergameTitle: "Ghicește Numărul",
+      numbergameDesc: "Mai mare, mai mic… găsește numărul secret!",
+      numbergameIconBg: "from-orange-400 to-yellow-400",
+      numbergameOverlay: "from-orange-500/20 via-transparent to-yellow-500/20",
+
       mastermindTitle: "Mastermind",
       mastermindDesc: "Ghicește combinația de culori",
       mastermindIconBg: "from-violet-400 to-pink-500",
@@ -339,6 +334,11 @@ export const UI_TEXT = {
       secretwordIconBg: "from-cyan-400 to-fuchsia-500",
       secretwordOverlay: "from-fuchsia-500/20 via-transparent to-cyan-500/20",
       secretwordIconCells: ["bg-green-500", "bg-yellow-400", "bg-slate-500"],
+
+      numbergameTitle: "Devine le Nombre",
+      numbergameDesc: "Plus haut, plus bas… trouve le nombre secret !",
+      numbergameIconBg: "from-orange-400 to-yellow-400",
+      numbergameOverlay: "from-orange-500/20 via-transparent to-yellow-500/20",
 
       mastermindTitle: "Mastermind",
       mastermindDesc: "Devinez la combinaison de couleurs",
