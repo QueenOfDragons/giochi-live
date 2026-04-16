@@ -337,10 +337,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
       setStatus("lost");
     }
 
-    // scroll automatico in fondo alla griglia
-    setTimeout(() => {
-      gridRef.current?.scrollTo({ top: gridRef.current.scrollHeight, behavior: "smooth" });
-    }, 100);
+
   };
 
   // scorciatoia tastiera: Invio = conferma, Backspace = cancella
@@ -455,21 +452,21 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
 
           <div
             ref={gridRef}
-            className="space-y-2 flex-1 overflow-y-auto pr-1"
+            className="space-y-2 flex-1 overflow-hidden pr-1"
           >
-            {/* Righe già confermate */}
-            {attempts.map((attempt, i) => (
-              <AttemptRow key={i} attempt={attempt} lang={lang} attemptNumber={i + 1} />
+            {/* Righe vuote future — in cima */}
+            {status === "playing" && Array.from({ length: remainingRows }, (_, i) => (
+              <EmptyRow key={`empty-${i}`} />
             ))}
 
-            {/* Riga corrente */}
+            {/* Riga corrente — sempre visibile subito sopra i tentativi */}
             {status === "playing" && (
               <CurrentRow current={current} onRemove={removeLast} />
             )}
 
-            {/* Righe vuote future */}
-            {status === "playing" && Array.from({ length: remainingRows }, (_, i) => (
-              <EmptyRow key={`empty-${i}`} />
+            {/* Righe già confermate — crescono verso il basso */}
+            {attempts.map((attempt, i) => (
+              <AttemptRow key={i} attempt={attempt} lang={lang} attemptNumber={i + 1} />
             ))}
           </div>
         </motion.div>
