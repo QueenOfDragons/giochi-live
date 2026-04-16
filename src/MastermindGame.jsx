@@ -38,20 +38,20 @@ const COLOR_DEFS = [
     labels: { it: "Giallo", en: "Yellow", fr: "Jaune",  ro: "Galben" },
   },
   {
-    id: "cyan",
-    bg: "bg-cyan-400",
-    shadow: "shadow-cyan-400/60",
-    ring: "ring-cyan-200",
-    hex: "#22d3ee",
-    labels: { it: "Ciano",     en: "Cyan",   fr: "Cyan",   ro: "Cyan"    },
+    id: "brown",
+    bg: "bg-amber-800",
+    shadow: "shadow-amber-800/60",
+    ring: "ring-amber-600",
+    hex: "#92400e",
+    labels: { it: "Marrone", en: "Brown",  fr: "Marron", ro: "Maro"    },
   },
   {
-    id: "orange",
-    bg: "bg-orange-500",
-    shadow: "shadow-orange-500/60",
-    ring: "ring-orange-300",
-    hex: "#f97316",
-    labels: { it: "Arancione", en: "Orange", fr: "Orange", ro: "Portocaliu" },
+    id: "anthracite",
+    bg: "bg-slate-500",
+    shadow: "shadow-slate-500/60",
+    ring: "ring-slate-300",
+    hex: "#64748b",
+    labels: { it: "Antracite", en: "Anthracite", fr: "Anthracite", ro: "Antracit" },
   },
 ];
 
@@ -356,13 +356,13 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
   const remainingRows = Math.max(0, MAX_ATTEMPTS - attempts.length - (status === "playing" ? 1 : 0));
 
   return (
-    <div className="relative min-h-screen bg-slate-950 text-white overflow-hidden">
+    <div className="relative h-screen bg-slate-950 text-white overflow-hidden flex flex-col">
 
       {/* Sfondo decorativo vivace */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-cyan-600/20 blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-orange-600/20 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-48 w-48 rounded-full bg-cyan-500/10 blur-3xl" />
+        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-amber-800/20 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-slate-500/20 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-48 w-48 rounded-full bg-amber-800/10 blur-3xl" />
       </div>
 
       {/* Flash vittoria */}
@@ -387,14 +387,14 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
         )}
       </AnimatePresence>
 
-      <div className="relative z-10 mx-auto max-w-lg px-4 py-5">
+      <div className="relative z-10 mx-auto w-full max-w-lg px-4 py-3 flex flex-col flex-1 overflow-hidden">
 
         {/* Header */}
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-2 flex items-center justify-between">
           <button onClick={onBack} className="text-xs text-slate-400 hover:text-white transition">
             {t.home.backToMenu}
           </button>
-          <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-red-400 via-amber-800 to-yellow-400 bg-clip-text text-transparent">
             Mastermind
           </h1>
           <button
@@ -407,7 +407,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
         </div>
 
         {/* Selettore numero colori */}
-        <div className="mb-4 flex items-center justify-center gap-2">
+        <div className="mb-2 flex items-center justify-center gap-2">
           <span className="text-xs text-slate-400">{t.mastermind?.colors || "Colors"}:</span>
           {[4, 5, 6].map((n) => (
             <button
@@ -415,7 +415,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
               onClick={() => reset(n)}
               className={`h-8 w-8 rounded-xl text-sm font-bold transition ${
                 colorCount === n
-                  ? "bg-gradient-to-br from-cyan-500 to-orange-500 text-white shadow-lg shadow-cyan-500/30"
+                  ? "bg-gradient-to-br from-blue-500 to-amber-800 text-white shadow-lg shadow-blue-500/30"
                   : "bg-white/10 text-slate-300 hover:bg-white/15"
               }`}
             >
@@ -425,7 +425,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
         </div>
 
         {/* Legenda iniziali colori */}
-        <div className="mb-4">
+        <div className="mb-2">
           <ColorLegend colorCount={colorCount} lang={lang} />
         </div>
 
@@ -433,7 +433,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
         <motion.div
           animate={shake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }}
           transition={{ duration: 0.35 }}
-          className="mb-4 rounded-3xl border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-sm"
+          className="mb-3 rounded-3xl border border-white/10 bg-white/5 p-3 shadow-2xl backdrop-blur-sm flex flex-col flex-1 min-h-0"
         >
           {/* Intestazione colonne */}
           <div className="flex items-center gap-3 mb-3 px-1">
@@ -455,7 +455,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
 
           <div
             ref={gridRef}
-            className="space-y-2.5 max-h-[340px] overflow-y-auto pr-1 scrollbar-thin"
+            className="space-y-2 flex-1 overflow-y-auto pr-1"
           >
             {/* Righe già confermate */}
             {attempts.map((attempt, i) => (
@@ -475,7 +475,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
         </motion.div>
 
         {/* Contatore tentativi */}
-        <div className="mb-3 text-center text-xs text-slate-400">
+        <div className="mb-1 text-center text-xs text-slate-400">
           {status === "playing"
             ? `${t.hangman?.errors || "Attempts"}: ${attempts.length} / ${MAX_ATTEMPTS}`
             : status === "won"
@@ -517,7 +517,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
 
         {/* Palette colori selezionabili */}
         {status === "playing" && (
-          <div className="mb-4 rounded-3xl border border-white/10 bg-white/5 p-4">
+          <div className="mb-2 rounded-3xl border border-white/10 bg-white/5 p-3">
             <div className="flex flex-wrap justify-center gap-3">
               {COLOR_DEFS.slice(0, colorCount).map((colorDef, i) => (
                 <ColorBall
@@ -557,7 +557,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
                 className={`rounded-2xl px-6 py-2.5 text-sm font-bold transition shadow-lg ${
                   current.length !== CODE_LENGTH
                     ? "bg-white/5 text-slate-600 cursor-not-allowed"
-                    : "bg-gradient-to-r from-cyan-500 to-orange-500 text-white shadow-cyan-500/30"
+                    : "bg-gradient-to-r from-blue-500 to-amber-800 text-white shadow-blue-500/30"
                 }`}
               >
                 ✓ OK
