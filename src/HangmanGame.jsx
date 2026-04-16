@@ -953,7 +953,8 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
   };
 
   const hearts = Array.from({ length: maxHearts }, (_, i) => i < maxHearts - wrong.length);
-  const canGoNext = status !== "playing" || showAnswer;
+  const hasAttempted = guessed.size > 0 || wrong.length > 0;
+  const canGoNext = status !== "playing" || showAnswer || hasAttempted;
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 p-4 text-slate-100 md:p-8">
