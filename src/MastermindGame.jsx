@@ -426,60 +426,100 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
           <ColorLegend colorCount={colorCount} lang={lang} />
         </div>
 
-        {/* Griglia tentativi */}
-        <motion.div
-          animate={shake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }}
-          transition={{ duration: 0.35 }}
-          className="mb-3 rounded-3xl border border-white/10 bg-white/5 p-3 shadow-2xl backdrop-blur-sm"
-        >
-          {/* Intestazione colonne */}
-          <div className="flex items-center gap-3 mb-3 px-1">
-            <span className="w-5" />
-            <div className="flex gap-2">
-              {Array.from({ length: CODE_LENGTH }, (_, i) => (
-                <div key={i} className="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center">
-                  <span className="text-xs text-slate-500 font-bold">{i + 1}</span>
-                </div>
-              ))}
-            </div>
-            <div className="ml-1 grid grid-cols-2 gap-1">
-              <div className="h-3 w-3 rounded-full bg-emerald-400" title="colore e posizione giusti" />
-              <div className="h-3 w-3 rounded-full bg-amber-300" title="colore giusto, posizione sbagliata" />
-              <div className="h-3 w-3 rounded-full bg-slate-600" />
-              <div className="h-3 w-3 rounded-full bg-slate-600" />
-            </div>
-          </div>
+        {/* ZONA INTERATTIVA — sempre visibile, non scorre mai */}
+        <div className="mb-3 rounded-3xl border border-white/10 bg-white/5 p-3 shadow-xl">
 
-          <div
-            ref={gridRef}
-            className="space-y-2 overflow-hidden pr-1"
-          >
-            {/* Righe vuote future — in cima */}
-            {status === "playing" && Array.from({ length: remainingRows }, (_, i) => (
-              <EmptyRow key={`empty-${i}`} />
-            ))}
-
-            {/* Riga corrente — sempre visibile subito sopra i tentativi */}
-            {status === "playing" && (
-              <CurrentRow current={current} onRemove={removeLast} />
-            )}
-
-            {/* Righe già confermate — crescono verso il basso */}
-            {attempts.map((attempt, i) => (
-              <AttemptRow key={i} attempt={attempt} lang={lang} attemptNumber={i + 1} />
+          {/* Riga corrente in costruzione */}
+          <div className="flex items-center justify-center gap-2 mb-3">
+            {Array.from({ length: CODE_LENGTH }, (_, i) => (
+              <motion.div
+                key={i}
+                className={`
+                  h-12 w-12 rounded-full border-2 flex items-center justify-center
+                  ${current[i] !== undefined
+                    ? `${COLOR_DEFS[current[i]].bg} ${COLOR_DEFS[current[i]].shadow} shadow-md border-transparent`
+                    : "border-white/20 bg-white/5"
+                  }
+                `}
+                animate={current[i] !== undefined ? { scale: [1, 1.1, 1] } : { scale: 1 }}
+                transition={{ duration: 0.15 }}
+              >
+                {current[i] !== undefined && (
+                  <span className="text-sm font-black text-white/90" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>
+                    {COLOR_DEFS[current[i]].labels[lang]?.charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </motion.div>
             ))}
           </div>
-        </motion.div>
+
+          {/* Palette colori */}
+          <div className="flex flex-wrap justify-center gap-2 mb-3">
+            {COLOR_DEFS.slice(0, colorCount).map((colorDef, i) => (
+              <ColorBall
+                key={colorDef.id}
+                colorDef={colorDef}
+                size="md"
+                onClick={() => addColor(i)}
+                disabled={current.length >= CODE_LENGTH}
+                lang={lang}
+              />
+            ))}
+          </div>
+
+          {/* Bottoni Undo + OK */}
+          <div className="flex justify-center gap-3">
+            <button
+              onClick={removeLast}
+              disabled={current.length === 0}
+              className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
+                current.length === 0
+                  ? "bg-white/5 text-slate-600 cursor-not-allowed"
+                  : "bg-white/10 hover:bg-white/15 text-white"
+              }`}
+            >
+              ⌫ Undo
+            </button>
+            <motion.button
+              onClick={submit}
+              disabled={current.length !== CODE_LENGTH}
+              whileHover={current.length === CODE_LENGTH ? { scale: 1.04 } : {}}
+              whileTap={current.length === CODE_LENGTH ? { scale: 0.97 } : {}}
+              className={`rounded-2xl px-6 py-2 text-sm font-bold transition shadow-lg ${
+                current.length !== CODE_LENGTH
+                  ? "bg-white/5 text-slate-600 cursor-not-allowed"
+                  : "bg-gradient-to-r from-blue-500 to-yellow-500 text-white shadow-blue-500/30"
+              }`}
+            >
+              ✓ OK
+            </motion.button>
+          </div>
+        </div>
 
         {/* Contatore tentativi */}
         <div className="mb-1 text-center text-xs text-slate-400">
           {status === "playing"
-            ? `${t.hangman?.errors || "Attempts"}: ${attempts.length} / ${MAX_ATTEMPTS}`
+            ? `Tentativo ${attempts.length + 1} / ${MAX_ATTEMPTS}`
             : status === "won"
             ? <span className="text-emerald-400 font-bold text-base">{t.mastermind?.won || "You won 🎉"}</span>
             : null
           }
         </div>
+
+        {/* Bottone Avanti (fine partita) */}
+        {status !== "playing" && (
+          <div className="flex justify-center mb-3">
+            <motion.button
+              onClick={() => reset()}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/30"
+            >
+              <ArrowRight className="h-4 w-4" />
+              {t.mastermind?.next || "Next"}
+            </motion.button>
+          </div>
+        )}
 
         {/* Messaggio sconfitta + soluzione */}
         <AnimatePresence>
@@ -487,9 +527,9 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 text-center"
+              className="mb-3 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3 text-center"
             >
-              <div className="text-base font-bold text-rose-300 mb-2">
+              <div className="text-sm font-bold text-rose-300 mb-2">
                 {t.mastermind?.lost || "You lost 😈"}
               </div>
               <div className="text-xs text-slate-400 mb-2">{t.mastermind?.solution || "Solution"}:</div>
@@ -500,9 +540,9 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ delay: i * 0.1, type: "spring", stiffness: 300 }}
-                    className={`h-12 w-12 rounded-full ${COLOR_DEFS[colorIdx].bg} shadow-lg ${COLOR_DEFS[colorIdx].shadow} flex items-center justify-center`}
+                    className={`h-10 w-10 rounded-full ${COLOR_DEFS[colorIdx].bg} shadow-lg ${COLOR_DEFS[colorIdx].shadow} flex items-center justify-center`}
                   >
-                    <span className="text-sm font-black text-white/90">
+                    <span className="text-xs font-black text-white/90">
                       {COLOR_DEFS[colorIdx].labels[lang]?.charAt(0).toUpperCase()}
                     </span>
                   </motion.div>
@@ -512,66 +552,30 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
           )}
         </AnimatePresence>
 
-        {/* Palette colori selezionabili */}
-        {status === "playing" && (
-          <div className="mb-2 rounded-3xl border border-white/10 bg-white/5 p-3">
-            <div className="flex flex-wrap justify-center gap-3">
-              {COLOR_DEFS.slice(0, colorCount).map((colorDef, i) => (
-                <ColorBall
-                  key={colorDef.id}
-                  colorDef={colorDef}
-                  size="md"
-                  onClick={() => addColor(i)}
-                  disabled={current.length >= CODE_LENGTH}
-                  lang={lang}
-                />
+        {/* Griglia storico tentativi — scorre se necessario */}
+        {attempts.length > 0 && (
+          <motion.div
+            animate={shake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }}
+            transition={{ duration: 0.35 }}
+            className="rounded-3xl border border-white/10 bg-white/5 p-3 shadow-2xl backdrop-blur-sm"
+          >
+            <div className="flex items-center gap-3 mb-2 px-1">
+              <span className="w-5" />
+              <div className="flex gap-2">
+                {Array.from({ length: CODE_LENGTH }, (_, i) => (
+                  <div key={i} className="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center">
+                    <span className="text-xs text-slate-500 font-bold">{i + 1}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              {attempts.map((attempt, i) => (
+                <AttemptRow key={i} attempt={attempt} lang={lang} attemptNumber={i + 1} />
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
-
-        {/* Bottoni azione */}
-        <div className="flex justify-center gap-3">
-          {status === "playing" ? (
-            <>
-              <button
-                onClick={removeLast}
-                disabled={current.length === 0}
-                className={`rounded-2xl px-4 py-2.5 text-sm font-semibold transition ${
-                  current.length === 0
-                    ? "bg-white/5 text-slate-600 cursor-not-allowed"
-                    : "bg-white/10 hover:bg-white/15 text-white"
-                }`}
-              >
-                ⌫ Undo
-              </button>
-
-              <motion.button
-                onClick={submit}
-                disabled={current.length !== CODE_LENGTH}
-                whileHover={current.length === CODE_LENGTH ? { scale: 1.04 } : {}}
-                whileTap={current.length === CODE_LENGTH ? { scale: 0.97 } : {}}
-                className={`rounded-2xl px-6 py-2.5 text-sm font-bold transition shadow-lg ${
-                  current.length !== CODE_LENGTH
-                    ? "bg-white/5 text-slate-600 cursor-not-allowed"
-                    : "bg-gradient-to-r from-blue-500 to-amber-800 text-white shadow-blue-500/30"
-                }`}
-              >
-                ✓ OK
-              </motion.button>
-            </>
-          ) : (
-            <motion.button
-              onClick={() => reset()}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/30"
-            >
-              <ArrowRight className="h-4 w-4" />
-              {t.mastermind?.next || "Next"}
-            </motion.button>
-          )}
-        </div>
 
       </div>
     </div>
