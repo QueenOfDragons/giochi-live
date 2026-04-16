@@ -86,17 +86,17 @@ function WordCard({ word, index, isLatest, requiredLetter }) {
       initial={{ opacity: 0, y: -16, scale: 0.92 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: "spring", stiffness: 400, damping: 22 }}
-      className={`flex items-center gap-2 rounded-xl px-3 py-2 border ${
+      className={`flex items-center gap-2 rounded-xl border ${
         isLatest
-          ? "border-emerald-400/40 bg-emerald-500/10"
-          : "border-white/10 bg-white/5"
+          ? "border-emerald-400/40 bg-emerald-500/10 px-4 py-3"
+          : "border-white/10 bg-white/5 px-3 py-2"
       }`}
     >
       <span className="text-xs font-bold text-slate-500 w-5 text-right">{index}</span>
-      <span className={`font-bold ${isLatest ? "text-white text-base" : "text-slate-300 text-sm"}`}>
+      <span className={`font-bold ${isLatest ? "text-white text-2xl" : "text-slate-300 text-base"}`}>
         {word}
       </span>
-      <span className="ml-auto text-xs font-black px-2 py-0.5 rounded-lg bg-white/10 text-cyan-300 uppercase">
+      <span className={`ml-auto font-black px-2.5 py-1 rounded-lg bg-white/10 text-cyan-300 uppercase ${isLatest ? "text-base" : "text-sm"}`}>
         →{last}
       </span>
     </motion.div>
@@ -351,7 +351,7 @@ export default function WordChainGame({ onBack, selectedLanguage }) {
                 </span>
                 <span className="text-xs text-slate-400">
                   {chain.length > 0 && (
-                    <span className="font-bold text-cyan-300 text-sm uppercase tracking-widest">
+                    <span className="font-black text-cyan-300 text-2xl uppercase">
                       → {requiredLetter?.toUpperCase()}
                     </span>
                   )}
@@ -391,13 +391,13 @@ export default function WordChainGame({ onBack, selectedLanguage }) {
               >
                 {/* Lettera richiesta */}
                 {requiredLetter && (
-                  <div className="mb-2 text-center">
-                    <span className="text-xs text-slate-400">{wt.mustStartWith || "Deve iniziare con"} </span>
-                    <span className="text-2xl font-black text-cyan-300 uppercase">{requiredLetter}</span>
+                  <div className="mb-3 flex flex-col items-center gap-0.5">
+                    <span className="text-xs uppercase tracking-widest text-slate-400">{wt.mustStartWith || "Deve iniziare con"}</span>
+                    <span className="text-6xl font-black text-cyan-300 uppercase leading-none" style={{ textShadow: "0 0 24px rgba(34,211,238,0.5)" }}>{requiredLetter}</span>
                   </div>
                 )}
                 {!requiredLetter && (
-                  <div className="mb-2 text-center text-xs text-slate-400">
+                  <div className="mb-3 text-center text-sm text-slate-400">
                     {wt.firstWord || "Inserisci la prima parola!"}
                   </div>
                 )}
