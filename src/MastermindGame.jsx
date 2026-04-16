@@ -353,7 +353,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
   const remainingRows = Math.max(0, MAX_ATTEMPTS - attempts.length - (status === "playing" ? 1 : 0));
 
   return (
-    <div className="relative h-screen bg-slate-950 text-white overflow-hidden flex flex-col">
+    <div className="relative min-h-screen bg-slate-950 text-white overflow-hidden">
 
       {/* Sfondo decorativo vivace */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -384,7 +384,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
         )}
       </AnimatePresence>
 
-      <div className="relative z-10 mx-auto w-full max-w-lg px-4 py-3 flex flex-col flex-1 overflow-hidden">
+      <div className="relative z-10 mx-auto max-w-lg px-4 py-4">
 
         {/* Header */}
         <div className="mb-2 flex items-center justify-between">
@@ -430,7 +430,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
         <motion.div
           animate={shake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }}
           transition={{ duration: 0.35 }}
-          className="mb-3 rounded-3xl border border-white/10 bg-white/5 p-3 shadow-2xl backdrop-blur-sm flex flex-col flex-1 min-h-0"
+          className="mb-3 rounded-3xl border border-white/10 bg-white/5 p-3 shadow-2xl backdrop-blur-sm"
         >
           {/* Intestazione colonne */}
           <div className="flex items-center gap-3 mb-3 px-1">
@@ -452,7 +452,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
 
           <div
             ref={gridRef}
-            className="space-y-2 flex-1 overflow-hidden pr-1"
+            className="space-y-2 overflow-hidden pr-1"
           >
             {/* Righe vuote future — in cima */}
             {status === "playing" && Array.from({ length: remainingRows }, (_, i) => (
