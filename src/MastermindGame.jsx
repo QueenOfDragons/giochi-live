@@ -426,73 +426,82 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
           <ColorLegend colorCount={colorCount} lang={lang} />
         </div>
 
-        {/* ZONA INTERATTIVA — sempre visibile, non scorre mai */}
+        {/* ZONA INTERATTIVA — palette a sinistra, riga + bottoni a destra */}
         <div className="mb-3 rounded-3xl border border-white/10 bg-white/5 p-3 shadow-xl">
+          <div className="flex items-center gap-4">
 
-          {/* Riga corrente in costruzione */}
-          <div className="flex items-center justify-center gap-2 mb-3">
-            {Array.from({ length: CODE_LENGTH }, (_, i) => (
-              <motion.div
-                key={i}
-                className={`
-                  h-12 w-12 rounded-full border-2 flex items-center justify-center
-                  ${current[i] !== undefined
-                    ? `${COLOR_DEFS[current[i]].bg} ${COLOR_DEFS[current[i]].shadow} shadow-md border-transparent`
-                    : "border-white/20 bg-white/5"
-                  }
-                `}
-                animate={current[i] !== undefined ? { scale: [1, 1.1, 1] } : { scale: 1 }}
-                transition={{ duration: 0.15 }}
-              >
-                {current[i] !== undefined && (
-                  <span className="text-sm font-black text-white/90" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>
-                    {COLOR_DEFS[current[i]].labels[lang]?.charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </motion.div>
-            ))}
-          </div>
+            {/* Palette colori — colonna sinistra */}
+            <div className="flex flex-wrap justify-center gap-2" style={{ maxWidth: "160px" }}>
+              {COLOR_DEFS.slice(0, colorCount).map((colorDef, i) => (
+                <ColorBall
+                  key={colorDef.id}
+                  colorDef={colorDef}
+                  size="md"
+                  onClick={() => addColor(i)}
+                  disabled={current.length >= CODE_LENGTH}
+                  lang={lang}
+                />
+              ))}
+            </div>
 
-          {/* Palette colori */}
-          <div className="flex flex-wrap justify-center gap-2 mb-3">
-            {COLOR_DEFS.slice(0, colorCount).map((colorDef, i) => (
-              <ColorBall
-                key={colorDef.id}
-                colorDef={colorDef}
-                size="md"
-                onClick={() => addColor(i)}
-                disabled={current.length >= CODE_LENGTH}
-                lang={lang}
-              />
-            ))}
-          </div>
+            {/* Divisore */}
+            <div className="w-px self-stretch bg-white/10" />
 
-          {/* Bottoni Undo + OK */}
-          <div className="flex justify-center gap-3">
-            <button
-              onClick={removeLast}
-              disabled={current.length === 0}
-              className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
-                current.length === 0
-                  ? "bg-white/5 text-slate-600 cursor-not-allowed"
-                  : "bg-white/10 hover:bg-white/15 text-white"
-              }`}
-            >
-              ⌫ Undo
-            </button>
-            <motion.button
-              onClick={submit}
-              disabled={current.length !== CODE_LENGTH}
-              whileHover={current.length === CODE_LENGTH ? { scale: 1.04 } : {}}
-              whileTap={current.length === CODE_LENGTH ? { scale: 0.97 } : {}}
-              className={`rounded-2xl px-6 py-2 text-sm font-bold transition shadow-lg ${
-                current.length !== CODE_LENGTH
-                  ? "bg-white/5 text-slate-600 cursor-not-allowed"
-                  : "bg-gradient-to-r from-blue-500 to-yellow-500 text-white shadow-blue-500/30"
-              }`}
-            >
-              ✓ OK
-            </motion.button>
+            {/* Riga corrente + bottoni — colonna destra */}
+            <div className="flex flex-col items-center gap-3 flex-1">
+              {/* Slots riga corrente */}
+              <div className="flex items-center gap-2">
+                {Array.from({ length: CODE_LENGTH }, (_, i) => (
+                  <motion.div
+                    key={i}
+                    className={`
+                      h-11 w-11 rounded-full border-2 flex items-center justify-center
+                      ${current[i] !== undefined
+                        ? `${COLOR_DEFS[current[i]].bg} ${COLOR_DEFS[current[i]].shadow} shadow-md border-transparent`
+                        : "border-white/20 bg-white/5"
+                      }
+                    `}
+                    animate={current[i] !== undefined ? { scale: [1, 1.1, 1] } : { scale: 1 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    {current[i] !== undefined && (
+                      <span className="text-sm font-black text-white/90" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>
+                        {COLOR_DEFS[current[i]].labels[lang]?.charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Undo + OK */}
+              <div className="flex gap-2">
+                <button
+                  onClick={removeLast}
+                  disabled={current.length === 0}
+                  className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                    current.length === 0
+                      ? "bg-white/5 text-slate-600 cursor-not-allowed"
+                      : "bg-white/10 hover:bg-white/15 text-white"
+                  }`}
+                >
+                  ⌫
+                </button>
+                <motion.button
+                  onClick={submit}
+                  disabled={current.length !== CODE_LENGTH}
+                  whileHover={current.length === CODE_LENGTH ? { scale: 1.04 } : {}}
+                  whileTap={current.length === CODE_LENGTH ? { scale: 0.97 } : {}}
+                  className={`rounded-xl px-5 py-2 text-sm font-bold transition shadow-lg ${
+                    current.length !== CODE_LENGTH
+                      ? "bg-white/5 text-slate-600 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-500 to-yellow-500 text-white shadow-blue-500/30"
+                  }`}
+                >
+                  ✓ OK
+                </motion.button>
+              </div>
+            </div>
+
           </div>
         </div>
 
