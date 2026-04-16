@@ -16,12 +16,47 @@ import {
   PanelsTopLeft,
 } from "lucide-react";
 
-const DEFAULT_ITEMS = [
+const DEFAULT_ITEMS_IT = [
   { text: "Chat silenziosa", hint: "Tutti leggono… nessuno scrive 👀", difficulty: "Media" },
   { text: "Friendzone", hint: "Ti vuole… ma non così 😭", difficulty: "Facile" },
   { text: "Visualizza e non risponde", hint: "Ti legge… e sceglie di no 😏", difficulty: "Difficile" },
   { text: "Pensieri notturni", hint: "Di giorno ok… di notte no 😶‍🌫️", difficulty: "Media" },
 ];
+
+const DEFAULT_ITEMS_EN = [
+  { text: "Break a leg", hint: "What you say to an actor before they go on stage 🎭", difficulty: "Facile" },
+  { text: "Hit the sack", hint: "Time to go to sleep 😴", difficulty: "Facile" },
+  { text: "Bite the bullet", hint: "Endure a painful situation with courage 💪", difficulty: "Media" },
+  { text: "Spill the beans", hint: "Accidentally reveal a secret 🫘", difficulty: "Facile" },
+  { text: "Under the weather", hint: "Feeling a bit sick 🤒", difficulty: "Media" },
+  { text: "The early bird catches the worm", hint: "Success comes to those who start early 🐦", difficulty: "Difficile" },
+  { text: "Barking up the wrong tree", hint: "Looking for something in the wrong place 🌳", difficulty: "Difficile" },
+  { text: "Kill two birds with one stone", hint: "Solve two problems with one action 🎯", difficulty: "Media" },
+  { text: "Beat around the bush", hint: "Avoid talking about the main topic 🌿", difficulty: "Media" },
+  { text: "Once in a blue moon", hint: "Something that happens very rarely 🌙", difficulty: "Facile" },
+];
+
+const DEFAULT_ITEMS_FR = [
+  { text: "Avoir le cafard", hint: "Se sentir déprimé ou triste 🪳", difficulty: "Facile" },
+  { text: "Casser les pieds", hint: "Ennuyer ou agacer quelqu'un 🦶", difficulty: "Media" },
+  { text: "Il pleut des cordes", hint: "Il pleut très fort dehors 🌧️", difficulty: "Facile" },
+  { text: "Poser un lapin", hint: "Ne pas venir à un rendez-vous 🐰", difficulty: "Media" },
+];
+
+const DEFAULT_ITEMS_RO = [
+  { text: "A da cu oiștea-n gard", hint: "A face o greșeală mare 🐑", difficulty: "Media" },
+  { text: "A tăia frunze la câini", hint: "A pierde timpul fără a face nimic 🐕", difficulty: "Difficile" },
+  { text: "A se face că plouă", hint: "A ignora intenționat ceva 🌧️", difficulty: "Media" },
+];
+
+const DEFAULT_ITEMS_BY_LANG = {
+  it: DEFAULT_ITEMS_IT,
+  en: DEFAULT_ITEMS_EN,
+  fr: DEFAULT_ITEMS_FR,
+  ro: DEFAULT_ITEMS_RO,
+};
+
+const DEFAULT_ITEMS = DEFAULT_ITEMS_IT;
 
 const DIFFICULTY_HEARTS = {
   Facile: 7,
@@ -581,10 +616,29 @@ function renderHintWithEmoji(text) {
   return parts;
 }
 
+const STORAGE_KEY_PREFIX = "hangman_items_";
+
+function loadItemsFromStorage(language) {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_PREFIX + language);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) { /* ignora errori localStorage */ }
+  return DEFAULT_ITEMS_BY_LANG[language] || DEFAULT_ITEMS_IT;
+}
+
+function saveItemsToStorage(language, items) {
+  try {
+    localStorage.setItem(STORAGE_KEY_PREFIX + language, JSON.stringify(items));
+  } catch (e) { /* ignora errori localStorage */ }
+}
+
 export default function HangmanGame({ onBack, selectedLanguage }) {
   const t = UI_TEXT[selectedLanguage];
 
-  const [items, setItems] = useState(DEFAULT_ITEMS);
+  const [items, setItems] = useState(() => loadItemsFromStorage(selectedLanguage));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [guessed, setGuessed] = useState(() => new Set());
   const [wrong, setWrong] = useState([]);
@@ -718,6 +772,20 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
       remainingIndexesRef.current = buildRemainingPool(items.length, currentIndex);
     }
   }, []);
+
+  // Salva automaticamente le frasi nel browser ogni volta che cambiano
+  useEffect(() => {
+    saveItemsToStorage(selectedLanguage, items);
+  }, [items, selectedLanguage]);
+
+  // Quando cambia la lingua, carica le frasi salvate per quella lingua
+  useEffect(() => {
+    const loaded = loadItemsFromStorage(selectedLanguage);
+    setItems(loaded);
+    setCurrentIndex(0);
+    remainingIndexesRef.current = buildRemainingPool(loaded.length, 0);
+    clearRoundState();
+  }, [selectedLanguage]);
 
   useEffect(() => {
     const prevWrong = previousWrongCountRef.current;
@@ -907,30 +975,49 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
             <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} t={t} />
 
+            {/* Barra progresso + difficoltà */}
+            <div className="mt-2 flex items-center justify-between px-1">
+              <span className="text-[11px] text-slate-400 font-medium">
+                {currentIndex + 1} / {items.length}
+              </span>
+              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-lg ${
+                currentItem.difficulty === "Facile" ? "bg-emerald-500/20 text-emerald-300" :
+                currentItem.difficulty === "Difficile" ? "bg-rose-500/20 text-rose-300" :
+                "bg-amber-500/20 text-amber-300"
+              }`}>
+                {getDifficultyLabel(currentItem.difficulty)}
+              </span>
+            </div>
+
+            {/* Indizio */}
             <div className="mt-2 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-3 text-center">
-              <div className="text-[16px] sm:text-lg font-semibold leading-snug tracking-wide">
+              <div className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">{t.hangman.clue}</div>
+              <div className="text-[17px] sm:text-xl font-semibold leading-snug tracking-wide">
                 {renderHintWithEmoji(currentItem.hint)}
               </div>
             </div>
 
-            <div className="mt-3 flex items-center justify-center gap-1.5">
-              {hearts.map((alive, idx) => {
-                const isBurst = heartBurstIndex === idx;
-                return (
-                  <motion.div key={idx} initial={false} animate={alive ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 0.35 }} transition={{ duration: 0.2 }} className={`relative rounded-2xl border px-2 py-1 ${alive ? "border-rose-400/50 bg-rose-500/20" : "border-slate-700 bg-slate-800"}`}>
-                    <Heart className={`h-4 w-4 ${alive ? "fill-rose-400 text-rose-300" : "text-slate-500"}`} />
-                    <AnimatePresence>
-                      {isBurst ? <motion.div initial={{ scale: 0.4, opacity: 0.9 }} animate={{ scale: 1.8, opacity: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45 }} className="absolute inset-0 rounded-2xl border-2 border-rose-300" /> : null}
-                    </AnimatePresence>
-                  </motion.div>
-                );
-              })}
+            {/* Cuori + stato */}
+            <div className="mt-3 flex items-center justify-between px-1">
+              <div className="flex items-center gap-1">
+                {hearts.map((alive, idx) => {
+                  const isBurst = heartBurstIndex === idx;
+                  return (
+                    <motion.div key={idx} initial={false} animate={alive ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 0.3 }} transition={{ duration: 0.2 }} className={`relative rounded-xl border px-1.5 py-0.5 ${alive ? "border-rose-400/50 bg-rose-500/20" : "border-slate-700 bg-slate-800"}`}>
+                      <Heart className={`h-3.5 w-3.5 ${alive ? "fill-rose-400 text-rose-300" : "text-slate-600"}`} />
+                      <AnimatePresence>
+                        {isBurst ? <motion.div initial={{ scale: 0.4, opacity: 0.9 }} animate={{ scale: 1.8, opacity: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45 }} className="absolute inset-0 rounded-xl border-2 border-rose-300" /> : null}
+                      </AnimatePresence>
+                    </motion.div>
+                  );
+                })}
+              </div>
+              <div className={`text-[11px] font-semibold ${status === "won" ? "text-emerald-400" : status === "lost" ? "text-rose-400" : "text-slate-400"}`}>
+                {status === "playing" ? `${t.hangman.errors}: ${wrong.length}/${maxHearts}` : status === "won" ? `🎉 ${t.hangman.won}!` : `💀 ${t.hangman.lost}`}
+              </div>
             </div>
 
-            <div className="mt-1.5 text-center text-[10px] text-slate-400">
-              {status === "playing" ? `${t.hangman.errors} ${wrong.length}/${maxHearts}` : status === "won" ? t.hangman.won : t.hangman.lost}
-            </div>
-
+            {/* Robot + pulsanti laterali */}
             <div className="mt-2 flex w-full items-center justify-between">
               <div className="flex-1" />
 
@@ -948,6 +1035,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                   type="button"
                   onClick={() => setShowAnswer((prev) => !prev)}
                   className="rounded-lg bg-white/10 p-2 transition hover:bg-white/15"
+                  title={showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}
                 >
                   {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -956,12 +1044,12 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                   type="button"
                   onClick={goNext}
                   disabled={!canGoNext}
-                  className={`rounded-lg px-2.5 py-1.5 text-[11px] font-semibold transition ${!canGoNext
+                  className={`rounded-lg px-3 py-2 text-xs font-bold transition ${!canGoNext
                     ? "cursor-not-allowed bg-white/5 text-slate-500"
-                    : "bg-emerald-500/80 text-white hover:bg-emerald-500"
+                    : "bg-emerald-500 text-white hover:bg-emerald-400 shadow-lg shadow-emerald-500/30"
                     }`}
                 >
-                  {t.hangman.next}
+                  {t.hangman.next} →
                 </button>
               </div>
             </div>
@@ -1062,12 +1150,34 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               </div>
 
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl">
-                <h2 className="mb-4 text-xl font-bold">{t.hangman.archiveTitle}</h2>
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-xl font-bold">{t.hangman.archiveTitle}</h2>
+                  <button
+                    onClick={() => {
+                      const defaults = DEFAULT_ITEMS_BY_LANG[selectedLanguage] || DEFAULT_ITEMS_IT;
+                      setItems(defaults);
+                      setCurrentIndex(0);
+                      remainingIndexesRef.current = buildRemainingPool(defaults.length, 0);
+                      clearRoundState();
+                      saveItemsToStorage(selectedLanguage, defaults);
+                    }}
+                    className="text-[10px] text-slate-500 hover:text-rose-400 transition rounded-lg px-2 py-1 hover:bg-rose-500/10"
+                    title="Cancella lista e torna ai default"
+                  >
+                    🗑 reset
+                  </button>
+                </div>
                 <div className="max-h-[320px] space-y-2 overflow-auto pr-1">
                   {items.map((item, idx) => (
                     <button key={`${idx}-${item.difficulty}`} onClick={() => { setCurrentIndex(idx); setPlayMode("sequential"); remainingIndexesRef.current = buildRemainingPool(items.length, idx); clearRoundState(); }} className={`w-full rounded-2xl border px-4 py-3 text-left transition ${idx === currentIndex ? "border-pink-400/40 bg-pink-500/15" : "border-white/10 bg-black/20 hover:bg-white/10"}`}>
-                      <div className="font-semibold">{t.hangman.roundLabel} {idx + 1}</div>
-                      <div className="mt-1 text-xs text-slate-400">{getDifficultyLabel(item.difficulty)} • {t.hangman.hiddenSolution}</div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.hangman.roundLabel} {idx + 1}</div>
+                        <div className="flex items-center gap-1.5">
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-semibold ${item.difficulty === "Facile" ? "bg-emerald-500/20 text-emerald-300" : item.difficulty === "Difficile" ? "bg-rose-500/20 text-rose-300" : "bg-amber-500/20 text-amber-300"}`}>{getDifficultyLabel(item.difficulty)}</span>
+                          <span className="text-[10px] text-slate-500">{item.text.replace(/ /g, "").length} {selectedLanguage === "it" ? "lett." : "ltrs"}</span>
+                        </div>
+                      </div>
+                      <div className="mt-1 text-sm text-slate-200 truncate">{item.hint}</div>
                     </button>
                   ))}
                 </div>
