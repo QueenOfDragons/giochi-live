@@ -17,7 +17,7 @@ export const UI_TEXT = {
       secretwordTitle: "Parola Segreta",
       secretwordDesc: "Trova la parola con tentativi limitati",
       secretwordIconBg: "from-cyan-400 to-fuchsia-500",
-      secretwordOverlay:  "from-fuchsia-500/20 via-transparent to-cyan-500/20",
+      secretwordOverlay: "from-fuchsia-500/20 via-transparent to-cyan-500/20",
       secretwordIconCells: ["bg-green-500", "bg-yellow-400", "bg-slate-500"],
 
       mastermindTitle: "Mastermind",
@@ -25,7 +25,6 @@ export const UI_TEXT = {
       mastermindIconBg: "from-violet-400 to-pink-500",
       mastermindOverlay: "from-violet-500/20 via-transparent to-pink-500/20",
       mastermindIconDots: ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-400"],
-      
     },
     hangman: {
       restart: "Ricomincia",
@@ -66,12 +65,20 @@ export const UI_TEXT = {
       title: "Parola Segreta",
       subtitle: "Indovina la parola",
       restart: "Reset",
-      random: "Random",
+      random: "Casuale",
       next: "Avanti",
       length: "Lunghezza",
+      lengthLabel: "Lunghezza",
       attempts: "Tentativi",
       won: "Hai indovinato",
       lost: "Parola",
+    },
+    mastermind: {
+      won: "Hai vinto 🎉",
+      lost: "Hai perso 😈",
+      solution: "Soluzione",
+      next: "Avanti",
+      colors: "Colori",
     },
   },
 
@@ -144,9 +151,17 @@ export const UI_TEXT = {
       random: "Random",
       next: "Next",
       length: "Length",
+      lengthLabel: "Length",
       attempts: "Attempts",
       won: "You guessed it",
       lost: "Word",
+    },
+    mastermind: {
+      won: "You won 🎉",
+      lost: "You lost 😈",
+      solution: "Solution",
+      next: "Next",
+      colors: "Colors",
     },
   },
 
@@ -159,8 +174,23 @@ export const UI_TEXT = {
       backToMenu: "← Înapoi la meniu",
     },
     games: {
-      hangmanTitle: "Ghicește cuvântul sau expresia",
+      hangmanTitle: "Ghicește cuvântul",
       hangmanDesc: "Joc cu indicii, inimi și tastatură interactivă",
+      hangmanIcon: "🤖",
+      hangmanIconBg: "from-emerald-400 to-lime-500",
+      hangmanOverlay: "from-emerald-500/20 via-transparent to-lime-500/20",
+
+      secretwordTitle: "Cuvânt Secret",
+      secretwordDesc: "Ghicește cuvântul cu încercări limitate",
+      secretwordIconBg: "from-cyan-400 to-fuchsia-500",
+      secretwordOverlay: "from-fuchsia-500/20 via-transparent to-cyan-500/20",
+      secretwordIconCells: ["bg-green-500", "bg-yellow-400", "bg-slate-500"],
+
+      mastermindTitle: "Mastermind",
+      mastermindDesc: "Ghicește combinația de culori",
+      mastermindIconBg: "from-violet-400 to-pink-500",
+      mastermindOverlay: "from-violet-500/20 via-transparent to-pink-500/20",
+      mastermindIconDots: ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-400"],
     },
     hangman: {
       restart: "Reia",
@@ -201,73 +231,84 @@ export const UI_TEXT = {
       title: "Cuvânt Secret",
       subtitle: "Ghicește cuvântul",
       restart: "Reset",
-      random: "Random",
+      random: "Aleator",
       next: "Următor",
       length: "Lungime",
+      lengthLabel: "Lungime",
       attempts: "Încercări",
       won: "Ai ghicit",
       lost: "Cuvântul",
     },
+    mastermind: {
+      won: "Ai câștigat 🎉",
+      lost: "Ai pierdut 😈",
+      solution: "Soluție",
+      next: "Următor",
+      colors: "Culori",
+    },
   },
+
   fr: {
     home: {
       title: "Jeux en direct",
       subtitle: "Choisissez un jeu et jouez avec votre communauté",
       languageLabel: "Langue",
       open: "Ouvrir",
-      backToMenu: "← Retour au menu"
+      backToMenu: "← Retour au menu",
     },
-
     games: {
       hangmanTitle: "Jeu du pendu",
-      hangmanDesc: "Devinez le mot ou la phrase avec l'aide de l'indice"
+      hangmanDesc: "Devinez le mot ou la phrase avec l'aide de l'indice",
+      hangmanIcon: "🤖",
+      hangmanIconBg: "from-emerald-400 to-lime-500",
+      hangmanOverlay: "from-emerald-500/20 via-transparent to-lime-500/20",
+
+      secretwordTitle: "Mot Secret",
+      secretwordDesc: "Trouvez le mot avec des tentatives limitées",
+      secretwordIconBg: "from-cyan-400 to-fuchsia-500",
+      secretwordOverlay: "from-fuchsia-500/20 via-transparent to-cyan-500/20",
+      secretwordIconCells: ["bg-green-500", "bg-yellow-400", "bg-slate-500"],
+
+      mastermindTitle: "Mastermind",
+      mastermindDesc: "Devinez la combinaison de couleurs",
+      mastermindIconBg: "from-violet-400 to-pink-500",
+      mastermindOverlay: "from-violet-500/20 via-transparent to-pink-500/20",
+      mastermindIconDots: ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-400"],
     },
-
     hangman: {
-      title: "Devinez le mot ou la phrase",
-      liveGame: "Jeu style live",
-      clue: "Indice",
-      hearts: "cœurs",
-
-      easy: "Facile",
-      medium: "Moyen",
-      hard: "Difficile",
-
-      errors: "Erreurs",
-      won: "Gagné",
-      lost: "Perdu",
-
-      try: "Essayer",
-      next: "Suivant",
-
-      showSolution: "Afficher la solution",
-      hideSolution: "Masquer la solution",
-
       restart: "Recommencer",
       random: "Aléatoire",
       import: "Importer",
-      downloadTemplate: "Télécharger modèle",
-
       fullscreenEnter: "Plein écran",
       fullscreenExit: "Quitter",
-
       soundOn: "Son ON",
       soundOff: "Son OFF",
-
       showPanels: "Afficher panneaux",
       hidePanels: "Masquer panneaux",
-
+      clue: "Indice",
+      try: "Essayer",
+      showSolution: "Afficher la solution",
+      hideSolution: "Masquer la solution",
       letterPlaceholder: "Lettre",
       longLetterPlaceholder: "Entrez une lettre",
-
+      errors: "Erreurs",
+      won: "Gagné",
+      lost: "Perdu",
+      easy: "Facile",
+      medium: "Moyen",
+      hard: "Difficile",
+      hearts: "Cœurs",
       addItemTitle: "Ajouter mot ou phrase",
       itemPlaceholder: "Mot ou phrase",
       cluePlaceholder: "Indice",
       addAndPlay: "Ajouter et jouer",
-
       archiveTitle: "Archives live",
       roundLabel: "Manche",
-      hiddenSolution: "solution cachée"
+      hiddenSolution: "solution cachée",
+      liveGame: "Jeu style live",
+      title: "Devinez le mot ou la phrase",
+      downloadTemplate: "Télécharger modèle",
+      next: "Suivant",
     },
     secretword: {
       title: "Mot Secret",
@@ -276,9 +317,17 @@ export const UI_TEXT = {
       random: "Aléatoire",
       next: "Suivant",
       length: "Longueur",
+      lengthLabel: "Longueur",
       attempts: "Essais",
       won: "Trouvé",
       lost: "Mot",
-    }
-  }
+    },
+    mastermind: {
+      won: "Vous avez gagné 🎉",
+      lost: "Vous avez perdu 😈",
+      solution: "Solution",
+      next: "Suivant",
+      colors: "Couleurs",
+    },
+  },
 };
