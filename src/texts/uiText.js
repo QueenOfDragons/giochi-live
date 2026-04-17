@@ -72,6 +72,8 @@ export const UI_TEXT = {
       solution: "Soluzione",
       next: "Avanti",
       colors: "Colori",
+      correct: "colore e posizione giusti",
+      present: "colore giusto, posizione sbagliata",
     },
     numbergame: {
       title: "Indovina il Numero",
@@ -181,6 +183,8 @@ export const UI_TEXT = {
       solution: "Solution",
       next: "Next",
       colors: "Colors",
+      correct: "correct color and position",
+      present: "correct color, wrong position",
     },
     numbergame: {
       title: "Guess the Number",
@@ -290,6 +294,8 @@ export const UI_TEXT = {
       solution: "Soluție",
       next: "Următor",
       colors: "Culori",
+      correct: "culoare și poziție corecte",
+      present: "culoare corectă, poziție greșită",
     },
     numbergame: {
       title: "Ghicește Numărul",
@@ -399,6 +405,8 @@ export const UI_TEXT = {
       solution: "Solution",
       next: "Suivant",
       colors: "Couleurs",
+      correct: "couleur et position correctes",
+      present: "couleur correcte, mauvaise position",
     },
     numbergame: {
       title: "Devine le Nombre",
