@@ -277,11 +277,11 @@ function ColorLegend({ colorCount, lang, t }) {
       <div className="border-t border-white/10 pt-2.5 flex justify-center gap-6">
         <div className="flex items-center gap-2">
           <div className="h-4 w-4 rounded-full bg-emerald-400 shadow-md shadow-emerald-400/50" />
-          <span className="text-xs text-slate-300"><span className="text-emerald-400 font-bold">🟢</span> {t.mastermind?.correct || "colore e posizione giusti"}</span>
+          <span className="text-xs text-slate-300">{t.mastermind?.correct || "colore e posizione giusti"}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-4 w-4 rounded-full bg-amber-300 shadow-md shadow-amber-300/50" />
-          <span className="text-xs text-slate-300"><span className="text-amber-300 font-bold">🟡</span> {t.mastermind?.present || "colore giusto, posizione sbagliata"}</span>
+          <span className="text-xs text-slate-300">{t.mastermind?.present || "colore giusto, posizione sbagliata"}</span>
         </div>
       </div>
 
