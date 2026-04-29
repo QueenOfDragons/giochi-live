@@ -437,7 +437,7 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
           <div className="flex items-center gap-4">
 
             {/* Palette colori — colonna sinistra */}
-            <div className="flex flex-wrap justify-center gap-2" style={{ maxWidth: "160px" }}>
+            <div className="flex justify-center gap-2">
               {COLOR_DEFS.slice(0, colorCount).map((colorDef, i) => (
                 <ColorBall
                   key={colorDef.id}
