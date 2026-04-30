@@ -35,16 +35,26 @@ export default function App() {
             <h1 className="text-2xl font-bold">{t.home.title}</h1>
             <p className="text-xs text-slate-400 mt-0.5">{t.home.subtitle}</p>
           </div>
-          <select
-            value={selectedLanguage}
-            onChange={(e) => setSelectedLanguage(e.target.value)}
-            className="rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none"
-          >
-            <option value="it">🇮🇹 IT</option>
-            <option value="en">🇬🇧 EN</option>
-            <option value="fr">🇫🇷 FR</option>
-            <option value="ro">🇷🇴 RO</option>
-          </select>
+          <div className="flex gap-1.5">
+            {[
+              { code: "it", flag: "🇮🇹" },
+              { code: "en", flag: "🇬🇧" },
+              { code: "fr", flag: "🇫🇷" },
+              { code: "ro", flag: "🇷🇴" },
+            ].map(({ code, flag }) => (
+              <button
+                key={code}
+                onClick={() => setSelectedLanguage(code)}
+                className={`rounded-xl px-2.5 py-1.5 text-xl transition ${
+                  selectedLanguage === code
+                    ? "bg-white/20 ring-2 ring-white/40"
+                    : "bg-white/5 hover:bg-white/10"
+                }`}
+              >
+                {flag}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Card giochi */}
