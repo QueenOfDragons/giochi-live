@@ -37,21 +37,22 @@ export default function App() {
           </div>
           <div className="flex gap-1.5">
             {[
-              { code: "it", flag: "🇮🇹" },
-              { code: "en", flag: "🇬🇧" },
-              { code: "fr", flag: "🇫🇷" },
-              { code: "ro", flag: "🇷🇴" },
-            ].map(({ code, flag }) => (
+              { code: "it", img: "https://flagcdn.com/w40/it.png", label: "IT" },
+              { code: "en", img: "https://flagcdn.com/w40/gb.png", label: "EN" },
+              { code: "fr", img: "https://flagcdn.com/w40/fr.png", label: "FR" },
+              { code: "ro", img: "https://flagcdn.com/w40/ro.png", label: "RO" },
+            ].map(({ code, img, label }) => (
               <button
                 key={code}
                 onClick={() => setSelectedLanguage(code)}
-                className={`rounded-xl px-2.5 py-1.5 text-xl transition ${
+                title={label}
+                className={`rounded-xl p-1.5 transition ${
                   selectedLanguage === code
                     ? "bg-white/20 ring-2 ring-white/40"
                     : "bg-white/5 hover:bg-white/10"
                 }`}
               >
-                {flag}
+                <img src={img} alt={label} className="h-6 w-9 rounded-sm object-cover" />
               </button>
             ))}
           </div>
