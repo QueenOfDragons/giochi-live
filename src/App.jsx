@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import HangmanGame from "./HangmanGame";
 import MastermindGame from "./MastermindGame";
 import NumberGame from "./NumberGame";
-import WordChainGame from "./WordChainGame";
+import BersaglioGame from "./BersaglioGame";
 import { UI_TEXT } from "./texts/uiText";
 
 export default function App() {
@@ -21,8 +21,8 @@ export default function App() {
   if (selectedGame === "numbergame") {
     return <NumberGame onBack={() => setSelectedGame(null)} selectedLanguage={selectedLanguage} />;
   }
-  if (selectedGame === "wordchain") {
-    return <WordChainGame onBack={() => setSelectedGame(null)} selectedLanguage={selectedLanguage} />;
+  if (selectedGame === "bersaglio") {
+    return <BersaglioGame onBack={() => setSelectedGame(null)} selectedLanguage={selectedLanguage} />;
   }
 
   return (
@@ -109,17 +109,17 @@ export default function App() {
 
           {/* Catena di Parole */}
           <button
-            onClick={() => setSelectedGame("wordchain")}
+            onClick={() => setSelectedGame("bersaglio")}
             className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 text-left shadow-lg transition duration-200 hover:scale-[1.02] hover:bg-white/10"
           >
-            <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${t.games.wordchainOverlay} opacity-0 transition duration-200 group-hover:opacity-80`} />
+            <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${t.games.bersaglioOverlay} opacity-0 transition duration-200 group-hover:opacity-80`} />
             <div className="relative z-10 flex items-center gap-4">
-              <div className={`flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${t.games.wordchainIconBg} text-2xl shadow-md transition duration-200 group-hover:scale-110`}>
+              <div className={`flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${t.games.bersaglioIconBg} text-2xl shadow-md transition duration-200 group-hover:scale-110`}>
                 🔗
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-white">{t.games.wordchainTitle}</div>
-                <div className="text-xs text-slate-400 mt-0.5 leading-snug">{t.games.wordchainDesc}</div>
+                <div className="font-bold text-white">{t.games.bersaglioTitle}</div>
+                <div className="text-xs text-slate-400 mt-0.5 leading-snug">{t.games.bersaglioDesc}</div>
               </div>
               <div className="flex-shrink-0 rounded-lg bg-cyan-500/70 px-3 py-1.5 text-xs font-semibold text-white transition group-hover:bg-cyan-500">
                 {t.home.open} →
