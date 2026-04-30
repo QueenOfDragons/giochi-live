@@ -4,11 +4,11 @@ import { RotateCcw, ArrowRight, Heart } from "lucide-react";
 import { UI_TEXT } from "./texts/uiText";
 
 const MAX_HEARTS = 7;
-const STORAGE_KEY = "bersaglio_percorsi";
+const STORAGE_KEY_PREFIX = "bersaglio_percorsi_";
 
-function loadPercorsi() {
+function loadPercorsi(language) {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(STORAGE_KEY_PREFIX + language);
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -17,8 +17,8 @@ function loadPercorsi() {
   return [];
 }
 
-function savePercorsi(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+function savePercorsi(language, data) {
+  try { localStorage.setItem(STORAGE_KEY_PREFIX + language, JSON.stringify(data)); } catch (e) {}
 }
 
 function shuffle(arr) {
@@ -48,9 +48,9 @@ export default function BersaglioGame({ onBack, selectedLanguage }) {
   const t = UI_TEXT[selectedLanguage];
   const bt = t.bersaglio || {};
 
-  const [percorsi, setPercorsi]           = useState(loadPercorsi);
+  const [percorsi, setPercorsi]           = useState(() => loadPercorsi(selectedLanguage));
   const [percorsoIdx, setPercorsoIdx]     = useState(0);
-  const [status, setStatus]               = useState(() => loadPercorsi().length > 0 ? "playing" : "empty");
+  const [status, setStatus]               = useState(() => loadPercorsi(selectedLanguage).length > 0 ? "playing" : "empty");
   const [percorso, setPercorso]           = useState([]);
   const [paroleDisplay, setParoleDisplay] = useState([]);
   const [catena, setCatena]               = useState([]);
@@ -60,6 +60,15 @@ export default function BersaglioGame({ onBack, selectedLanguage }) {
   const [gameStatus, setGameStatus]       = useState("playing");
 
   const fileRef = useRef(null);
+
+  // Quando cambia la lingua, carica i percorsi salvati per quella lingua
+  useEffect(() => {
+    const loaded = loadPercorsi(selectedLanguage);
+    setPercorsi(loaded);
+    setPercorsoIdx(0);
+    setStatus(loaded.length > 0 ? "playing" : "empty");
+    if (loaded.length > 0) initPercorso(loaded, 0);
+  }, [selectedLanguage]);
 
   function initPercorso(pList, idx) {
     const p = pList[idx] || [];
@@ -86,7 +95,7 @@ export default function BersaglioGame({ onBack, selectedLanguage }) {
       const parsed = await parseExcel(file);
       if (parsed.length === 0) return;
       setPercorsi(parsed);
-      savePercorsi(parsed);
+      savePercorsi(selectedLanguage, parsed);
       setPercorsoIdx(0);
     } catch (err) {}
     e.target.value = "";
