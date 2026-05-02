@@ -178,7 +178,7 @@ function normalizeChar(char) {
   return String(char ?? "")
     .toLocaleLowerCase("it-IT")
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    .replace(/[\u0300-\u036f\u0326]/g, "");
 }
 
 function getUniqueLetters(text) {
