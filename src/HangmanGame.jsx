@@ -64,7 +64,7 @@ const DIFFICULTY_HEARTS = {
   Difficile: 10,
 };
 
-const LETTER_REGEX = /[A-Za-zÀ-ÖØ-öø-ÿ]/;
+const LETTER_REGEX = /[A-Za-zÀ-ÖØ-öø-ÿĀ-ɏ]/;
 
 const KEYBOARD_LAYOUTS = {
   it: [
@@ -76,8 +76,8 @@ const KEYBOARD_LAYOUTS = {
     ["n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
   ],
   ro: [
-    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-    ["p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ă", "â", "î", "ș", "ț"],
+    ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],
+    ["q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ă", "â", "î"],
   ],
   fr: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s"],
