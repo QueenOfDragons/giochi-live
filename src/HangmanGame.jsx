@@ -678,9 +678,21 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
   const getDifficultyLabel = (difficulty) => {
     switch (difficulty) {
+      // Italiano
       case "Facile": return t.hangman.easy;
       case "Media": return t.hangman.medium;
       case "Difficile": return t.hangman.hard;
+      // Rumeno
+      case "Ușor": return t.hangman.easy;
+      case "Mediu": return t.hangman.medium;
+      case "Dificil": return t.hangman.hard;
+      // Inglese / Francese
+      case "Easy": return t.hangman.easy;
+      case "Medium": return t.hangman.medium;
+      case "Hard": return t.hangman.hard;
+      case "Facile_fr": return t.hangman.easy;
+      case "Moyen": return t.hangman.medium;
+      case "Difficile_fr": return t.hangman.hard;
       default: return difficulty;
     }
   };
@@ -982,8 +994,8 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                 {currentIndex + 1} / {items.length}
               </span>
               <span className={`text-[11px] font-bold px-2 py-0.5 rounded-lg ${
-                currentItem.difficulty === "Facile" ? "bg-emerald-500/20 text-emerald-300" :
-                currentItem.difficulty === "Difficile" ? "bg-rose-500/20 text-rose-300" :
+                ["Facile","Easy","Ușor"].includes(currentItem.difficulty) ? "bg-emerald-500/20 text-emerald-300" :
+                ["Difficile","Hard","Dificil"].includes(currentItem.difficulty) ? "bg-rose-500/20 text-rose-300" :
                 "bg-amber-500/20 text-amber-300"
               }`}>
                 {getDifficultyLabel(currentItem.difficulty)}
@@ -1174,7 +1186,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                       <div className="flex items-center justify-between">
                         <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.hangman.roundLabel} {idx + 1}</div>
                         <div className="flex items-center gap-1.5">
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-semibold ${item.difficulty === "Facile" ? "bg-emerald-500/20 text-emerald-300" : item.difficulty === "Difficile" ? "bg-rose-500/20 text-rose-300" : "bg-amber-500/20 text-amber-300"}`}>{getDifficultyLabel(item.difficulty)}</span>
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-semibold ${["Facile","Easy","Ușor"].includes(item.difficulty) ? "bg-emerald-500/20 text-emerald-300" : ["Difficile","Hard","Dificil"].includes(item.difficulty) ? "bg-rose-500/20 text-rose-300" : "bg-amber-500/20 text-amber-300"}`}>{getDifficultyLabel(item.difficulty)}</span>
                           <span className="text-[10px] text-slate-500">{item.text.replace(/ /g, "").length} {selectedLanguage === "it" ? "lett." : "ltrs"}</span>
                         </div>
                       </div>
