@@ -569,16 +569,11 @@ function TopControls({
   onToggleCompact,
   fileInputRef,
   handleImportFile,
-  onNext,
-  hasAttempted,
   t,
 }) {
   return (
     <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
       <button onClick={onReset} className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-2.5 py-2 text-[11px] transition hover:bg-white/15 sm:text-xs"><RotateCcw className="h-3.5 w-3.5" />{t.hangman.restart}</button>
-      <button onClick={onNext} className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[11px] font-bold transition sm:text-xs ${hasAttempted ? "bg-rose-500/80 hover:bg-rose-500" : "bg-cyan-500/80 hover:bg-cyan-500"}`}>
-        <ArrowRight className="h-3.5 w-3.5" />{hasAttempted ? (t.hangman?.abandon || "Abbandona") : (t.hangman?.next || "Avanti")}
-      </button>
       <button onClick={onRandom} className="inline-flex items-center gap-1.5 rounded-xl bg-pink-500/80 px-2.5 py-2 text-[11px] transition hover:bg-pink-500 sm:text-xs"><Shuffle className="h-3.5 w-3.5" />{t.hangman.random}</button>
       <button onClick={onImport} className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/80 px-2.5 py-2 text-[11px] transition hover:bg-emerald-500 sm:text-xs"><Upload className="h-3.5 w-3.5" />{t.hangman.import}</button>
       <button onClick={onDownloadTemplate} className="inline-flex items-center gap-1.5 rounded-xl bg-violet-500/80 px-2.5 py-2 text-[11px] transition hover:bg-violet-500 sm:text-xs"><Upload className="h-3.5 w-3.5" />{t.hangman.downloadTemplate}</button>
@@ -972,7 +967,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
   const hearts = Array.from({ length: maxHearts }, (_, i) => i < maxHearts - wrong.length);
   const hasAttempted = guessed.size > 0 || wrong.length > 0;
-  const canGoNext = status !== "playing" || showAnswer || hasAttempted;
+  const canGoNext = true; // sempre attivo: Avanti se non iniziato, Abbandona se iniziato
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 p-4 text-slate-100 md:p-8">
@@ -992,7 +987,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               <button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">{t.home.backToMenu}</button>
             </div>
 
-            <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} t={t} />
+            <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} t={t} />
 
             {/* Barra progresso + difficoltà */}
             <div className="mt-2 flex items-center justify-between px-1">
@@ -1062,13 +1057,13 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                 <button
                   type="button"
                   onClick={goNext}
-                  disabled={!canGoNext}
-                  className={`rounded-lg px-3 py-2 text-xs font-bold transition ${!canGoNext
-                    ? "cursor-not-allowed bg-white/5 text-slate-500"
-                    : "bg-emerald-500 text-white hover:bg-emerald-400 shadow-lg shadow-emerald-500/30"
-                    }`}
+                  className={`rounded-lg px-3 py-2 text-xs font-bold transition ${
+                    hasAttempted
+                      ? "bg-rose-500 text-white hover:bg-rose-400 shadow-lg shadow-rose-500/30"
+                      : "bg-cyan-500 text-white hover:bg-cyan-400 shadow-lg shadow-cyan-500/30"
+                  }`}
                 >
-                  {t.hangman.next} →
+                  {hasAttempted ? (t.hangman?.abandon || "Abbandona") : (t.hangman?.next || "Avanti")} →
                 </button>
               </div>
             </div>
@@ -1136,13 +1131,13 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                   <button
                     type="button"
                     onClick={goNext}
-                    disabled={!canGoNext}
-                    className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${!canGoNext
-                      ? "cursor-not-allowed bg-white/5 text-slate-500"
-                      : "bg-emerald-500/80 text-white hover:bg-emerald-500"
-                      }`}
+                    className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                      hasAttempted
+                        ? "bg-rose-500/80 text-white hover:bg-rose-500"
+                        : "bg-cyan-500/80 text-white hover:bg-cyan-500"
+                    }`}
                   >
-                    {t.hangman.next}
+                    {hasAttempted ? (t.hangman?.abandon || "Abbandona") : (t.hangman?.next || "Avanti")}
                   </button>
                 </div>
               </div>
