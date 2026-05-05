@@ -37,10 +37,10 @@ export default function App() {
           </div>
           <div className="flex gap-1.5">
             {[
-              { code: "it", img: "https://flagcdn.com/w40/it.png", label: "IT" },
-              { code: "en", img: "https://flagcdn.com/w40/gb.png", label: "EN" },
-              { code: "fr", img: "https://flagcdn.com/w40/fr.png", label: "FR" },
-              { code: "ro", img: "https://flagcdn.com/w40/ro.png", label: "RO" },
+              { code: "it", img: "https://hatscripts.github.io/circle-flags/flags/it.svg", label: "IT" },
+              { code: "en", img: "https://hatscripts.github.io/circle-flags/flags/gb.svg", label: "EN" },
+              { code: "fr", img: "https://hatscripts.github.io/circle-flags/flags/fr.svg", label: "FR" },
+              { code: "ro", img: "https://hatscripts.github.io/circle-flags/flags/ro.svg", label: "RO" },
             ].map(({ code, img, label }) => (
               <button
                 key={code}
