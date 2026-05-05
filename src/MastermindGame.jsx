@@ -400,28 +400,13 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
           <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-red-400 via-amber-800 to-yellow-400 bg-clip-text text-transparent">
             Mastermind
           </h1>
-          <div className="flex gap-2">
-            {status === "playing" && (
-              <motion.button
-                onClick={() => reset()}
-                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                className={`flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-bold transition ${
-                  attempts.length === 0
-                    ? "bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 hover:bg-cyan-500/30"
-                    : "bg-rose-500/20 border border-rose-400/30 text-rose-300 hover:bg-rose-500/30"
-                }`}
-              >
-                <ArrowRight className="h-3 w-3" />
-                {attempts.length === 0 ? (t.hangman?.next || "Avanti") : (t.hangman?.abandon || "Abbandona")}
-              </motion.button>
-            )}
-            <button
-              onClick={() => reset()}
-              className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-xs hover:bg-white/15 transition"
-            >
-              <RotateCcw className="h-3 w-3" />
-            </button>
-          </div>
+          <button
+            onClick={() => reset()}
+            className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-xs hover:bg-white/15 transition"
+          >
+            <RotateCcw className="h-3 w-3" />
+            {t.mastermind?.next || "New"}
+          </button>
         </div>
 
         {/* Selettore numero colori */}
