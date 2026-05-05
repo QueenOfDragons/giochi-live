@@ -49,7 +49,7 @@ export const UI_TEXT = {
     },
     mastermind: {
       won: "Hai vinto 🎉", lost: "Hai perso 😈",
-      solution: "Soluzione", next: "Avanti", colors: "Colori",
+      solution: "Soluzione", next: "Nuovo round", colors: "Colori",
       correct: "colore e posizione giusti", present: "colore giusto, posizione sbagliata",
     },
     numbergame: {
@@ -130,7 +130,7 @@ export const UI_TEXT = {
     },
     mastermind: {
       won: "You won 🎉", lost: "You lost 😈",
-      solution: "Solution", next: "Next", colors: "Colors",
+      solution: "Solution", next: "Next round", colors: "Colors",
       correct: "correct color and position", present: "correct color, wrong position",
     },
     numbergame: {
@@ -211,7 +211,7 @@ export const UI_TEXT = {
     },
     mastermind: {
       won: "Ai câștigat 🎉", lost: "Ai pierdut 😈",
-      solution: "Soluție", next: "Următor", colors: "Culori",
+      solution: "Soluție", next: "Rundă nouă", colors: "Culori",
       correct: "culoare și poziție corecte", present: "culoare corectă, poziție greșită",
     },
     numbergame: {
@@ -292,7 +292,7 @@ export const UI_TEXT = {
     },
     mastermind: {
       won: "Vous avez gagné 🎉", lost: "Vous avez perdu 😈",
-      solution: "Solution", next: "Suivant", colors: "Couleurs",
+      solution: "Solution", next: "Nouveau round", colors: "Couleurs",
       correct: "couleur et position correctes", present: "couleur correcte, mauvaise position",
     },
     numbergame: {
