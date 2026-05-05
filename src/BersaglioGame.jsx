@@ -165,6 +165,22 @@ export default function BersaglioGame({ onBack, selectedLanguage }) {
             {t.home?.backToMenu || "← Menu"}
           </button>
           <div className="flex gap-2">
+            {/* Bottone Avanti / Abbandona */}
+            {status === "playing" && percorso.length > 0 && (
+              <motion.button
+                onClick={nextPercorso}
+                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+                className={`rounded-xl px-2.5 py-1.5 text-xs font-bold transition ${
+                  catena.length === 0
+                    ? "bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 hover:bg-cyan-500/30"
+                    : "bg-rose-500/20 border border-rose-400/30 text-rose-300 hover:bg-rose-500/30"
+                }`}
+              >
+                {catena.length === 0
+                  ? (bt.skipBtn || "Avanti →")
+                  : (bt.abandonBtn || "Abbandona")}
+              </motion.button>
+            )}
             <button onClick={() => fileRef.current?.click()}
               className="rounded-xl bg-white/10 px-2.5 py-1.5 text-xs hover:bg-white/15 transition">
               📥 {bt.importBtn || "Importa"}
@@ -266,7 +282,7 @@ export default function BersaglioGame({ onBack, selectedLanguage }) {
                       whileHover={clickable ? { scale: 1.04, y: -2 } : {}}
                       whileTap={clickable ? { scale: 0.95 } : {}}
                       className={`
-                        rounded-xl px-1 py-1.5 text-2xl font-bold border transition select-none text-center w-full
+                        rounded-xl px-1 py-1.5 text-xl font-bold border transition select-none text-center w-full
                         ${isWon
                           ? "bg-yellow-400 border-yellow-300 text-black shadow-lg shadow-yellow-400/50"
                           : isFirst

@@ -568,11 +568,16 @@ function TopControls({
   onToggleCompact,
   fileInputRef,
   handleImportFile,
+  onNext,
+  hasAttempted,
   t,
 }) {
   return (
     <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
       <button onClick={onReset} className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-2.5 py-2 text-[11px] transition hover:bg-white/15 sm:text-xs"><RotateCcw className="h-3.5 w-3.5" />{t.hangman.restart}</button>
+      <button onClick={onNext} className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[11px] font-bold transition sm:text-xs ${hasAttempted ? "bg-rose-500/80 hover:bg-rose-500" : "bg-cyan-500/80 hover:bg-cyan-500"}`}>
+        <ArrowRight className="h-3.5 w-3.5" />{hasAttempted ? t.hangman.abandon : t.hangman.next}
+      </button>
       <button onClick={onRandom} className="inline-flex items-center gap-1.5 rounded-xl bg-pink-500/80 px-2.5 py-2 text-[11px] transition hover:bg-pink-500 sm:text-xs"><Shuffle className="h-3.5 w-3.5" />{t.hangman.random}</button>
       <button onClick={onImport} className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/80 px-2.5 py-2 text-[11px] transition hover:bg-emerald-500 sm:text-xs"><Upload className="h-3.5 w-3.5" />{t.hangman.import}</button>
       <button onClick={onDownloadTemplate} className="inline-flex items-center gap-1.5 rounded-xl bg-violet-500/80 px-2.5 py-2 text-[11px] transition hover:bg-violet-500 sm:text-xs"><Upload className="h-3.5 w-3.5" />{t.hangman.downloadTemplate}</button>
@@ -986,7 +991,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               <button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">{t.home.backToMenu}</button>
             </div>
 
-            <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} t={t} />
+            <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} t={t} />
 
             {/* Barra progresso + difficoltà */}
             <div className="mt-2 flex items-center justify-between px-1">
