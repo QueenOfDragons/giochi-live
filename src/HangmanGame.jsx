@@ -4,6 +4,7 @@ import { UI_TEXT } from "./texts/uiText";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
 import {
+  ArrowRight,
   Eye,
   EyeOff,
   Heart,
