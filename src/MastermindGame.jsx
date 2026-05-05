@@ -390,16 +390,12 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
         )}
       </AnimatePresence>
 
-      <div className="relative z-10 mx-auto max-w-lg px-4 py-4">
-
-        {/* Header */}
-        <div className="mb-2 flex items-center justify-between">
+      {/* Barra bottoni superiore */}
+      <div className="relative z-10 w-full border-b border-white/10 mb-2">
+        <div className="flex items-center justify-between px-4 py-2">
           <button onClick={onBack} className="text-xs text-slate-400 hover:text-white transition">
             {t.home.backToMenu}
           </button>
-          <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-red-400 via-amber-800 to-yellow-400 bg-clip-text text-transparent">
-            Mastermind
-          </h1>
           <button
             onClick={() => reset()}
             className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-xs hover:bg-white/15 transition"
@@ -408,6 +404,20 @@ export default function MastermindGame({ onBack, selectedLanguage }) {
             {t.mastermind?.next || "New"}
           </button>
         </div>
+      </div>
+
+      {/* Titolo con barra decorativa */}
+      <div className="relative z-10 w-full mb-3">
+        <div className="h-1 w-full bg-gradient-to-r from-red-400 via-violet-400 to-pink-400 opacity-60" />
+        <div className="flex items-center justify-center gap-2 py-3">
+          <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-red-400 via-violet-400 to-pink-400 bg-clip-text text-transparent">
+            Mastermind
+          </h1>
+        </div>
+        <div className="h-1 w-full bg-gradient-to-r from-red-400 via-violet-400 to-pink-400 opacity-60" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-lg px-4 py-2">
 
         {/* Selettore numero colori */}
         <div className="mb-2 flex items-center justify-center gap-2">
