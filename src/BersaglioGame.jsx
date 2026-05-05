@@ -158,16 +158,12 @@ export default function BersaglioGame({ onBack, selectedLanguage }) {
         )}
       </AnimatePresence>
 
-      <div className="relative z-10 mx-auto max-w-lg px-4 py-4">
-
-        {/* Header */}
-        <div className="mb-3 flex items-center justify-between">
+      {/* Barra bottoni superiore */}
+      <div className="relative z-10 w-full border-b border-white/10 mb-2">
+        <div className="flex items-center justify-between px-4 py-2">
           <button onClick={onBack} className="text-xs text-slate-400 hover:text-white transition">
             {t.home?.backToMenu || "← Menu"}
           </button>
-          <h1 className="text-2xl font-black bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
-            {bt.title || "Il Bersaglio"}
-          </h1>
           <div className="flex gap-2">
             <button onClick={() => fileRef.current?.click()}
               className="rounded-xl bg-white/10 px-2.5 py-1.5 text-xs hover:bg-white/15 transition">
@@ -180,6 +176,21 @@ export default function BersaglioGame({ onBack, selectedLanguage }) {
           </div>
           <input ref={fileRef} type="file" accept=".xlsx" className="hidden" onChange={handleFile} />
         </div>
+      </div>
+
+      {/* Titolo con barra decorativa */}
+      <div className="relative z-10 w-full mb-3">
+        <div className="h-1 w-full bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 opacity-60" />
+        <div className="flex items-center justify-center gap-2 py-3">
+          <span className="text-2xl">🎯</span>
+          <h1 className="text-2xl font-black bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
+            {bt.title || "Il Bersaglio"}
+          </h1>
+        </div>
+        <div className="h-1 w-full bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 opacity-60" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-lg px-4 py-2">
 
         {/* Stato vuoto */}
         {status === "empty" && (
