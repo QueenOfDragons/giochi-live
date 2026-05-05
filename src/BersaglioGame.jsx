@@ -246,9 +246,9 @@ export default function BersaglioGame({ onBack, selectedLanguage }) {
               </div>
             )}
 
-            {/* Griglia parole */}
+            {/* Griglia parole — max 3 per riga */}
             <div className="mb-3 rounded-3xl border border-white/10 bg-white/5 p-4 shadow-2xl">
-              <div className="flex flex-wrap gap-2 justify-center">
+              <div className="grid grid-cols-3 gap-2">
                 {paroleDisplay.map((parola, i) => {
                   const isFirst  = parola === firstWord;
                   const isLast   = parola === lastWord;
@@ -263,10 +263,10 @@ export default function BersaglioGame({ onBack, selectedLanguage }) {
                       onClick={() => clickable && handleWordClick(parola)}
                       animate={isShaking ? { x: [0, -8, 8, -5, 5, 0] } : { x: 0 }}
                       transition={{ duration: 0.3 }}
-                      whileHover={clickable ? { scale: 1.07, y: -2 } : {}}
+                      whileHover={clickable ? { scale: 1.04, y: -2 } : {}}
                       whileTap={clickable ? { scale: 0.95 } : {}}
                       className={`
-                        rounded-xl px-3 py-2 text-sm font-bold border transition select-none
+                        rounded-xl px-2 py-3 text-base font-bold border transition select-none text-center w-full
                         ${isWon
                           ? "bg-yellow-400 border-yellow-300 text-black shadow-lg shadow-yellow-400/50"
                           : isFirst
