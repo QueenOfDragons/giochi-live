@@ -266,7 +266,7 @@ export default function BersaglioGame({ onBack, selectedLanguage }) {
                       whileHover={clickable ? { scale: 1.04, y: -2 } : {}}
                       whileTap={clickable ? { scale: 0.95 } : {}}
                       className={`
-                        rounded-xl px-2 py-3 text-base font-bold border transition select-none text-center w-full
+                        rounded-xl px-1 py-1.5 text-lg font-bold border transition select-none text-center w-full
                         ${isWon
                           ? "bg-yellow-400 border-yellow-300 text-black shadow-lg shadow-yellow-400/50"
                           : isFirst
