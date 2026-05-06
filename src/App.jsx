@@ -20,6 +20,7 @@ const PLAYER_COLORS = [
 // Conversione donazioni non lineare — diminishing returns
 // protegge dal pay-to-win lasciando impatto reale alle donazioni piccole
 const coinsToPoints = (coins) => {
+  if (coins > 10000)  return 50;
   if (coins >= 10000) return 30;
   if (coins >= 5000)  return 20;
   if (coins >= 1000)  return 7;
@@ -118,8 +119,16 @@ function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound
         </div>
 
         {/* Info conversione */}
-        <div className="px-5 py-2 text-center">
-          <span className="text-[10px] text-slate-500">100→1pt · 500→4pt · 1000→7pt · 5000→20pt</span>
+        <div className="px-4 py-2">
+          <div className="text-[10px] text-slate-500 text-center mb-1">💰 Conversione donazioni</div>
+          <div className="grid grid-cols-5 gap-1 text-center">
+            {[[100,1],[500,4],[1000,7],[5000,20],[10000,30]].map(([coins, pts]) => (
+              <div key={coins} className="rounded-lg bg-white/5 py-1">
+                <div className="text-[9px] text-slate-400 font-bold">{coins >= 1000 ? (coins/1000)+"K" : coins}</div>
+                <div className="text-[10px] font-black text-yellow-400">{pts}pt</div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Bottoni */}
@@ -317,9 +326,20 @@ function CompetitionSetup({ onStart, onBack }) {
           </div>
         </div>
 
-        {/* Info conversione */}
-        <div className="mb-4 rounded-xl bg-yellow-500/10 border border-yellow-400/20 px-4 py-2 text-center">
-          <span className="text-xs text-yellow-300">💰 100→1pt  500→4pt  1000→7pt  5000→20pt  10000→30pt</span>
+        {/* Info conversione — tabellina */}
+        <div className="mb-4 rounded-2xl bg-yellow-500/10 border border-yellow-400/20 p-3">
+          <div className="text-xs font-semibold text-yellow-300 mb-2 text-center">💰 Conversione Donazioni</div>
+          <div className="grid grid-cols-5 gap-1 text-center">
+            {[[100,1],[500,4],[1000,7],[5000,20],[10000,30]].map(([coins, pts]) => (
+              <div key={coins} className="rounded-lg bg-yellow-500/10 py-1.5 px-1">
+                <div className="text-[10px] text-yellow-200 font-bold">{coins >= 1000 ? (coins/1000)+"K" : coins}</div>
+                <div className="text-[9px] text-slate-400">monete</div>
+                <div className="text-sm font-black text-yellow-400">{pts}</div>
+                <div className="text-[9px] text-slate-400">pt</div>
+              </div>
+            ))}
+          </div>
+          <div className="text-[10px] text-slate-500 text-center mt-2">Oltre 10.000 monete: 50 punti fissi</div>
         </div>
 
         {/* Start */}
