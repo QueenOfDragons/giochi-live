@@ -60,7 +60,7 @@ const DEFAULT_ITEMS_BY_LANG = {
 const DEFAULT_ITEMS = DEFAULT_ITEMS_IT;
 
 const DIFFICULTY_HEARTS = {
-  Facile: 7,
+  Facile: 6,
   Media: 8,
   Difficile: 10,
 };
@@ -291,23 +291,28 @@ function CuteRobotFace({ state = "idle" }) {
 }
 
 function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
-  const step = maxHearts / 7;
-  const phase1 = step * 1;
-  const phase2 = step * 2;
-  const phase3 = step * 3;
-  const phase4 = step * 4;
-  const phase5 = step * 5;
-  const phase6 = step * 6;
-  const phase7 = step * 7;
+  // Parti visibili = maxHearts, ogni errore toglie una parte
+  // Facile (6): braccia, gambe, corpo, testa
+  // Media (8): + orecchie, antenna
+  // Difficile (10): + spalla sinistra, spalla destra, bacino
 
-  const bodyVisible = wrongCount < phase5;
-  const leftArmVisible = wrongCount < phase1;
-  const rightArmVisible = wrongCount < phase2;
-  const leftLegVisible = wrongCount < phase3;
-  const rightLegVisible = wrongCount < phase4;
-  const earsVisible = wrongCount < phase5;
-  const antennaVisible = wrongCount < phase6;
-  const headVisible = wrongCount < phase7;
+  const p = (n) => wrongCount < n; // parte visibile se errori < soglia
+
+  // Parti comuni a tutti i livelli (6)
+  const leftArmVisible  = p(1);
+  const rightArmVisible = p(2);
+  const leftLegVisible  = p(3);
+  const rightLegVisible = p(4);
+  const bodyVisible     = p(5);
+  const headVisible     = p(6);
+
+  // Parti aggiuntive Media (8): orecchie e antenna
+  const earsVisible     = maxHearts >= 8 ? p(7) : p(5);
+  const antennaVisible  = maxHearts >= 8 ? p(8) : p(6);
+
+  // Parti aggiuntive Difficile (10): spalle e bacino
+  const leftShoulderVisible  = maxHearts >= 10 ? p(9)  : false;
+  const rightShoulderVisible = maxHearts >= 10 ? p(10) : false;
 
   const leftArmOuter = isWon
     ? "absolute left-[6px] top-[58px] h-[34px] w-[30px]"
@@ -353,6 +358,9 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
 
         <RobotPiece show={earsVisible} className="absolute left-[9px] top-[28px] h-3.5 w-3.5 rounded-full border-[2px] border-sky-500 bg-sky-300 sm:left-[11px] sm:top-[33px]" exitY={70} exitRotate={-25} />
         <RobotPiece show={earsVisible} className="absolute right-[9px] top-[28px] h-3.5 w-3.5 rounded-full border-[2px] border-sky-500 bg-sky-300 sm:right-[11px] sm:top-[33px]" exitY={70} exitRotate={25} />
+        {/* Spalle — solo Difficile */}
+        <RobotPiece show={leftShoulderVisible} className="absolute left-[4px] top-[52px] h-3 w-3 rounded-sm bg-orange-400 border border-orange-500 sm:left-[6px] sm:top-[62px]" exitY={80} exitRotate={-30} />
+        <RobotPiece show={rightShoulderVisible} className="absolute right-[4px] top-[52px] h-3 w-3 rounded-sm bg-orange-400 border border-orange-500 sm:right-[6px] sm:top-[62px]" exitY={80} exitRotate={30} />
 
         <RobotPiece show={bodyVisible} className="absolute left-[20px] top-[48px] h-[34px] w-[42px] sm:left-[24px] sm:top-[58px] sm:h-[38px] sm:w-[48px]" exitY={82} exitRotate={20}>
           <div className="absolute inset-0 rounded-[16px] border-[2px] border-sky-400 bg-gradient-to-br from-orange-200 to-orange-300 shadow-md" />
@@ -569,11 +577,18 @@ function TopControls({
   onToggleCompact,
   fileInputRef,
   handleImportFile,
+  onNext,
+  hasAttempted,
   t,
 }) {
   return (
     <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
       <button onClick={onReset} className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-2.5 py-2 text-[11px] transition hover:bg-white/15 sm:text-xs"><RotateCcw className="h-3.5 w-3.5" />{t.hangman.restart}</button>
+      {hasAttempted && (
+        <button onClick={onNext} className="inline-flex items-center gap-1.5 rounded-xl bg-rose-500/80 px-2.5 py-2 text-[11px] font-bold text-white transition hover:bg-rose-500 sm:text-xs">
+          <ArrowRight className="h-3.5 w-3.5" />{t.hangman?.abandon || "Abbandona"}
+        </button>
+      )}
       <button onClick={onRandom} className="inline-flex items-center gap-1.5 rounded-xl bg-pink-500/80 px-2.5 py-2 text-[11px] transition hover:bg-pink-500 sm:text-xs"><Shuffle className="h-3.5 w-3.5" />{t.hangman.random}</button>
       <button onClick={onImport} className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/80 px-2.5 py-2 text-[11px] transition hover:bg-emerald-500 sm:text-xs"><Upload className="h-3.5 w-3.5" />{t.hangman.import}</button>
       <button onClick={onDownloadTemplate} className="inline-flex items-center gap-1.5 rounded-xl bg-violet-500/80 px-2.5 py-2 text-[11px] transition hover:bg-violet-500 sm:text-xs"><Upload className="h-3.5 w-3.5" />{t.hangman.downloadTemplate}</button>
@@ -987,7 +1002,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               <button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">{t.home.backToMenu}</button>
             </div>
 
-            <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} t={t} />
+            <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} t={t} />
 
             {/* Barra progresso + difficoltà */}
             <div className="mt-2 flex items-center justify-between px-1">
@@ -1057,13 +1072,9 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                 <button
                   type="button"
                   onClick={goNext}
-                  className={`rounded-lg px-3 py-2 text-xs font-bold transition ${
-                    hasAttempted
-                      ? "bg-rose-500 text-white hover:bg-rose-400 shadow-lg shadow-rose-500/30"
-                      : "bg-cyan-500 text-white hover:bg-cyan-400 shadow-lg shadow-cyan-500/30"
-                  }`}
+                  className="rounded-lg px-3 py-2 text-xs font-bold transition bg-cyan-500 text-white hover:bg-cyan-400 shadow-lg shadow-cyan-500/30"
                 >
-                  {hasAttempted ? (t.hangman?.abandon || "Abbandona") : (t.hangman?.next || "Avanti")} →
+                  {t.hangman?.next || "Avanti"} →
                 </button>
               </div>
             </div>
@@ -1083,7 +1094,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                   <h1 className="text-2xl font-bold md:text-4xl">{t.hangman.title}</h1>
                 </div>
                 <div className="mb-2 flex justify-center"><button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">{t.home.backToMenu}</button></div>
-                <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} t={t} />
+                <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} t={t} />
               </div>
 
               <div className="mb-5 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4">
@@ -1131,13 +1142,9 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                   <button
                     type="button"
                     onClick={goNext}
-                    className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                      hasAttempted
-                        ? "bg-rose-500/80 text-white hover:bg-rose-500"
-                        : "bg-cyan-500/80 text-white hover:bg-cyan-500"
-                    }`}
+                    className="rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-cyan-500/80 text-white hover:bg-cyan-500"
                   >
-                    {hasAttempted ? (t.hangman?.abandon || "Abbandona") : (t.hangman?.next || "Avanti")}
+                    {t.hangman?.next || "Avanti"}
                   </button>
                 </div>
               </div>
