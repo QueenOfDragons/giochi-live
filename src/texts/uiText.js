@@ -5,6 +5,7 @@ export const UI_TEXT = {
       subtitle: "Scegli il gioco da usare in live",
       languageLabel: "Lingua",
       open: "Apri",
+      chooseMode: "Scegli una modalità per iniziare",
       backToMenu: "← Torna al menu",
     },
     games: {
@@ -114,7 +115,7 @@ export const UI_TEXT = {
     home: {
       title: "Live Games Hub",
       subtitle: "Choose the game to use on live",
-      languageLabel: "Language", open: "Open", backToMenu: "← Back to menu",
+      languageLabel: "Language", open: "Open", chooseMode: "Choose a mode to start", backToMenu: "← Back to menu",
     },
     games: {
       hangmanTitle: "Hangman",
@@ -223,7 +224,7 @@ export const UI_TEXT = {
     home: {
       title: "Hub Jocuri Live",
       subtitle: "Alege jocul pentru live",
-      languageLabel: "Limbă", open: "Deschide", backToMenu: "← Înapoi la meniu",
+      languageLabel: "Limbă", open: "Deschide", chooseMode: "Alege un mod pentru a începe", backToMenu: "← Înapoi la meniu",
     },
     games: {
       hangmanTitle: "Ghicește cuvântul",
@@ -332,7 +333,7 @@ export const UI_TEXT = {
     home: {
       title: "Jeux en direct",
       subtitle: "Choisissez un jeu et jouez avec votre communauté",
-      languageLabel: "Langue", open: "Ouvrir", backToMenu: "← Retour au menu",
+      languageLabel: "Langue", open: "Ouvrir", chooseMode: "Choisissez un mode pour commencer", backToMenu: "← Retour au menu",
     },
     games: {
       hangmanTitle: "Jeu du pendu",

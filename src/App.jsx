@@ -563,7 +563,7 @@ export default function App() {
         {/* Placeholder modalità non selezionata */}
         {!mode && (
           <div className="text-center text-slate-500 text-sm py-4">
-            Scegli una modalità per iniziare
+            {t.home.chooseMode}
           </div>
         )}
       </div>
