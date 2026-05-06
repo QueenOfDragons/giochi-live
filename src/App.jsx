@@ -17,7 +17,16 @@ const PLAYER_COLORS = [
   { bg: "bg-orange-500",  ring: "ring-orange-400",  text: "text-orange-300",  hex: "#f97316", name: "Arancio" },
 ];
 
-const COINS_PER_POINT = 100;
+// Conversione donazioni non lineare — diminishing returns
+// protegge dal pay-to-win lasciando impatto reale alle donazioni piccole
+const coinsToPoints = (coins) => {
+  if (coins >= 10000) return 30;
+  if (coins >= 5000)  return 20;
+  if (coins >= 1000)  return 7;
+  if (coins >= 500)   return 4;
+  if (coins >= 100)   return 1;
+  return 0;
+};
 
 // ── Scoreboard tra round ─────────────────────────────────────────────────────
 function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound, onEndCompetition, currentRound, totalRounds }) {
@@ -43,7 +52,7 @@ function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound
         {/* Classifica */}
         <div className="p-4 space-y-2 max-h-[55vh] overflow-y-auto">
           {sorted.map((player, rank) => {
-            const bonusPoints = Math.floor(player.coins / COINS_PER_POINT);
+            const bonusPoints = coinsToPoints(player.coins);
             const total = player.points + bonusPoints;
             const color = PLAYER_COLORS[player.colorIdx];
             return (
@@ -110,7 +119,7 @@ function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound
 
         {/* Info conversione */}
         <div className="px-5 py-2 text-center">
-          <span className="text-[10px] text-slate-500">{COINS_PER_POINT} monete = 1 punto bonus</span>
+          <span className="text-[10px] text-slate-500">100→1pt · 500→4pt · 1000→7pt · 5000→20pt</span>
         </div>
 
         {/* Bottoni */}
@@ -154,7 +163,7 @@ function CompetitionPodium({ players, onClose }) {
 
         <div className="p-5 space-y-3">
           {sorted.map((player, rank) => {
-            const bonusPoints = Math.floor(player.coins / COINS_PER_POINT);
+            const bonusPoints = coinsToPoints(player.coins);
             const total = player.points + bonusPoints;
             const color = PLAYER_COLORS[player.colorIdx];
             return (
@@ -310,7 +319,7 @@ function CompetitionSetup({ onStart, onBack }) {
 
         {/* Info conversione */}
         <div className="mb-4 rounded-xl bg-yellow-500/10 border border-yellow-400/20 px-4 py-2 text-center">
-          <span className="text-xs text-yellow-300">💰 {COINS_PER_POINT} monete ricevute = 1 punto bonus a fine competizione</span>
+          <span className="text-xs text-yellow-300">💰 100→1pt  500→4pt  1000→7pt  5000→20pt  10000→30pt</span>
         </div>
 
         {/* Start */}
