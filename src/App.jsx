@@ -30,7 +30,7 @@ const coinsToPoints = (coins) => {
 };
 
 // ── Scoreboard tra round ─────────────────────────────────────────────────────
-function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound, onEndCompetition, currentRound, totalRounds }) {
+function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound, onEndCompetition, currentRound, totalRounds, t }) {
   const [donationInput, setDonationInput] = useState({});
   const sorted = [...players].sort((a, b) => (b.points + Math.floor(b.coins / COINS_PER_POINT)) - (a.points + Math.floor(a.coins / COINS_PER_POINT)));
 
@@ -43,7 +43,7 @@ function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound
         <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-b border-white/10 px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-yellow-400" />
-            <span className="font-black text-white text-lg">Classifica</span>
+            <span className="font-black text-white text-lg">{t.competition.bannerLabel}</span>
           </div>
           <span className="text-xs text-slate-400 font-semibold">
             Round {currentRound} / {totalRounds}
@@ -69,15 +69,15 @@ function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound
                   {/* Punteggi */}
                   <div className="flex items-center gap-3 text-xs">
                     <div className="text-center">
-                      <div className="text-slate-400">Gioco</div>
+                      <div className="text-slate-400">{t.competition.scoreGame}</div>
                       <div className="font-black text-white">{player.points}</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-slate-400">Monete</div>
+                      <div className="text-slate-400">{t.competition.scoreCoins}</div>
                       <div className={`font-black ${color.text}`}>{player.coins}</div>
                     </div>
                     <div className="text-center border-l border-white/20 pl-3">
-                      <div className="text-slate-400">Totale</div>
+                      <div className="text-slate-400">{t.competition.scoreTotal}</div>
                       <div className="font-black text-yellow-400 text-base">{total}</div>
                     </div>
                   </div>
@@ -88,7 +88,7 @@ function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound
                   {/* +1 punto */}
                   <button onClick={() => onAddPoint(player.id)}
                     className="flex-1 flex items-center justify-center gap-1 rounded-xl bg-emerald-500/20 border border-emerald-400/30 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/30 transition">
-                    <Star className="h-3 w-3" /> +1 punto
+                    <Star className="h-3 w-3" /> {t.competition.addPoint}
                   </button>
                   {/* Donazione */}
                   <div className="flex-1 flex gap-1">
@@ -151,7 +151,7 @@ function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound
 }
 
 // ── Podio finale ──────────────────────────────────────────────────────────────
-function CompetitionPodium({ players, onClose }) {
+function CompetitionPodium({ players, onClose, t }) {
   const sorted = [...players].sort((a, b) => {
     const totalA = a.points + Math.floor(a.coins / COINS_PER_POINT);
     const totalB = b.points + Math.floor(b.coins / COINS_PER_POINT);
@@ -167,7 +167,7 @@ function CompetitionPodium({ players, onClose }) {
 
         <div className="bg-gradient-to-r from-yellow-500/30 to-orange-500/30 px-5 py-5 text-center border-b border-white/10">
           <div className="text-4xl mb-1">🏆</div>
-          <div className="text-2xl font-black text-yellow-400">Classifica Finale!</div>
+          <div className="text-2xl font-black text-yellow-400">{t.competition.finalTitle}</div>
         </div>
 
         <div className="p-5 space-y-3">
@@ -208,7 +208,7 @@ function CompetitionPodium({ players, onClose }) {
 }
 
 // ── Setup competizione ────────────────────────────────────────────────────────
-function CompetitionSetup({ onStart, onBack }) {
+function CompetitionSetup({ onStart, onBack, t }) {
   const [players, setPlayers] = useState([
     { id: 1, name: "", colorIdx: 0 },
     { id: 2, name: "", colorIdx: 1 },
@@ -247,13 +247,13 @@ function CompetitionSetup({ onStart, onBack }) {
           <button onClick={onBack} className="text-xs text-slate-400 hover:text-white transition">← Menu</button>
           <div className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-yellow-400" />
-            <h1 className="text-xl font-black text-white">Nuova Competizione</h1>
+            <h1 className="text-xl font-black text-white">{t.competition.title}</h1>
           </div>
         </div>
 
         {/* Gioco */}
         <div className="mb-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-          <div className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wide">Gioco</div>
+          <div className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wide">{t.competition.scoreGame}</div>
           <div className="grid grid-cols-2 gap-2">
             {games.map(g => (
               <button key={g.id} onClick={() => setSelectedGame(g.id)}
@@ -266,7 +266,7 @@ function CompetitionSetup({ onStart, onBack }) {
 
         {/* Round */}
         <div className="mb-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-          <div className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wide">Numero di Round</div>
+          <div className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wide">{t.competition.rounds}</div>
           <div className="flex items-center gap-4 justify-center">
             <button onClick={() => setRounds(r => Math.max(1, r - 1))}
               className="h-10 w-10 rounded-xl bg-white/10 hover:bg-white/15 transition flex items-center justify-center">
@@ -308,7 +308,7 @@ function CompetitionSetup({ onStart, onBack }) {
                 {/* Nome */}
                 <input
                   type="text"
-                  placeholder={`Giocatore ${players.indexOf(player) + 1}`}
+                  placeholder={`${t.competition.playerPlaceholder} ${players.indexOf(player) + 1}`}
                   value={player.name}
                   onChange={e => updateName(player.id, e.target.value)}
                   maxLength={20}
@@ -339,7 +339,7 @@ function CompetitionSetup({ onStart, onBack }) {
               </div>
             ))}
           </div>
-          <div className="text-[10px] text-slate-500 text-center mt-2">Oltre 10.000 monete: 50 punti fissi</div>
+          <div className="text-[10px] text-slate-500 text-center mt-2">{t.competition.conversionNote}</div>
         </div>
 
         {/* Start */}
@@ -349,7 +349,7 @@ function CompetitionSetup({ onStart, onBack }) {
           whileHover={canStart ? { scale: 1.03 } : {}}
           whileTap={canStart ? { scale: 0.97 } : {}}
           className={`w-full rounded-2xl py-4 font-black text-lg transition ${canStart ? "bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg shadow-yellow-500/30" : "bg-white/5 text-slate-600 cursor-not-allowed"}`}>
-          🏆 Inizia Competizione
+          {t.competition.start}
         </motion.button>
       </div>
     </div>
@@ -447,6 +447,7 @@ export default function App() {
     return (
       <CompetitionScoreboard
         players={competition.players}
+        t={t}
         onAddPoint={addPoint}
         onAddDonation={addDonation}
         onNextRound={nextRound}
@@ -459,12 +460,12 @@ export default function App() {
 
   // Podio
   if (showPodium) {
-    return <CompetitionPodium players={competition.players} onClose={resetAll} />;
+    return <CompetitionPodium players={competition.players} onClose={resetAll} t={t} />;
   }
 
   // Setup competizione
   if (mode === "competition-setup") {
-    return <CompetitionSetup onStart={startCompetition} onBack={() => setMode(null)} />;
+    return <CompetitionSetup onStart={startCompetition} onBack={() => setMode(null)} t={t} />;
   }
 
   // Modalità live — gioco attivo
@@ -509,14 +510,14 @@ export default function App() {
           <button onClick={() => setMode("live")}
             className={`rounded-2xl border p-4 text-left transition ${mode === "live" ? "border-cyan-400/50 bg-cyan-500/15" : "border-white/10 bg-white/5 hover:bg-white/10"}`}>
             <div className="text-2xl mb-1">🎮</div>
-            <div className="font-bold text-white text-sm">Live con chat</div>
-            <div className="text-[11px] text-slate-400 mt-0.5">Gioca con il pubblico TikTok</div>
+            <div className="font-bold text-white text-sm">{t.competition.modeLive}</div>
+            <div className="text-[11px] text-slate-400 mt-0.5">{t.competition.modeLiveDesc}</div>
           </button>
           <button onClick={() => setMode("competition-setup")}
             className="rounded-2xl border border-yellow-400/30 bg-yellow-500/10 p-4 text-left hover:bg-yellow-500/15 transition">
             <div className="text-2xl mb-1">🏆</div>
-            <div className="font-bold text-yellow-300 text-sm">Competizione</div>
-            <div className="text-[11px] text-slate-400 mt-0.5">Gara tra 2-6 giocatori nel panel</div>
+            <div className="font-bold text-yellow-300 text-sm">{t.competition.modeComp}</div>
+            <div className="text-[11px] text-slate-400 mt-0.5">{t.competition.modeCompDesc}</div>
           </button>
         </div>
 
