@@ -709,7 +709,7 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
   const remainingIndexesRef = useRef([]);
 
   const currentItem = items[currentIndex] || DEFAULT_ITEMS[0];
-  const maxHearts = DIFFICULTY_HEARTS[currentItem.difficulty] || 8;
+  const maxHearts = competitionMode ? 12 : (DIFFICULTY_HEARTS[currentItem.difficulty] || 8);
   const uniqueLetters = useMemo(() => getUniqueLetters(currentItem.text), [currentItem.text]);
   const masked = useMemo(() => maskCharacters(currentItem.text, guessed), [currentItem.text, guessed]);
 
@@ -827,8 +827,25 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
     const available = allKeys.filter(k => !guessedArray.includes(k) && !wrong.includes(k));
     if (available.length === 0) return;
 
+    // Probabilità pesata 60/40 — lettere presenti nella parola escono più spesso
+    const presentLetters = available.filter(k => uniqueLetters.includes(k));
+    const absentLetters = available.filter(k => !uniqueLetters.includes(k));
+
+    let winner;
+    if (presentLetters.length === 0) {
+      winner = absentLetters[Math.floor(Math.random() * absentLetters.length)];
+    } else if (absentLetters.length === 0) {
+      winner = presentLetters[Math.floor(Math.random() * presentLetters.length)];
+    } else {
+      // 60% lettere presenti, 40% lettere assenti
+      const pool = [
+        ...presentLetters, ...presentLetters, ...presentLetters,  // peso 3x
+        ...absentLetters, ...absentLetters,                        // peso 2x
+      ];
+      winner = pool[Math.floor(Math.random() * pool.length)];
+    }
+
     setSlotSpinning(true);
-    const winner = available[Math.floor(Math.random() * available.length)];
 
     // Sequenza di intervalli: parte lento, accelera, poi rallenta prima della fine
     // Totale ~4 secondi

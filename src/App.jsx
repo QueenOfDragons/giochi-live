@@ -32,7 +32,11 @@ const coinsToPoints = (coins) => {
 // ── Scoreboard tra round ─────────────────────────────────────────────────────
 function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound, onEndCompetition, currentRound, totalRounds, t }) {
   const [donationInput, setDonationInput] = useState({});
-  const sorted = [...players].sort((a, b) => (b.points + Math.floor(b.coins / COINS_PER_POINT)) - (a.points + Math.floor(a.coins / COINS_PER_POINT)));
+
+  // Guardia — se players non è valido non renderizzare
+  if (!players || players.length === 0) return null;
+
+  const sorted = [...players].sort((a, b) => (b.points + coinsToPoints(b.coins)) - (a.points + coinsToPoints(a.coins)));
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/95 flex items-center justify-center p-4">
@@ -152,6 +156,8 @@ function CompetitionScoreboard({ players, onAddPoint, onAddDonation, onNextRound
 
 // ── Podio finale ──────────────────────────────────────────────────────────────
 function CompetitionPodium({ players, onClose, t }) {
+  if (!players || players.length === 0) return null;
+
   const sorted = [...players].sort((a, b) => {
     const totalA = a.points + Math.floor(a.coins / COINS_PER_POINT);
     const totalB = b.points + Math.floor(b.coins / COINS_PER_POINT);
