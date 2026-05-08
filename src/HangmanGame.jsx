@@ -985,7 +985,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
   const canGoNext = true; // sempre attivo: Avanti se non iniziato, Abbandona se iniziato
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-950 p-4 text-slate-100 md:p-8">
+    <div className={`relative overflow-hidden bg-slate-950 text-slate-100 ${compactMode ? "h-screen p-0" : "min-h-screen p-4 md:p-8"}`}>
       <style>{`img.twemoji-small { height: 0.9em; width: 0.9em; vertical-align: -0.12em; display: inline-block; }`}</style>
 
       <AnimatePresence>
@@ -995,13 +995,13 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
         {flashMode === "won" ? <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.14 }} exit={{ opacity: 0 }} className="pointer-events-none absolute inset-0 z-0 bg-emerald-400" /> : null}
       </AnimatePresence>
 
-      <div className={`relative z-10 ${compactMode ? "w-full overflow-x-auto" : "mx-auto max-w-6xl"}`}>
+      <div className={`relative z-10 ${compactMode ? "w-full h-screen" : "mx-auto max-w-6xl"}`}>
         {compactMode ? (
           <motion.div
             animate={boardShake ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }}
             transition={{ duration: 0.35 }}
-            style={{ width: "1674px", height: "1080px", maxWidth: "100vw" }}
-            className="flex flex-col rounded-[28px] border border-white/10 bg-white/5 shadow-2xl backdrop-blur-sm overflow-hidden mx-auto"
+            style={{ width: "100%", height: "100vh", maxHeight: "100vh" }}
+            className="flex flex-col rounded-[28px] border border-white/10 bg-white/5 shadow-2xl backdrop-blur-sm overflow-hidden"
           >
             {/* Riga 1 — Bottoni (altezza fissa ~52px) */}
             <div className="flex-none px-4 pt-3 pb-1">
@@ -1022,7 +1022,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
             </div>
 
             {/* Riga 3 — Indizio (altezza fissa ~90px) */}
-            <div className="flex-none mx-4 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 px-5 py-3 text-center" style={{ minHeight: "80px", maxHeight: "90px" }}>
+            <div className="flex-none mx-4 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 px-5 py-3 text-center" style={{ minHeight: "60px", maxHeight: "90px" }}>
               <div className="text-xl font-semibold leading-snug tracking-wide line-clamp-2">
                 {renderHintWithEmoji(currentItem.hint)}
               </div>
@@ -1034,17 +1034,17 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
               <span className="text-slate-400 text-sm">—</span>
               <div className="flex items-center gap-1.5 text-sm text-white">
                 <span>Vocali: 1</span>
-                <img src="/rosa.png" alt="Rosa" style={{height:"24px", width:"24px", objectFit:"contain"}} />
+                <img src="/Rosa.png" alt="Rosa" style={{height:"24px", width:"24px", objectFit:"contain"}} />
                 <span>Rosa</span>
                 <span className="text-slate-400 mx-1">|</span>
                 <span>1</span>
-                <img src="/lovvami.png" alt="Lovvami" style={{height:"24px", width:"24px", objectFit:"contain"}} />
+                <img src="/Lovvami.png" alt="Lovvami" style={{height:"24px", width:"24px", objectFit:"contain"}} />
                 <span>Lovvami</span>
               </div>
             </div>
 
-            {/* Riga 5 — Cuori + Robot + Pulsanti (altezza fissa ~180px) */}
-            <div className="flex-none mx-4 mt-2 flex items-center justify-between" style={{ height: "170px" }}>
+            {/* Riga 5 — Cuori + Robot + Pulsanti */}
+            <div className="flex-none mx-4 mt-2 flex items-center justify-between" style={{ height: "22vh", minHeight: "120px", maxHeight: "180px" }}>
               {/* Cuori + stato a sinistra */}
               <div className="flex flex-col gap-1 w-36">
                 <div className="flex items-center gap-1 flex-wrap">
