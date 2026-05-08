@@ -997,93 +997,95 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
 
       <div className={`relative z-10 mx-auto ${compactMode ? "max-w-3xl" : "max-w-6xl"}`}>
         {compactMode ? (
-          <motion.div animate={boardShake ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }} transition={{ duration: 0.35 }} className="flex h-full flex-col rounded-[28px] border border-white/10 bg-white/5 p-3 shadow-2xl backdrop-blur-sm sm:p-4">
-            <div className="mb-2 flex justify-center">
-              <button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">{t.home.backToMenu}</button>
+          <motion.div
+            animate={boardShake ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }}
+            transition={{ duration: 0.35 }}
+            style={{ width: "1674px", height: "1080px", maxWidth: "100vw" }}
+            className="flex flex-col rounded-[28px] border border-white/10 bg-white/5 shadow-2xl backdrop-blur-sm overflow-hidden mx-auto"
+          >
+            {/* Riga 1 — Bottoni (altezza fissa ~52px) */}
+            <div className="flex-none px-4 pt-3 pb-1">
+              <div className="flex justify-center mb-1">
+                <button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">{t.home.backToMenu}</button>
+              </div>
+              <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} t={t} />
             </div>
 
-            <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} t={t} />
-
-            {/* Barra progresso + difficoltà */}
-            <div className="mt-2 flex items-center justify-between px-1">
-              <span className="text-[11px] text-slate-400 font-medium">
-                {currentIndex + 1} / {items.length}
-              </span>
+            {/* Riga 2 — Progresso + difficoltà (altezza fissa ~28px) */}
+            <div className="flex-none flex items-center justify-between px-5 py-1">
+              <span className="text-[11px] text-slate-400 font-medium">{currentIndex + 1} / {items.length}</span>
               <span className={`text-[11px] font-bold px-2 py-0.5 rounded-lg ${
                 ["Facile","Easy","Ușor"].includes(currentItem.difficulty) ? "bg-emerald-500/20 text-emerald-300" :
                 ["Difficile","Hard","Dificil"].includes(currentItem.difficulty) ? "bg-rose-500/20 text-rose-300" :
                 "bg-amber-500/20 text-amber-300"
-              }`}>
-                {getDifficultyLabel(currentItem.difficulty)}
-              </span>
+              }`}>{getDifficultyLabel(currentItem.difficulty)}</span>
             </div>
 
-            {/* Indizio */}
-            <div className="mt-2 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-3 text-center">
-              <div className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">{t.hangman.clue}</div>
-              <div className="text-[17px] sm:text-xl font-semibold leading-snug tracking-wide">
+            {/* Riga 3 — Indizio (altezza fissa ~90px) */}
+            <div className="flex-none mx-4 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 px-5 py-3 text-center" style={{ minHeight: "80px", maxHeight: "90px" }}>
+              <div className="text-xl font-semibold leading-snug tracking-wide line-clamp-2">
                 {renderHintWithEmoji(currentItem.hint)}
               </div>
             </div>
 
-            {/* Cuori + stato */}
-            <div className="mt-3 flex items-center justify-between px-1">
-              <div className="flex items-center gap-1">
-                {hearts.map((alive, idx) => {
-                  const isBurst = heartBurstIndex === idx;
-                  return (
-                    <motion.div key={idx} initial={false} animate={alive ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 0.3 }} transition={{ duration: 0.2 }} className={`relative rounded-xl border px-1.5 py-0.5 ${alive ? "border-rose-400/50 bg-rose-500/20" : "border-slate-700 bg-slate-800"}`}>
-                      <Heart className={`h-3.5 w-3.5 ${alive ? "fill-rose-400 text-rose-300" : "text-slate-600"}`} />
-                      <AnimatePresence>
-                        {isBurst ? <motion.div initial={{ scale: 0.4, opacity: 0.9 }} animate={{ scale: 1.8, opacity: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45 }} className="absolute inset-0 rounded-xl border-2 border-rose-300" /> : null}
-                      </AnimatePresence>
-                    </motion.div>
-                  );
-                })}
-              </div>
-              <div className={`text-[11px] font-semibold ${status === "won" ? "text-emerald-400" : status === "lost" ? "text-rose-400" : "text-slate-400"}`}>
-                {status === "playing" ? `${t.hangman.errors}: ${wrong.length}/${maxHearts}` : status === "won" ? `🎉 ${t.hangman.won}!` : `💀 ${t.hangman.lost}`}
-              </div>
+            {/* Riga 4 — Banner vocali (altezza fissa ~38px) */}
+            <div className="flex-none mx-4 mt-2 rounded-2xl bg-rose-500/10 border border-rose-400/20 px-4 py-1.5 flex items-center justify-center gap-3">
+              <span className="text-sm font-bold text-white">Consonanti <span className="text-emerald-400">GRATIS</span></span>
+              <span className="text-slate-400 text-sm">—</span>
+              <span className="text-sm text-white flex items-center gap-1.5">
+                Vocali: 1 <img src="/rosa.png" alt="Rosa" className="inline h-6 w-6 object-contain" /> Rosa
+                &nbsp;|&nbsp;
+                1 <img src="/lovvami.png" alt="Lovvami" className="inline h-6 w-6 object-contain" /> Lovvami
+              </span>
             </div>
 
-            {/* Robot + pulsanti laterali */}
-            <div className="mt-2 flex w-full items-center justify-between">
-              <div className="flex-1" />
-
-              <div className="flex flex-1 justify-center">
-                <RobotArena
-                  wrongCount={wrong.length}
-                  maxHearts={maxHearts}
-                  isLost={status === "lost"}
-                  isWon={status === "won"}
-                />
+            {/* Riga 5 — Cuori + Robot + Pulsanti (altezza fissa ~180px) */}
+            <div className="flex-none mx-4 mt-2 flex items-center justify-between" style={{ height: "170px" }}>
+              {/* Cuori + stato a sinistra */}
+              <div className="flex flex-col gap-1 w-36">
+                <div className="flex items-center gap-1 flex-wrap">
+                  {hearts.map((alive, idx) => {
+                    const isBurst = heartBurstIndex === idx;
+                    return (
+                      <motion.div key={idx} initial={false} animate={alive ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 0.3 }} transition={{ duration: 0.2 }} className={`relative rounded-xl border px-1.5 py-0.5 ${alive ? "border-rose-400/50 bg-rose-500/20" : "border-slate-700 bg-slate-800"}`}>
+                        <Heart className={`h-3.5 w-3.5 ${alive ? "fill-rose-400 text-rose-300" : "text-slate-600"}`} />
+                        <AnimatePresence>
+                          {isBurst ? <motion.div initial={{ scale: 0.4, opacity: 0.9 }} animate={{ scale: 1.8, opacity: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45 }} className="absolute inset-0 rounded-xl border-2 border-rose-300" /> : null}
+                        </AnimatePresence>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+                <div className={`text-[11px] font-semibold ${status === "won" ? "text-emerald-400" : status === "lost" ? "text-rose-400" : "text-slate-400"}`}>
+                  {status === "playing" ? `${t.hangman.errors}: ${wrong.length}/${maxHearts}` : status === "won" ? `🎉 ${t.hangman.won}!` : `💀 ${t.hangman.lost}`}
+                </div>
               </div>
 
-              <div className="flex flex-1 flex-col items-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowAnswer((prev) => !prev)}
-                  className="rounded-lg bg-white/10 p-2 transition hover:bg-white/15"
-                  title={showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}
-                >
+              {/* Robot al centro */}
+              <div className="flex justify-center flex-1">
+                <RobotArena wrongCount={wrong.length} maxHearts={maxHearts} isLost={status === "lost"} isWon={status === "won"} />
+              </div>
+
+              {/* Pulsanti a destra */}
+              <div className="flex flex-col items-end gap-2 w-36">
+                <button type="button" onClick={() => setShowAnswer((prev) => !prev)} className="rounded-lg bg-white/10 p-2 transition hover:bg-white/15" title={showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}>
                   {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
-
-                <button
-                  type="button"
-                  onClick={goNext}
-                  className="rounded-lg px-3 py-2 text-xs font-bold transition bg-cyan-500 text-white hover:bg-cyan-400 shadow-lg shadow-cyan-500/30"
-                >
-                  {t.hangman?.next || "Avanti"} →
+                <button type="button" onClick={goNext} className={`rounded-lg px-3 py-2 text-xs font-bold transition ${hasAttempted ? "bg-rose-500 text-white hover:bg-rose-400" : "bg-cyan-500 text-white hover:bg-cyan-400"} shadow-lg`}>
+                  {hasAttempted ? (t.hangman?.abandon || "Abbandona") : (t.hangman?.next || "Avanti")} →
                 </button>
               </div>
             </div>
 
-            <div className="mt-2 rounded-3xl border border-white/10 bg-slate-900/60 p-2.5">
+            {/* Riga 6 — Lettere (altezza fissa ~80px) */}
+            <div className="flex-none mx-4 mt-2 rounded-3xl border border-white/10 bg-slate-900/60 p-2.5">
               <SolutionRow masked={masked} showAnswer={showAnswer} />
             </div>
 
-            <div className="mt-2 flex-1"><Keyboard guessed={guessed} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} /></div>
+            {/* Riga 7 — Tastiera (occupa il resto) */}
+            <div className="flex-1 mx-4 mt-2 mb-3 min-h-0">
+              <Keyboard guessed={guessed} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} />
+            </div>
           </motion.div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
