@@ -995,7 +995,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
         {flashMode === "won" ? <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.14 }} exit={{ opacity: 0 }} className="pointer-events-none absolute inset-0 z-0 bg-emerald-400" /> : null}
       </AnimatePresence>
 
-      <div className={`relative z-10 mx-auto ${compactMode ? "max-w-3xl" : "max-w-6xl"}`}>
+      <div className={`relative z-10 ${compactMode ? "w-full overflow-x-auto" : "mx-auto max-w-6xl"}`}>
         {compactMode ? (
           <motion.div
             animate={boardShake ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }}
