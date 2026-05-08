@@ -579,22 +579,51 @@ function TopControls({
   handleImportFile,
   onNext,
   hasAttempted,
+  onBack,
   t,
 }) {
+  const [menuOpen, setMenuOpen] = React.useState(false);
+
   return (
-    <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
-      <button onClick={onReset} className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-2.5 py-2 text-[11px] transition hover:bg-white/15 sm:text-xs"><RotateCcw className="h-3.5 w-3.5" />{t.hangman.restart}</button>
-      {hasAttempted && (
-        <button onClick={onNext} className="inline-flex items-center gap-1.5 rounded-xl bg-rose-500/80 px-2.5 py-2 text-[11px] font-bold text-white transition hover:bg-rose-500 sm:text-xs">
-          <ArrowRight className="h-3.5 w-3.5" />{t.hangman?.abandon || "Abbandona"}
+    <div className="relative flex items-center justify-between gap-2">
+      {/* Sinistra: bottone menu ⚙️ */}
+      <div className="relative">
+        <button
+          onClick={() => setMenuOpen(prev => !prev)}
+          className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-2.5 py-2 text-[11px] transition hover:bg-white/15"
+        >
+          ⚙️
         </button>
-      )}
-      <button onClick={onRandom} className="inline-flex items-center gap-1.5 rounded-xl bg-pink-500/80 px-2.5 py-2 text-[11px] transition hover:bg-pink-500 sm:text-xs"><Shuffle className="h-3.5 w-3.5" />{t.hangman.random}</button>
-      <button onClick={onImport} className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/80 px-2.5 py-2 text-[11px] transition hover:bg-emerald-500 sm:text-xs"><Upload className="h-3.5 w-3.5" />{t.hangman.import}</button>
-      <button onClick={onDownloadTemplate} className="inline-flex items-center gap-1.5 rounded-xl bg-violet-500/80 px-2.5 py-2 text-[11px] transition hover:bg-violet-500 sm:text-xs"><Upload className="h-3.5 w-3.5" />{t.hangman.downloadTemplate}</button>
-      <button onClick={onFullscreen} className="inline-flex items-center gap-1.5 rounded-xl bg-cyan-500/80 px-2.5 py-2 text-[11px] transition hover:bg-cyan-500 sm:text-xs"><Monitor className="h-3.5 w-3.5" />{fullscreenMode ? t.hangman.fullscreenExit : t.hangman.fullscreenEnter}</button>
-      <button onClick={onToggleSound} className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-2.5 py-2 text-[11px] transition hover:bg-white/15 sm:text-xs">{soundOn ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}{soundOn ? t.hangman.soundOn : t.hangman.soundOff}</button>
-      <button onClick={onToggleCompact} className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-2.5 py-2 text-[11px] transition hover:bg-white/15 sm:text-xs"><PanelsTopLeft className="h-3.5 w-3.5" />{compactMode ? t.hangman.showPanels : t.hangman.hidePanels}</button>
+
+        {/* Menu a tendina */}
+        {menuOpen && (
+          <div className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-2xl border border-white/10 bg-slate-900 shadow-2xl p-2 flex flex-col gap-1">
+            <button onClick={() => { onBack(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition text-left">← {t.home.backToMenu}</button>
+            <div className="h-px bg-white/10 my-1" />
+            <button onClick={() => { onReset(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><RotateCcw className="h-3.5 w-3.5" />{t.hangman.restart}</button>
+            <button onClick={() => { onRandom(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-pink-500/20 transition"><Shuffle className="h-3.5 w-3.5" />{t.hangman.random}</button>
+            <button onClick={() => { onDownloadTemplate(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.downloadTemplate}</button>
+            <button onClick={() => { onFullscreen(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-cyan-500/20 transition"><Monitor className="h-3.5 w-3.5" />{fullscreenMode ? t.hangman.fullscreenExit : t.hangman.fullscreenEnter}</button>
+            <button onClick={() => { onToggleSound(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition">{soundOn ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}{soundOn ? t.hangman.soundOn : t.hangman.soundOff}</button>
+            <button onClick={() => { onToggleCompact(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><PanelsTopLeft className="h-3.5 w-3.5" />{compactMode ? t.hangman.showPanels : t.hangman.hidePanels}</button>
+          </div>
+        )}
+      </div>
+
+      {/* Centro: Importa — sempre visibile */}
+      <button onClick={onImport} className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/80 px-3 py-2 text-[11px] font-bold transition hover:bg-emerald-500">
+        <Upload className="h-3.5 w-3.5" />{t.hangman.import}
+      </button>
+
+      {/* Destra: Abbandona/Avanti — solo se hasAttempted */}
+      <div className="w-24 flex justify-end">
+        {hasAttempted && (
+          <button onClick={onNext} className="inline-flex items-center gap-1.5 rounded-xl bg-rose-500/80 px-2.5 py-2 text-[11px] font-bold text-white transition hover:bg-rose-500">
+            <ArrowRight className="h-3.5 w-3.5" />{t.hangman?.abandon || "Abbandona"}
+          </button>
+        )}
+      </div>
+
       <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" onChange={handleImportFile} className="hidden" />
     </div>
   );
@@ -1005,10 +1034,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
           >
             {/* Riga 1 — Bottoni (altezza fissa ~52px) */}
             <div className="flex-none px-4 pt-3 pb-1">
-              <div className="flex justify-center mb-1">
-                <button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">{t.home.backToMenu}</button>
-              </div>
-              <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} t={t} />
+              <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} onBack={onBack} t={t} />
             </div>
 
             {/* Riga 2 — Progresso + difficoltà (altezza fissa ~28px) */}
@@ -1100,7 +1126,7 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
                   <h1 className="text-2xl font-bold md:text-4xl">{t.hangman.title}</h1>
                 </div>
                 <div className="mb-2 flex justify-center"><button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">{t.home.backToMenu}</button></div>
-                <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} t={t} />
+                <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} onBack={onBack} t={t} />
               </div>
 
               <div className="mb-5 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4">
