@@ -527,7 +527,7 @@ function SolutionRow({ masked, showAnswer }) {
   );
 }
 
-function Keyboard({ guessed, wrong, onGuess, disabled, rows }) {
+function Keyboard({ guessed, wrong, onGuess, disabled, rows, slotHighlight = null, competitionMode = false }) {
   const guessedSet = new Set(guessed);
   const wrongSet = new Set(wrong);
 
@@ -540,14 +540,17 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows }) {
               const isGuessed = guessedSet.has(key);
               const isWrong = wrongSet.has(key);
               const isUsed = isGuessed || isWrong;
-              const stateClass = isGuessed
-                ? "border-emerald-400/50 bg-emerald-500/20 text-emerald-200"
-                : isWrong
-                  ? "border-rose-400/50 bg-rose-500/20 text-rose-200"
-                  : "border-white/10 bg-white/5 text-slate-200 hover:bg-white/10";
+              const isSlot = slotHighlight === key;
+              const stateClass = isSlot
+                ? "border-yellow-300 bg-yellow-400 text-black font-black scale-110"
+                : isGuessed
+                  ? "border-emerald-400 bg-emerald-500 text-white font-bold"
+                  : isWrong
+                    ? "border-rose-400 bg-rose-500 text-white font-bold"
+                    : "border-white/20 bg-white/10 text-slate-100 hover:bg-white/20";
 
               return (
-                <button key={key} type="button" disabled={disabled || isUsed} onClick={() => onGuess(key)} className={`flex h-7 w-7 items-center justify-center rounded-lg border text-[11px] font-semibold uppercase transition sm:h-8 sm:w-8 sm:text-xs ${stateClass} ${disabled || isUsed ? "cursor-default" : ""}`}>
+                <button key={key} type="button" disabled={disabled || isUsed || competitionMode} onClick={() => !competitionMode && onGuess(key)} className={`flex h-7 w-7 items-center justify-center rounded-lg border text-[11px] font-semibold uppercase transition sm:h-8 sm:w-8 sm:text-xs ${stateClass} ${disabled || isUsed || competitionMode ? "cursor-default" : ""}`}>
                   {key}
                 </button>
               );
@@ -601,6 +604,7 @@ function TopControls({
             <button onClick={() => { onBack(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition text-left">← {t.home.backToMenu}</button>
             <div className="h-px bg-white/10 my-1" />
             <button onClick={() => { onReset(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><RotateCcw className="h-3.5 w-3.5" />{t.hangman.restart}</button>
+            <button onClick={() => { onImport(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-emerald-500/20 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.import}</button>
             <button onClick={() => { onRandom(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-pink-500/20 transition"><Shuffle className="h-3.5 w-3.5" />{t.hangman.random}</button>
             <button onClick={() => { onDownloadTemplate(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.downloadTemplate}</button>
             <button onClick={() => { onFullscreen(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-cyan-500/20 transition"><Monitor className="h-3.5 w-3.5" />{fullscreenMode ? t.hangman.fullscreenExit : t.hangman.fullscreenEnter}</button>
@@ -610,13 +614,8 @@ function TopControls({
         )}
       </div>
 
-      {/* Centro: Importa — sempre visibile */}
-      <button onClick={onImport} className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/80 px-3 py-2 text-[11px] font-bold transition hover:bg-emerald-500">
-        <Upload className="h-3.5 w-3.5" />{t.hangman.import}
-      </button>
-
-      {/* Destra: Abbandona/Avanti — solo se hasAttempted */}
-      <div className="w-24 flex justify-end">
+      {/* Destra: Abbandona — solo se hasAttempted */}
+      <div className="flex justify-end">
         {hasAttempted && (
           <button onClick={onNext} className="inline-flex items-center gap-1.5 rounded-xl bg-rose-500/80 px-2.5 py-2 text-[11px] font-bold text-white transition hover:bg-rose-500">
             <ArrowRight className="h-3.5 w-3.5" />{t.hangman?.abandon || "Abbandona"}
@@ -680,7 +679,7 @@ function saveItemsToStorage(language, items) {
   } catch (e) { /* ignora errori localStorage */ }
 }
 
-export default function HangmanGame({ onBack, selectedLanguage }) {
+export default function HangmanGame({ onBack, selectedLanguage, competitionMode = false }) {
   const t = UI_TEXT[selectedLanguage];
 
   const [items, setItems] = useState(() => loadItemsFromStorage(selectedLanguage));
@@ -700,6 +699,8 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
   const [flashMode, setFlashMode] = useState("none");
   const [compactMode, setCompactMode] = useState(true);
   const [playMode, setPlayMode] = useState("sequential");
+  const [slotSpinning, setSlotSpinning] = useState(false);
+  const [slotHighlight, setSlotHighlight] = useState(null); // lettera evidenziata durante spin
 
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -815,6 +816,34 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
   const goNext = () => {
     if (playMode === "random") nextRandom();
     else nextSequential();
+  };
+
+  const spinSlot = () => {
+    if (slotSpinning || status !== "playing") return;
+    // Lettere disponibili — non ancora estratte
+    const allKeys = KEYBOARD_LAYOUTS[selectedLanguage].flat();
+    const available = allKeys.filter(k => !guessed.has(k) && !wrong.includes(k));
+    if (available.length === 0) return;
+
+    setSlotSpinning(true);
+    let count = 0;
+    const totalSpins = 12 + Math.floor(Math.random() * 8); // 12-20 spin
+    const winner = available[Math.floor(Math.random() * available.length)];
+
+    const interval = setInterval(() => {
+      // Mostra una lettera random durante lo spin
+      const randomKey = available[Math.floor(Math.random() * available.length)];
+      setSlotHighlight(randomKey);
+      count++;
+
+      if (count >= totalSpins) {
+        clearInterval(interval);
+        setSlotHighlight(null);
+        setSlotSpinning(false);
+        // Estrae la lettera vincitrice
+        setTimeout(() => handleGuess(winner), 80);
+      }
+    }, 80);
   };
 
   useEffect(() => {
@@ -1113,8 +1142,29 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
             </div>
 
             {/* Riga 7 — Tastiera (occupa il resto) */}
-            <div className="flex-1 mx-4 mt-2 mb-3 min-h-0">
-              <Keyboard guessed={guessed} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} />
+            <div className="flex-1 mx-4 mt-2 mb-3 min-h-0 flex flex-col gap-2">
+              {competitionMode && (
+                <div className="flex justify-center">
+                  <motion.button
+                    onClick={spinSlot}
+                    disabled={slotSpinning || status !== "playing"}
+                    whileHover={!slotSpinning ? { scale: 1.05 } : {}}
+                    whileTap={!slotSpinning ? { scale: 0.95 } : {}}
+                    className={`px-6 py-2 rounded-2xl font-black text-sm transition shadow-lg ${
+                      slotSpinning
+                        ? "bg-yellow-400 text-black animate-pulse cursor-not-allowed"
+                        : status !== "playing"
+                          ? "bg-white/10 text-slate-500 cursor-not-allowed"
+                          : "bg-gradient-to-r from-yellow-400 to-orange-400 text-black hover:from-yellow-300 hover:to-orange-300 shadow-yellow-500/30"
+                    }`}
+                  >
+                    {slotSpinning ? "🎰 ..." : "🎰 Estrai lettera"}
+                  </motion.button>
+                </div>
+              )}
+              <div className="flex-1 min-h-0">
+                <Keyboard guessed={guessed} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} slotHighlight={slotHighlight} competitionMode={competitionMode} />
+              </div>
             </div>
           </motion.div>
         ) : (

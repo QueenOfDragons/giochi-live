@@ -429,6 +429,7 @@ export default function App() {
         <GameComponent
           onBack={() => setShowScoreboard(true)}
           selectedLanguage={selectedLanguage}
+          competitionMode={true}
         />
         {/* Banner competizione */}
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
