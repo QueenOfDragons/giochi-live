@@ -1032,11 +1032,15 @@ export default function HangmanGame({ onBack, selectedLanguage }) {
             <div className="flex-none mx-4 mt-2 rounded-2xl bg-rose-500/10 border border-rose-400/20 px-4 py-1.5 flex items-center justify-center gap-3">
               <span className="text-sm font-bold text-white">Consonanti <span className="text-emerald-400">GRATIS</span></span>
               <span className="text-slate-400 text-sm">—</span>
-              <span className="text-sm text-white flex items-center gap-1.5">
-                Vocali: 1 <img src="/rosa.png" alt="Rosa" className="inline h-6 w-6 object-contain" /> Rosa
-                &nbsp;|&nbsp;
-                1 <img src="/lovvami.png" alt="Lovvami" className="inline h-6 w-6 object-contain" /> Lovvami
-              </span>
+              <div className="flex items-center gap-1.5 text-sm text-white">
+                <span>Vocali: 1</span>
+                <img src="/rosa.png" alt="Rosa" style={{height:"24px", width:"24px", objectFit:"contain"}} />
+                <span>Rosa</span>
+                <span className="text-slate-400 mx-1">|</span>
+                <span>1</span>
+                <img src="/lovvami.png" alt="Lovvami" style={{height:"24px", width:"24px", objectFit:"contain"}} />
+                <span>Lovvami</span>
+              </div>
             </div>
 
             {/* Riga 5 — Cuori + Robot + Pulsanti (altezza fissa ~180px) */}
