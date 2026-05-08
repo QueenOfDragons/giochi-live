@@ -820,30 +820,43 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
 
   const spinSlot = () => {
     if (slotSpinning || status !== "playing") return;
-    // Lettere disponibili — non ancora estratte
+
+    // Lettere disponibili — escludo tutto ciò che è già stato estratto
     const allKeys = KEYBOARD_LAYOUTS[selectedLanguage].flat();
-    const available = allKeys.filter(k => !guessed.has(k) && !wrong.includes(k));
+    const guessedArray = [...guessed];
+    const available = allKeys.filter(k => !guessedArray.includes(k) && !wrong.includes(k));
     if (available.length === 0) return;
 
     setSlotSpinning(true);
-    let count = 0;
-    const totalSpins = 12 + Math.floor(Math.random() * 8); // 12-20 spin
     const winner = available[Math.floor(Math.random() * available.length)];
 
-    const interval = setInterval(() => {
-      // Mostra una lettera random durante lo spin
-      const randomKey = available[Math.floor(Math.random() * available.length)];
-      setSlotHighlight(randomKey);
-      count++;
+    // Sequenza di intervalli: parte lento, accelera, poi rallenta prima della fine
+    // Totale ~4 secondi
+    const delays = [
+      220, 200, 180, 160, 140, 120, 100, 90, 80, 80,  // accelera
+      80, 80, 90, 100, 110, 130, 150, 180, 220, 280,  // rallenta
+    ];
+    let step = 0;
 
-      if (count >= totalSpins) {
-        clearInterval(interval);
-        setSlotHighlight(null);
-        setSlotSpinning(false);
-        // Estrae la lettera vincitrice
-        setTimeout(() => handleGuess(winner), 80);
+    const runStep = () => {
+      if (step < delays.length) {
+        // Mostra lettera random durante lo spin (solo tra quelle disponibili)
+        const randomKey = available[Math.floor(Math.random() * available.length)];
+        setSlotHighlight(randomKey);
+        step++;
+        setTimeout(runStep, delays[step - 1]);
+      } else {
+        // Fine spin — mostra vincitrice
+        setSlotHighlight(winner);
+        setTimeout(() => {
+          setSlotHighlight(null);
+          setSlotSpinning(false);
+          handleGuess(winner);
+        }, 600);
       }
-    }, 80);
+    };
+
+    runStep();
   };
 
   useEffect(() => {
