@@ -146,6 +146,14 @@ function parseImportedRows(rows) {
     "indice",
   ]);
 
+  const categoryIdx = findColumnIndex(header, [
+    "category",
+    "categoria",
+    "categorie",
+    "categorie",
+    "cat",
+  ]);
+
   const difficultyIdx = findColumnIndex(header, [
     "difficulty",
     "difficolta",
@@ -165,6 +173,7 @@ function parseImportedRows(rows) {
     .map((row) => ({
       text: decodeExcelText(row?.[textIdx] ?? ""),
       hint: decodeExcelText(row?.[hintIdx] ?? ""),
+      category: categoryIdx >= 0 ? decodeExcelText(row?.[categoryIdx] ?? "") : "",
       difficulty:
         decodeExcelText(difficultyIdx >= 0 ? row?.[difficultyIdx] ?? "Media" : "Media") || "Media",
     }))
@@ -1108,6 +1117,11 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
 
             {/* Riga 3 — Indizio (altezza fissa ~90px) */}
             <div className="flex-none mx-4 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 px-5 py-3 text-center" style={{ minHeight: "60px", maxHeight: "90px" }}>
+              {currentItem.category && (
+                <div className="text-[10px] font-bold uppercase tracking-widest text-purple-300/70 mb-1">
+                  {currentItem.category}
+                </div>
+              )}
               <div className="text-xl font-semibold leading-snug tracking-wide line-clamp-2">
                 {renderHintWithEmoji(currentItem.hint)}
               </div>
@@ -1211,7 +1225,10 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
 
               <div className="mb-5 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4">
                 <div>
-                  <p className="mb-2 text-sm text-slate-300">{t.hangman.clue}</p>
+                  {currentItem.category && (
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-purple-300/70 mb-0.5">{currentItem.category}</p>
+                )}
+                <p className="mb-2 text-sm text-slate-300">{t.hangman.clue}</p>
                   <p className="text-xl md:text-2xl font-semibold leading-relaxed tracking-wide" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI", sans-serif' }} dangerouslySetInnerHTML={{ __html: twemoji.parse(currentItem.hint, { folder: "svg", ext: ".svg", className: "twemoji-small" }) }} />
                 </div>
               </div>
