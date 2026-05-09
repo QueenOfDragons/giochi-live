@@ -93,9 +93,13 @@ function decodeExcelText(value) {
 }
 
 function normalizeDifficultyLabel(value) {
-  const d = String(value ?? "").trim().toLowerCase();
+  const d = String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-̦ͯ]/g, ""); // rimuove accenti e diacritici
 
-  if (["facile", "easy", "ușor", "usor"].includes(d)) return "Facile";
+  if (["facile", "easy", "usor"].includes(d)) return "Facile";
   if (["media", "medium", "mediu", "moyen"].includes(d)) return "Media";
   if (["difficile", "hard", "dificil"].includes(d)) return "Difficile";
 
@@ -149,7 +153,6 @@ function parseImportedRows(rows) {
   const categoryIdx = findColumnIndex(header, [
     "category",
     "categoria",
-    "categorie",
     "categorie",
     "cat",
   ]);
@@ -1128,18 +1131,8 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
             </div>
 
             {/* Riga 4 — Banner vocali (altezza fissa ~38px) */}
-            <div className="flex-none mx-4 mt-2 rounded-2xl bg-rose-500/10 border border-rose-400/20 px-4 py-1.5 flex items-center justify-center gap-3">
-              <span className="text-sm font-bold text-white">Consonanti <span className="text-emerald-400">GRATIS</span></span>
-              <span className="text-slate-400 text-sm">—</span>
-              <div className="flex items-center gap-1.5 text-sm text-white">
-                <span>Vocali: 1</span>
-                <img src="/Rosa.png" alt="Rosa" style={{height:"24px", width:"24px", objectFit:"contain"}} />
-                <span>Rosa</span>
-                <span className="text-slate-400 mx-1">|</span>
-                <span>1</span>
-                <img src="/Lovvami.png" alt="Lovvami" style={{height:"24px", width:"24px", objectFit:"contain"}} />
-                <span>Lovvami</span>
-              </div>
+            <div className="flex-none mx-4 mt-2 rounded-2xl bg-rose-500/10 border border-rose-400/20 px-4 py-1.5 flex items-center justify-center">
+              <span className="text-sm font-bold text-white">{t.home.vowelBanner}</span>
             </div>
 
             {/* Riga 5 — Cuori + Robot + Pulsanti */}
