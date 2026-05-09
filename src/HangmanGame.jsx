@@ -1085,7 +1085,7 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
   const canGoNext = true; // sempre attivo: Avanti se non iniziato, Abbandona se iniziato
 
   return (
-    <div className={`relative overflow-hidden bg-slate-950 text-slate-100 ${compactMode ? "h-screen p-0" : "min-h-screen p-4 md:p-8"}`}>
+    <div className={`relative bg-slate-950 text-slate-100 ${compactMode ? "h-screen p-0 overflow-hidden" : "min-h-screen p-4 md:p-8"}`}>
       <style>{`img.twemoji-small { height: 0.9em; width: 0.9em; vertical-align: -0.12em; display: inline-block; }`}</style>
 
       <AnimatePresence>
