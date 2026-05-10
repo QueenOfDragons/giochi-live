@@ -23,7 +23,7 @@ export const UI_TEXT = {
 
       numbergameTitle: "Indovina il Numero",
       numbergameDesc: "Più alto, più basso… trova il numero segreto!",
-      numbergameIconBg: "from-orange-400 to-yellow-400",
+      numbergameIconBg: "from-blue-400 to-cyan-500",
       numbergameOverlay: "from-orange-500/20 via-transparent to-yellow-500/20",
 
       mastermindTitle: "Mastermind",
@@ -132,7 +132,7 @@ export const UI_TEXT = {
 
       numbergameTitle: "Guess the Number",
       numbergameDesc: "Higher, lower… find the secret number!",
-      numbergameIconBg: "from-orange-400 to-yellow-400",
+      numbergameIconBg: "from-blue-400 to-cyan-500",
       numbergameOverlay: "from-orange-500/20 via-transparent to-yellow-500/20",
 
       mastermindTitle: "Mastermind",
@@ -241,7 +241,7 @@ export const UI_TEXT = {
 
       numbergameTitle: "Ghicește Numărul",
       numbergameDesc: "Mai mare, mai mic… găsește numărul secret!",
-      numbergameIconBg: "from-orange-400 to-yellow-400",
+      numbergameIconBg: "from-blue-400 to-cyan-500",
       numbergameOverlay: "from-orange-500/20 via-transparent to-yellow-500/20",
 
       mastermindTitle: "Mastermind",
@@ -350,7 +350,7 @@ export const UI_TEXT = {
 
       numbergameTitle: "Devine le Nombre",
       numbergameDesc: "Plus haut, plus bas… trouve le nombre secret !",
-      numbergameIconBg: "from-orange-400 to-yellow-400",
+      numbergameIconBg: "from-blue-400 to-cyan-500",
       numbergameOverlay: "from-orange-500/20 via-transparent to-yellow-500/20",
 
       mastermindTitle: "Mastermind",
