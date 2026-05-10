@@ -435,6 +435,7 @@ export default function App() {
         <GameComponent
           onBack={() => setShowScoreboard(true)}
           selectedLanguage={selectedLanguage}
+          onLanguageChange={setSelectedLanguage}
           competitionMode={true}
         />
         {/* Banner competizione */}
@@ -483,7 +484,7 @@ export default function App() {
       numbergame: NumberGame,
       bersaglio: BersaglioGame,
     }[selectedGame];
-    return <GameComponent onBack={() => setSelectedGame(null)} selectedLanguage={selectedLanguage} />;
+    return <GameComponent onBack={() => setSelectedGame(null)} selectedLanguage={selectedLanguage} onLanguageChange={setSelectedLanguage} />;
   }
 
   // ── Menu principale ────────────────────────────────────────────────────────

@@ -595,6 +595,8 @@ function TopControls({
   onNext,
   hasAttempted,
   onBack,
+  onLanguageChange,
+  currentLanguage,
   t,
 }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -615,6 +617,21 @@ function TopControls({
           <div className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-2xl border border-white/10 bg-slate-900 shadow-2xl p-2 flex flex-col gap-1">
             <button onClick={() => { onBack(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition text-left">← {t.home.backToMenu}</button>
             <div className="h-px bg-white/10 my-1" />
+            {/* Selezione lingua */}
+            <div className="flex items-center gap-1 px-3 py-1">
+              {[
+                { code: "it", img: "https://hatscripts.github.io/circle-flags/flags/it.svg" },
+                { code: "en", img: "https://hatscripts.github.io/circle-flags/flags/gb.svg" },
+                { code: "fr", img: "https://hatscripts.github.io/circle-flags/flags/fr.svg" },
+                { code: "ro", img: "https://hatscripts.github.io/circle-flags/flags/ro.svg" },
+              ].map(({ code, img }) => (
+                <button key={code} onClick={() => { onLanguageChange(code); setMenuOpen(false); }}
+                  className={`rounded-lg p-1 transition ${currentLanguage === code ? "bg-white/20 ring-2 ring-white/40" : "hover:bg-white/10"}`}>
+                  <img src={img} alt={code} className="h-5 w-8 rounded-sm object-cover" />
+                </button>
+              ))}
+            </div>
+            <div className="h-px bg-white/10 my-1" />
             <button onClick={() => { onReset(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><RotateCcw className="h-3.5 w-3.5" />{t.hangman.restart}</button>
             <button onClick={() => { onImport(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-emerald-500/20 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.import}</button>
             <button onClick={() => { onRandom(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-pink-500/20 transition"><Shuffle className="h-3.5 w-3.5" />{t.hangman.random}</button>
@@ -626,13 +643,11 @@ function TopControls({
         )}
       </div>
 
-      {/* Destra: Abbandona — solo se hasAttempted */}
+      {/* Destra: Avanti o Abbandona */}
       <div className="flex justify-end">
-        {hasAttempted && (
-          <button onClick={onNext} className="inline-flex items-center gap-1.5 rounded-xl bg-rose-500/80 px-2.5 py-2 text-[11px] font-bold text-white transition hover:bg-rose-500">
-            <ArrowRight className="h-3.5 w-3.5" />{t.hangman?.abandon || "Abbandona"}
-          </button>
-        )}
+        <button onClick={onNext} className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[11px] font-bold text-white transition ${hasAttempted ? "bg-rose-500/80 hover:bg-rose-500" : "bg-cyan-500/80 hover:bg-cyan-500"}`}>
+          <ArrowRight className="h-3.5 w-3.5" />{hasAttempted ? (t.hangman?.abandon || "Abbandona") : (t.hangman?.next || "Avanti")}
+        </button>
       </div>
 
       <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" onChange={handleImportFile} className="hidden" />
@@ -691,7 +706,7 @@ function saveItemsToStorage(language, items) {
   } catch (e) { /* ignora errori localStorage */ }
 }
 
-export default function HangmanGame({ onBack, selectedLanguage, competitionMode = false }) {
+export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange, competitionMode = false }) {
   const t = UI_TEXT[selectedLanguage];
 
   const [items, setItems] = useState(() => loadItemsFromStorage(selectedLanguage));
@@ -1105,7 +1120,7 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
           >
             {/* Riga 1 — Bottoni (altezza fissa ~52px) */}
             <div className="flex-none px-4 pt-3 pb-1">
-              <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} onBack={onBack} t={t} />
+              <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} onBack={onBack} onLanguageChange={onLanguageChange} currentLanguage={selectedLanguage} t={t} />
             </div>
 
             {/* Riga 2 — Progresso + difficoltà (altezza fissa ~28px) */}
@@ -1121,7 +1136,7 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
             {/* Riga 3 — Indizio (altezza fissa ~90px) */}
             <div className="flex-none mx-4 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 px-5 py-3 text-center" style={{ minHeight: "60px", maxHeight: "90px" }}>
               {currentItem.category && (
-                <div className="text-[10px] font-bold uppercase tracking-widest text-purple-300/70 mb-1">
+                <div className="text-xs font-bold uppercase tracking-widest text-purple-300/90 mb-1">
                   {currentItem.category}
                 </div>
               )}
@@ -1136,7 +1151,7 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
             </div>
 
             {/* Riga 5 — Cuori + Robot + Pulsanti */}
-            <div className="flex-none mx-4 mt-2 flex items-center justify-between" style={{ height: "22vh", minHeight: "120px", maxHeight: "180px" }}>
+            <div className="flex-none mx-4 mt-2 flex items-center justify-between" style={{ height: "18vh", minHeight: "100px", maxHeight: "150px" }}>
               {/* Cuori + stato a sinistra */}
               <div className="flex flex-col gap-1 w-36">
                 <div className="flex items-center gap-1 flex-wrap">
@@ -1167,8 +1182,8 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
                 <button type="button" onClick={() => setShowAnswer((prev) => !prev)} className="rounded-lg bg-white/10 p-2 transition hover:bg-white/15" title={showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}>
                   {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
-                <button type="button" onClick={goNext} className={`rounded-lg px-3 py-2 text-xs font-bold transition ${hasAttempted ? "bg-rose-500 text-white hover:bg-rose-400" : "bg-cyan-500 text-white hover:bg-cyan-400"} shadow-lg`}>
-                  {hasAttempted ? (t.hangman?.abandon || "Abbandona") : (t.hangman?.next || "Avanti")} →
+                <button type="button" onClick={goNext} className="rounded-lg px-3 py-2 text-xs font-bold transition bg-cyan-500 text-white hover:bg-cyan-400 shadow-lg">
+                  {t.hangman?.next || "Avanti"} →
                 </button>
               </div>
             </div>
@@ -1213,7 +1228,7 @@ export default function HangmanGame({ onBack, selectedLanguage, competitionMode 
                   <h1 className="text-2xl font-bold md:text-4xl">{t.hangman.title}</h1>
                 </div>
                 <div className="mb-2 flex justify-center"><button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">{t.home.backToMenu}</button></div>
-                <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} onBack={onBack} t={t} />
+                <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} onBack={onBack} onLanguageChange={onLanguageChange} currentLanguage={selectedLanguage} t={t} />
               </div>
 
               <div className="mb-5 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4">
