@@ -937,7 +937,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
       setHeartBurstIndex(lostIndex);
       setBoardShake(true);
       setFlashMode("wrong");
-      playTone(150, 0.28, "sawtooth");
+      playTone(120, 0.40, "sawtooth");
       const shakeTimer = window.setTimeout(() => setBoardShake(false), 420);
       const burstTimer = window.setTimeout(() => setHeartBurstIndex(null), 650);
       const flashTimer = window.setTimeout(() => setFlashMode("none"), 300);
@@ -1104,10 +1104,10 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
       <style>{`img.twemoji-small { height: 0.9em; width: 0.9em; vertical-align: -0.12em; display: inline-block; }`}</style>
 
       <AnimatePresence>
-        {flashMode === "wrong" ? <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.16 }} exit={{ opacity: 0 }} className="pointer-events-none absolute inset-0 z-0 bg-red-500" /> : null}
+        {flashMode === "wrong" ? <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.35 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="pointer-events-none absolute inset-0 z-30 bg-red-500" /> : null}
       </AnimatePresence>
       <AnimatePresence>
-        {flashMode === "won" ? <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.14 }} exit={{ opacity: 0 }} className="pointer-events-none absolute inset-0 z-0 bg-emerald-400" /> : null}
+        {flashMode === "won" ? <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.30 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="pointer-events-none absolute inset-0 z-30 bg-emerald-400" /> : null}
       </AnimatePresence>
 
       <div className={`relative z-10 ${compactMode ? "w-full h-screen" : "mx-auto max-w-6xl"}`}>
