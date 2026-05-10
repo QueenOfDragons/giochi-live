@@ -529,48 +529,59 @@ export default function App() {
           </button>
         </div>
 
-        {/* Card giochi — solo in modalità live */}
-        {mode === "live" && (
-          <AnimatePresence>
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col gap-3">
-
-              {[
-                { id: "hangman",    icon: t.games.hangmanIcon,  bg: t.games.hangmanIconBg,    overlay: t.games.hangmanOverlay,    title: t.games.hangmanTitle,    desc: t.games.hangmanDesc },
-                { id: "numbergame", icon: "🔢",                  bg: t.games.numbergameIconBg,  overlay: t.games.numbergameOverlay, title: t.games.numbergameTitle, desc: t.games.numbergameDesc },
-                { id: "bersaglio",  icon: "🎯",                  bg: t.games.bersaglioIconBg,   overlay: t.games.bersaglioOverlay,  title: t.games.bersaglioTitle,  desc: t.games.bersaglioDesc },
-                { id: "mastermind", icon: null,                  bg: t.games.mastermindIconBg,  overlay: t.games.mastermindOverlay, title: t.games.mastermindTitle, desc: t.games.mastermindDesc },
-              ].map(game => (
-                <button key={game.id} onClick={() => setSelectedGame(game.id)}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 text-left shadow-lg transition duration-200 hover:scale-[1.02] hover:bg-white/10">
-                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${game.overlay} opacity-0 transition duration-200 group-hover:opacity-80`} />
-                  <div className="relative z-10 flex items-center gap-4">
-                    <div className={`flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${game.bg} text-2xl shadow-md transition duration-200 group-hover:scale-110`}>
-                      {game.id === "mastermind" ? (
-                        <div className="grid grid-cols-2 gap-1 bg-black/25 px-1.5 py-1 rounded-md">
-                          {t.games.mastermindIconDots.map((dotClass, index) => (
-                            <div key={index} className={`h-3 w-3 rounded-full ${dotClass}`} />
-                          ))}
-                        </div>
-                      ) : game.icon}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-bold text-white">{game.title}</div>
-                      <div className="text-xs text-slate-400 mt-0.5 leading-snug">{game.desc}</div>
-                    </div>
-                    <div className="flex-shrink-0 rounded-lg bg-cyan-500/70 px-3 py-1.5 text-xs font-semibold text-white transition group-hover:bg-cyan-500">
-                      {t.home.open} →
-                    </div>
+        {/* Card giochi — sempre visibili */}
+        <AnimatePresence>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col gap-3">
+            {[
+              { id: "hangman",    icon: t.games.hangmanIcon,  bg: t.games.hangmanIconBg,    overlay: t.games.hangmanOverlay,    title: t.games.hangmanTitle,    desc: t.games.hangmanDesc },
+              { id: "numbergame", icon: "🔢",                  bg: t.games.numbergameIconBg,  overlay: t.games.numbergameOverlay, title: t.games.numbergameTitle, desc: t.games.numbergameDesc },
+              { id: "bersaglio",  icon: "🎯",                  bg: t.games.bersaglioIconBg,   overlay: t.games.bersaglioOverlay,  title: t.games.bersaglioTitle,  desc: t.games.bersaglioDesc },
+              { id: "mastermind", icon: null,                  bg: t.games.mastermindIconBg,  overlay: t.games.mastermindOverlay, title: t.games.mastermindTitle, desc: t.games.mastermindDesc },
+            ].map(game => (
+              <button key={game.id} onClick={() => {
+                if (mode === "competition-setup" || mode === "competition") {
+                  // In modalità competizione apre il setup con il gioco preselezionato
+                  setSelectedGame(game.id);
+                  setMode("competition-setup");
+                } else {
+                  // In live o nessuna modalità — entra direttamente in live
+                  setMode("live");
+                  setSelectedGame(game.id);
+                }
+              }}
+                className={`group relative overflow-hidden rounded-2xl border p-4 text-left shadow-lg transition duration-200 hover:scale-[1.02] hover:bg-white/10 ${
+                  mode === "competition-setup" ? "border-yellow-400/20 bg-white/5" : "border-white/10 bg-white/5"
+                }`}>
+                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${game.overlay} opacity-0 transition duration-200 group-hover:opacity-80`} />
+                <div className="relative z-10 flex items-center gap-4">
+                  <div className={`flex-shrink-0 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${game.bg} text-2xl shadow-md transition duration-200 group-hover:scale-110`}>
+                    {game.id === "mastermind" ? (
+                      <div className="grid grid-cols-2 gap-1 bg-black/25 px-1.5 py-1 rounded-md">
+                        {t.games.mastermindIconDots.map((dotClass, index) => (
+                          <div key={index} className={`h-3 w-3 rounded-full ${dotClass}`} />
+                        ))}
+                      </div>
+                    ) : game.icon}
                   </div>
-                </button>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        )}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-white">{game.title}</div>
+                    <div className="text-xs text-slate-400 mt-0.5 leading-snug">{game.desc}</div>
+                  </div>
+                  <div className={`flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition ${
+                    mode === "competition-setup" ? "bg-yellow-500/70 group-hover:bg-yellow-500" : "bg-cyan-500/70 group-hover:bg-cyan-500"
+                  }`}>
+                    {mode === "competition-setup" ? "🏆" : t.home.open} →
+                  </div>
+                </div>
+              </button>
+            ))}
+          </motion.div>
+        </AnimatePresence>
 
         {/* Placeholder modalità non selezionata */}
         {!mode && (
-          <div className="text-center text-slate-500 text-sm py-4">
+          <div className="text-center text-slate-500 text-xs py-2">
             {t.home.chooseMode}
           </div>
         )}
