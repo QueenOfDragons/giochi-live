@@ -5,6 +5,7 @@ import HangmanGame from "./HangmanGame";
 import MastermindGame from "./MastermindGame";
 import NumberGame from "./NumberGame";
 import BersaglioGame from "./BersaglioGame";
+import VeroFalsoGame from "./VeroFalsoGame";
 import { UI_TEXT } from "./texts/uiText";
 
 // ── Colori giocatori ──────────────────────────────────────────────────────────
@@ -242,6 +243,7 @@ function CompetitionSetup({ onStart, onBack, t }) {
     { id: "bersaglio",  label: "Il Bersaglio",        icon: "🎯" },
     { id: "numbergame", label: "Indovina il Numero",  icon: "🔢" },
     { id: "mastermind", label: "Mastermind",          icon: "🎨" },
+    { id: "verofalso",  label: "Vero o Falso",        icon: "🧠" },
   ];
 
   return (
@@ -428,6 +430,7 @@ export default function App() {
       mastermind: MastermindGame,
       numbergame: NumberGame,
       bersaglio: BersaglioGame,
+      verofalso: VeroFalsoGame,
     }[selectedGame];
 
     return (
@@ -483,6 +486,7 @@ export default function App() {
       mastermind: MastermindGame,
       numbergame: NumberGame,
       bersaglio: BersaglioGame,
+      verofalso: VeroFalsoGame,
     }[selectedGame];
     return <GameComponent onBack={() => setSelectedGame(null)} selectedLanguage={selectedLanguage} onLanguageChange={setSelectedLanguage} />;
   }
@@ -539,6 +543,7 @@ export default function App() {
                 { id: "numbergame", icon: "🔢",                  bg: t.games.numbergameIconBg,  overlay: t.games.numbergameOverlay, title: t.games.numbergameTitle, desc: t.games.numbergameDesc },
                 { id: "bersaglio",  icon: "🎯",                  bg: t.games.bersaglioIconBg,   overlay: t.games.bersaglioOverlay,  title: t.games.bersaglioTitle,  desc: t.games.bersaglioDesc },
                 { id: "mastermind", icon: null,                  bg: t.games.mastermindIconBg,  overlay: t.games.mastermindOverlay, title: t.games.mastermindTitle, desc: t.games.mastermindDesc },
+                { id: "verofalso",  icon: "🧠",                  bg: t.games.verofalsoIconBg,   overlay: t.games.verofalsoOverlay,  title: t.games.verofalsoTitle,  desc: t.games.verofalsoDesc },
               ].map(game => (
                 <button key={game.id} onClick={() => setSelectedGame(game.id)}
                   className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 text-left shadow-lg transition duration-200 hover:scale-[1.02] hover:bg-white/10">
