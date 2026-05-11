@@ -220,7 +220,7 @@ export default function VeroFalsoGame({ onBack, selectedLanguage, competitionMod
                   ? <CheckCircle className="h-7 w-7 text-emerald-400 flex-shrink-0" />
                   : <XCircle className="h-7 w-7 text-rose-400 flex-shrink-0" />
                 }
-                <span className={`text-2xl font-black ${isCorrect ? "text-emerald-400" : "text-rose-400"}`}>
+                <span className={`text-4xl font-black ${isCorrect ? "text-emerald-400" : "text-rose-400"}`}>
                   {isCorrect ? "Corretto!" : `Sbagliato! Era ${current.answer === "V" ? "VERO" : "FALSO"}`}
                 </span>
               </div>
