@@ -131,24 +131,36 @@ export default function VeroFalsoGame({ onBack, selectedLanguage, competitionMod
 
       <div className="w-full max-w-2xl">
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <button onClick={onBack} className="text-xs text-slate-400 hover:text-white transition">← {t.home.backToMenu}</button>
-          <div className="flex items-center gap-2">
+        {/* Barra bottoni superiore */}
+        <div className="w-full border-b border-white/10 mb-2">
+          <div className="flex items-center justify-between px-4 py-2">
+            <button onClick={onBack} className="text-xs text-slate-400 hover:text-white transition">
+              {t.home.backToMenu}
+            </button>
+            <div className="flex gap-2">
+              <button onClick={() => fileInputRef.current?.click()}
+                className="rounded-xl bg-white/10 px-2.5 py-1.5 text-xs hover:bg-white/15 transition">
+                <Upload className="h-3.5 w-3.5 inline mr-1" />Importa
+              </button>
+              <button onClick={reset}
+                className="rounded-xl bg-white/10 p-1.5 hover:bg-white/15 transition">
+                <RotateCcw className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" onChange={handleImport} className="hidden" />
+          </div>
+        </div>
+
+        {/* Titolo con barre decorative */}
+        <div className="w-full mb-3">
+          <div className="h-1 w-full bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 opacity-60" />
+          <div className="flex items-center justify-center gap-2 py-3">
             <span className="text-2xl">🧠</span>
-            <span className="font-black text-white text-lg">Vero o Falso?</span>
+            <h1 className="text-2xl font-black bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
+              Vero o Falso?
+            </h1>
           </div>
-          <div className="flex gap-2">
-            <button onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-1 rounded-xl bg-emerald-500/20 border border-emerald-400/30 px-2.5 py-1.5 text-xs text-emerald-300 hover:bg-emerald-500/30 transition">
-              <Upload className="h-3 w-3" /> Importa
-            </button>
-            <button onClick={reset}
-              className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-xs text-slate-300 hover:bg-white/15 transition">
-              <RotateCcw className="h-3 w-3" />
-            </button>
-          </div>
-          <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" onChange={handleImport} className="hidden" />
+          <div className="h-1 w-full bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 opacity-60" />
         </div>
 
         {/* Progresso */}
@@ -156,7 +168,7 @@ export default function VeroFalsoGame({ onBack, selectedLanguage, competitionMod
           <span className="text-xs text-slate-400">{idx + 1} / {items.length}</span>
           <div className="flex items-center gap-2">
             {current.category && (
-              <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-300/80">{current.category}</span>
+              <span className="text-sm font-bold uppercase tracking-widest text-indigo-300">{current.category}</span>
             )}
             <span className={`text-[11px] font-bold px-2 py-0.5 rounded-lg ${diffColor}`}>{current.difficulty}</span>
           </div>
@@ -208,7 +220,7 @@ export default function VeroFalsoGame({ onBack, selectedLanguage, competitionMod
                   ? <CheckCircle className="h-7 w-7 text-emerald-400 flex-shrink-0" />
                   : <XCircle className="h-7 w-7 text-rose-400 flex-shrink-0" />
                 }
-                <span className={`text-xl font-black ${isCorrect ? "text-emerald-400" : "text-rose-400"}`}>
+                <span className={`text-2xl font-black ${isCorrect ? "text-emerald-400" : "text-rose-400"}`}>
                   {isCorrect ? "Corretto!" : `Sbagliato! Era ${current.answer === "V" ? "VERO" : "FALSO"}`}
                 </span>
               </div>
