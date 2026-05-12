@@ -1148,7 +1148,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
 
             {/* Riga 4 — Banner vocali (altezza fissa ~38px) */}
             <div className="flex-none mx-4 mt-2 rounded-2xl bg-rose-500/10 border border-rose-400/20 px-4 py-1.5 flex items-center justify-center">
-              <span className="text-xl font-bold text-white">{t.home.vowelBanner}</span>
+              <span className="text-sm font-bold text-white">{t.home.vowelBanner}</span>
             </div>
 
             {/* Riga 5 — Cuori + Robot + Pulsanti */}

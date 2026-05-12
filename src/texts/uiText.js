@@ -6,7 +6,7 @@ export const UI_TEXT = {
       languageLabel: "Lingua",
       open: "Apri",
       chooseMode: "Scegli una modalità per iniziare",
-      vowelBanner: "Consonanti GRATIS — Vocali: 1 🌹 Rosa | 1 ❤️ Lovvami",
+      vowelBanner: "Consonanti GRATIS — Vocali: 1🌹 Rosa | 1❤️ Lovvami",
       backToMenu: "← Torna al menu",
     },
     games: {
