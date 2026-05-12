@@ -1069,6 +1069,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
 
       if (parsed.length > 0) {
         setItems(parsed);
+        saveItemsToStorage(selectedLanguage, parsed); // salva subito nella lingua corrente
         setCurrentIndex(0);
         setPlayMode("sequential");
         remainingIndexesRef.current = buildRemainingPool(parsed.length, 0);
