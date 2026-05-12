@@ -6,7 +6,7 @@ export const UI_TEXT = {
       languageLabel: "Lingua",
       open: "Apri",
       chooseMode: "Scegli una modalità per iniziare",
-      vowelBanner: "Consonanti GRATIS — Vocali: 1🌹 Rosa | 1❤️ Lovvami",
+      vowelBanner: "Consonanti GRATIS — Vocali:    1🌹 Rosa | 1❤️ Lovvami",
       backToMenu: "← Torna al menu",
     },
     games: {
@@ -120,7 +120,7 @@ export const UI_TEXT = {
     home: {
       title: "Live Games Hub",
       subtitle: "Choose the game to use on live",
-      languageLabel: "Language", open: "Open", chooseMode: "Choose a mode to start", vowelBanner: "Consonants FREE — Vowels: 1 🌹 Rose | 1 ❤️ Member Heart", backToMenu: "← Back to menu",
+      languageLabel: "Language", open: "Open", chooseMode: "Choose a mode to start", vowelBanner: "Consonants FREE — Vowels:    1🌹 Rose | 1❤️ Member Heart", backToMenu: "← Back to menu",
     },
     games: {
       hangmanTitle: "Hangman",
@@ -233,7 +233,7 @@ export const UI_TEXT = {
     home: {
       title: "Hub Jocuri Live",
       subtitle: "Alege jocul pentru live",
-      languageLabel: "Limbă", open: "Deschide", chooseMode: "Alege un mod pentru a începe", vowelBanner: "Consoane GRATUIT — Vocale: 1 🌹 Trandafir | 1 ❤️ Inimă de Membru", backToMenu: "← Înapoi la meniu",
+      languageLabel: "Limbă", open: "Deschide", chooseMode: "Alege un mod pentru a începe", vowelBanner: "Consoane GRATUIT — Vocale:    1🌹 Trandafir | 1❤️ Inimă de Membru", backToMenu: "← Înapoi la meniu",
     },
     games: {
       hangmanTitle: "Ghicește cuvântul",
@@ -346,7 +346,7 @@ export const UI_TEXT = {
     home: {
       title: "Jeux en direct",
       subtitle: "Choisissez un jeu et jouez avec votre communauté",
-      languageLabel: "Langue", open: "Ouvrir", chooseMode: "Choisissez un mode pour commencer", vowelBanner: "Consonnes GRATUITES — Voyelles: 1 🌹 Rose | 1 ❤️ Cœur d'équipe", backToMenu: "← Retour au menu",
+      languageLabel: "Langue", open: "Ouvrir", chooseMode: "Choisissez un mode pour commencer", vowelBanner: "Consonnes GRATUITES — Voyelles:     1🌹 Rose | 1❤️ Cœur d'équipe", backToMenu: "← Retour au menu",
     },
     games: {
       hangmanTitle: "Jeu du pendu",
