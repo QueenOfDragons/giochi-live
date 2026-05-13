@@ -1137,11 +1137,11 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
             {/* Riga 3 — Indizio (altezza fissa ~90px) */}
             <div className="flex-none mx-4 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 px-5 py-3 text-center" style={{ minHeight: "60px", maxHeight: "90px" }}>
               {currentItem.category && (
-                <div className="text-xs font-bold uppercase tracking-widest text-purple-300/90 mb-1">
+                <div className="text-base font-bold uppercase tracking-widest text-purple-300/90 mb-1">
                   {currentItem.category}
                 </div>
               )}
-              <div className="text-xl font-semibold leading-snug tracking-wide line-clamp-2">
+              <div className="text-2xl font-semibold leading-snug tracking-wide line-clamp-2">
                 {renderHintWithEmoji(currentItem.hint)}
               </div>
             </div>
