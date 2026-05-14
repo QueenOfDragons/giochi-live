@@ -447,26 +447,31 @@ function SolutionRow({ masked, showAnswer }) {
   const total = displayItems.length;
 
   let boxClass =
-    "flex h-[56px] w-[30px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[28px] font-extrabold uppercase leading-none shadow-md";
+    "flex h-[44px] w-[26px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[22px] font-extrabold uppercase leading-none shadow-md";
 
-  let wordGapClass = "gap-5";
-  let letterGapClass = "gap-1";
+  let wordGapClass = "gap-3";
+  let letterGapClass = "gap-[3px]";
 
-  if (total >= 26) {
+  if (total >= 30) {
     boxClass =
-      "flex h-[46px] w-[24px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[22px] font-extrabold uppercase leading-none shadow-md";
-    wordGapClass = "gap-4";
-    letterGapClass = "gap-[3px]";
+      "flex h-[34px] w-[19px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[15px] font-extrabold uppercase leading-none shadow-md";
+    wordGapClass = "gap-2";
+    letterGapClass = "gap-[2px]";
+  } else if (total >= 26) {
+    boxClass =
+      "flex h-[38px] w-[21px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[17px] font-extrabold uppercase leading-none shadow-md";
+    wordGapClass = "gap-2";
+    letterGapClass = "gap-[2px]";
   } else if (total >= 20) {
     boxClass =
-      "flex h-[50px] w-[26px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[24px] font-extrabold uppercase leading-none shadow-md";
-    wordGapClass = "gap-3";
-    letterGapClass = "gap-[4px]";
+      "flex h-[40px] w-[23px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[19px] font-extrabold uppercase leading-none shadow-md";
+    wordGapClass = "gap-2";
+    letterGapClass = "gap-[3px]";
   }
 
   return (
     <div className="overflow-hidden py-1">
-      <div className="flex min-h-[92px] items-center justify-center">
+      <div className="flex min-h-[60px] items-center justify-center">
         <div className={`flex max-w-full flex-wrap justify-center ${wordGapClass} gap-y-3`}>
           {words.map((word, wordIndex) => {
             const isWordComplete = word.every(
@@ -1193,8 +1198,8 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
               </div>
             </div>
 
-            {/* Riga 6 — Lettere (altezza fissa ~80px) */}
-            <div className="flex-none mx-4 mt-2 rounded-3xl border border-white/10 bg-slate-900/60 p-2.5">
+            {/* Riga 6 — Lettere */}
+            <div className="flex-none mx-4 mt-2 rounded-3xl border border-white/10 bg-slate-900/60 p-2">
               <SolutionRow masked={masked} showAnswer={showAnswer} />
             </div>
 
