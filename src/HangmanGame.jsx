@@ -446,28 +446,31 @@ function SolutionRow({ masked, showAnswer }) {
 
   const total = displayItems.length;
 
-  let boxClass =
-    "flex h-[44px] w-[26px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[22px] font-extrabold uppercase leading-none shadow-md";
+  // Dimensioni casella: w x h in px, fontSize proporzionale (~85% della larghezza)
+  let cellW, cellH, fontSize, wordGap, letterGap;
 
-  let wordGapClass = "gap-3";
-  let letterGapClass = "gap-[3px]";
-
-  if (total >= 30) {
-    boxClass =
-      "flex h-[34px] w-[19px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[15px] font-extrabold uppercase leading-none shadow-md";
-    wordGapClass = "gap-2";
-    letterGapClass = "gap-[2px]";
+  if (total >= 35) {
+    cellW = 17; cellH = 26; fontSize = 14;
+    wordGap = "gap-[6px]"; letterGap = "gap-[2px]";
+  } else if (total >= 30) {
+    cellW = 19; cellH = 29; fontSize = 16;
+    wordGap = "gap-[7px]"; letterGap = "gap-[2px]";
   } else if (total >= 26) {
-    boxClass =
-      "flex h-[38px] w-[21px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[17px] font-extrabold uppercase leading-none shadow-md";
-    wordGapClass = "gap-2";
-    letterGapClass = "gap-[2px]";
+    cellW = 21; cellH = 32; fontSize = 18;
+    wordGap = "gap-[8px]"; letterGap = "gap-[2px]";
   } else if (total >= 20) {
-    boxClass =
-      "flex h-[40px] w-[23px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[19px] font-extrabold uppercase leading-none shadow-md";
-    wordGapClass = "gap-2";
-    letterGapClass = "gap-[3px]";
+    cellW = 24; cellH = 36; fontSize = 20;
+    wordGap = "gap-[9px]"; letterGap = "gap-[3px]";
+  } else {
+    cellW = 28; cellH = 42; fontSize = 24;
+    wordGap = "gap-[10px]"; letterGap = "gap-[3px]";
   }
+
+  const boxClass = "flex items-center justify-center rounded-md border border-gray-300 bg-white text-black font-extrabold uppercase leading-none shadow-md";
+  const boxStyle = { width: `${cellW}px`, height: `${cellH}px`, fontSize: `${fontSize}px`, padding: 0 };
+
+  const wordGapClass = wordGap;
+  const letterGapClass = letterGap;
 
   return (
     <div className="overflow-hidden py-1">
@@ -530,9 +533,8 @@ function SolutionRow({ masked, showAnswer }) {
                     }}
                     style={{
                       transformStyle: "preserve-3d",
-                      ...(item.isVisible
-                        ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" }
-                        : {}),
+                      ...boxStyle,
+                      ...(item.isVisible ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" } : {}),
                     }}
                     className={boxClass}
                   >
