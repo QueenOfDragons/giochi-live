@@ -1177,7 +1177,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                   {status === "playing" ? `${t.hangman.errors}: ${wrong.length}/${maxHearts}` : status === "won" ? `🎉 ${t.hangman.won}!` : `💀 ${t.hangman.lost}`}
                 </div>
                 {status === "playing" && (
-                  <div className="text-[11px] font-semibold text-cyan-400 mt-0.5">
+                  <div className="text-[13px] font-semibold text-cyan-400 mt-0.5">
                     {t.home?.missingConsonants || "Consonanti"}: {missingConsonants}
                   </div>
                 )}
