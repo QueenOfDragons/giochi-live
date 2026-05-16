@@ -65,28 +65,24 @@ const DIFFICULTY_HEARTS = {
   Difficile: 10,
 };
 
-const LETTER_REGEX = /[A-Za-zÀ-ÖØ-öø-ÿĀ-ɏ0-9]/;
+const LETTER_REGEX = /[A-Za-zÀ-ÖØ-öø-ÿĀ-ɏ]/;
 
 const KEYBOARD_LAYOUTS = {
   it: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],
     ["q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "à", "è", "é", "ì", "ò", "ù"],
-    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
   ],
   en: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"],
     ["n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
-    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
   ],
   ro: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],
     ["q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ă", "â", "î"],
-    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
   ],
   fr: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s"],
     ["t", "u", "v", "w", "x", "y", "z", "à", "â", "ç", "é", "è", "ê", "ë", "î", "ï", "ô", "ù", "û"],
-    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
   ],
 };
 
@@ -197,6 +193,8 @@ function normalizeChar(char) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f\u0326]/g, "");
 }
+
+const VOWELS = new Set(["a","e","i","o","u","à","è","é","ì","ò","ù","â","ê","î","ô","û","ă","â","î"]);
 
 function getUniqueLetters(text) {
   const set = new Set();
@@ -446,35 +444,27 @@ function SolutionRow({ masked, showAnswer }) {
 
   const total = displayItems.length;
 
-  // Dimensioni casella: w x h in px, fontSize proporzionale (~85% della larghezza)
-  let cellW, cellH, fontSize, wordGap, letterGap;
+  let boxClass =
+    "flex h-[56px] w-[30px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[28px] font-extrabold uppercase leading-none shadow-md";
 
-  if (total >= 35) {
-    cellW = 17; cellH = 26; fontSize = 14;
-    wordGap = "gap-[6px]"; letterGap = "gap-[2px]";
-  } else if (total >= 30) {
-    cellW = 19; cellH = 29; fontSize = 16;
-    wordGap = "gap-[7px]"; letterGap = "gap-[2px]";
-  } else if (total >= 26) {
-    cellW = 21; cellH = 32; fontSize = 18;
-    wordGap = "gap-[8px]"; letterGap = "gap-[2px]";
+  let wordGapClass = "gap-5";
+  let letterGapClass = "gap-1";
+
+  if (total >= 26) {
+    boxClass =
+      "flex h-[46px] w-[24px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[22px] font-extrabold uppercase leading-none shadow-md";
+    wordGapClass = "gap-4";
+    letterGapClass = "gap-[3px]";
   } else if (total >= 20) {
-    cellW = 24; cellH = 36; fontSize = 20;
-    wordGap = "gap-[9px]"; letterGap = "gap-[3px]";
-  } else {
-    cellW = 28; cellH = 42; fontSize = 24;
-    wordGap = "gap-[10px]"; letterGap = "gap-[3px]";
+    boxClass =
+      "flex h-[50px] w-[26px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[24px] font-extrabold uppercase leading-none shadow-md";
+    wordGapClass = "gap-3";
+    letterGapClass = "gap-[4px]";
   }
-
-  const boxClass = "flex items-center justify-center rounded-md border border-gray-300 bg-white text-black font-extrabold uppercase leading-none shadow-md";
-  const boxStyle = { width: `${cellW}px`, height: `${cellH}px`, fontSize: `${fontSize}px`, padding: 0 };
-
-  const wordGapClass = wordGap;
-  const letterGapClass = letterGap;
 
   return (
     <div className="overflow-hidden py-1">
-      <div className="flex min-h-[60px] items-center justify-center">
+      <div className="flex min-h-[92px] items-center justify-center">
         <div className={`flex max-w-full flex-wrap justify-center ${wordGapClass} gap-y-3`}>
           {words.map((word, wordIndex) => {
             const isWordComplete = word.every(
@@ -533,8 +523,9 @@ function SolutionRow({ masked, showAnswer }) {
                     }}
                     style={{
                       transformStyle: "preserve-3d",
-                      ...boxStyle,
-                      ...(item.isVisible ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" } : {}),
+                      ...(item.isVisible
+                        ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" }
+                        : {}),
                     }}
                     className={boxClass}
                   >
@@ -749,6 +740,9 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
   const currentItem = items[currentIndex] || DEFAULT_ITEMS[0];
   const maxHearts = competitionMode ? 12 : (DIFFICULTY_HEARTS[currentItem.difficulty] || 8);
   const uniqueLetters = useMemo(() => getUniqueLetters(currentItem.text), [currentItem.text]);
+  const missingConsonants = useMemo(() => {
+    return uniqueLetters.filter(l => !VOWELS.has(l) && !guessed.has(l)).length;
+  }, [uniqueLetters, guessed]);
   const masked = useMemo(() => maskCharacters(currentItem.text, guessed), [currentItem.text, guessed]);
 
   const buildRemainingPool = (itemsLength, excludeIndex = null) => {
@@ -1148,7 +1142,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
             {/* Riga 3 — Indizio (altezza fissa ~90px) */}
             <div className="flex-none mx-4 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 px-5 py-3 text-center" style={{ minHeight: "60px", maxHeight: "90px" }}>
               {currentItem.category && (
-                <div className="text-base font-bold uppercase tracking-widest text-purple-300/90 mb-1">
+                <div className="text-xs font-bold uppercase tracking-widest text-purple-300/90 mb-1">
                   {currentItem.category}
                 </div>
               )}
@@ -1159,7 +1153,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
 
             {/* Riga 4 — Banner vocali (altezza fissa ~38px) */}
             <div className="flex-none mx-4 mt-2 rounded-2xl bg-rose-500/10 border border-rose-400/20 px-4 py-1.5 flex items-center justify-center">
-              <span className="text-base font-bold text-white">{t.home.vowelBanner}</span>
+              <span className="text-sm font-bold text-white">{t.home.vowelBanner}</span>
             </div>
 
             {/* Riga 5 — Cuori + Robot + Pulsanti */}
@@ -1182,6 +1176,11 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 <div className={`text-[11px] font-semibold ${status === "won" ? "text-emerald-400" : status === "lost" ? "text-rose-400" : "text-slate-400"}`}>
                   {status === "playing" ? `${t.hangman.errors}: ${wrong.length}/${maxHearts}` : status === "won" ? `🎉 ${t.hangman.won}!` : `💀 ${t.hangman.lost}`}
                 </div>
+                {status === "playing" && (
+                  <div className="text-[11px] font-semibold text-cyan-400 mt-0.5">
+                    {t.home?.missingConsonants || "Consonanti"}: {missingConsonants}
+                  </div>
+                )}
               </div>
 
               {/* Robot al centro */}
@@ -1200,8 +1199,8 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
               </div>
             </div>
 
-            {/* Riga 6 — Lettere */}
-            <div className="flex-none mx-4 mt-2 rounded-3xl border border-white/10 bg-slate-900/60 p-2">
+            {/* Riga 6 — Lettere (altezza fissa ~80px) */}
+            <div className="flex-none mx-4 mt-2 rounded-3xl border border-white/10 bg-slate-900/60 p-2.5">
               <SolutionRow masked={masked} showAnswer={showAnswer} />
             </div>
 
