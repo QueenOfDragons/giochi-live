@@ -65,24 +65,28 @@ const DIFFICULTY_HEARTS = {
   Difficile: 10,
 };
 
-const LETTER_REGEX = /[A-Za-zÀ-ÖØ-öø-ÿĀ-ɏ]/;
+const LETTER_REGEX = /[A-Za-zÀ-ÖØ-öø-ÿĀ-ɏ0-9]/;
 
 const KEYBOARD_LAYOUTS = {
   it: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],
     ["q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "à", "è", "é", "ì", "ò", "ù"],
+    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
   ],
   en: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"],
     ["n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
+    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
   ],
   ro: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],
     ["q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ă", "â", "î"],
+    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
   ],
   fr: [
     ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s"],
     ["t", "u", "v", "w", "x", "y", "z", "à", "â", "ç", "é", "è", "ê", "ë", "î", "ï", "ô", "ù", "û"],
+    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
   ],
 };
 
@@ -1177,7 +1181,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                   {status === "playing" ? `${t.hangman.errors}: ${wrong.length}/${maxHearts}` : status === "won" ? `🎉 ${t.hangman.won}!` : `💀 ${t.hangman.lost}`}
                 </div>
                 {status === "playing" && (
-                  <div className="text-[13px] font-semibold text-cyan-400 mt-0.5">
+                  <div className="text-[11px] font-semibold text-cyan-400 mt-0.5">
                     {t.home?.missingConsonants || "Consonanti"}: {missingConsonants}
                   </div>
                 )}
