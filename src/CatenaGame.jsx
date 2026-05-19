@@ -9,6 +9,8 @@ const DEFAULT_CHAINS = [
   { words: ["SOLE", "MARE", "SALE", "GROSSO", "CALIBRO", "LUNGO", "RAGGIO"], category: "Misto", difficulty: "Difficile" },
 ];
 
+const TIMER_OPTIONS = [30, 45, 60, 90, 120];
+
 function parseChains(rows) {
   if (!rows || rows.length < 2) return [];
   const header = rows[0].map(v => String(v ?? "").toLowerCase().trim());
@@ -31,8 +33,6 @@ function calcScore(lettersRevealed) {
   if (lettersRevealed === 3) return 2;
   return 1;
 }
-
-const TIMER_OPTIONS = [30, 45, 60, 90, 120];
 
 export default function CatenaGame({ onBack, competitionMode = false }) {
   const [chains, setChains] = useState(DEFAULT_CHAINS);
@@ -57,9 +57,14 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
   const revealed = currentWord.slice(0, lettersRevealed);
   const hidden = currentWord.slice(lettersRevealed);
   const isLastWord = wordIdx === 5;
-
   const timerPct = (timeLeft / timerDuration) * 100;
   const timerColor = timeLeft > timerDuration * 0.5 ? "#34d399" : timeLeft > timerDuration * 0.25 ? "#fbbf24" : "#f87171";
+
+  const diffColor = {
+    Facile:    "bg-emerald-500/20 text-emerald-300",
+    Media:     "bg-amber-500/20 text-amber-300",
+    Difficile: "bg-rose-500/20 text-rose-300",
+  }[chain.difficulty] || "bg-slate-500/20 text-slate-300";
 
   useEffect(() => {
     if (timerRunning && !paused && timeLeft > 0) {
@@ -97,8 +102,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
 
   const markCorrect = () => {
     stopTimer();
-    const pts = calcScore(lettersRevealed);
-    if (competitionMode) setScore(s => s + pts);
+    if (competitionMode) setScore(s => s + calcScore(lettersRevealed));
     setSolved(prev => [...prev, { wordIdx, lettersRevealed }]);
     setFlashMode("correct");
     setTimeout(() => {
@@ -130,6 +134,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
     setFlashMode("none");
     setPaused(false);
     setGameStarted(false);
+    stopTimer();
   };
 
   const reset = () => {
@@ -155,10 +160,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
       const ws = wb.Sheets[wb.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: "" });
       const parsed = parseChains(rows);
-      if (parsed.length > 0) {
-        setChains(parsed);
-        reset();
-      }
+      if (parsed.length > 0) { setChains(parsed); reset(); }
     } catch (err) { console.error(err); }
     e.target.value = "";
   };
@@ -171,10 +173,35 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
     return "locked";
   };
 
+  const wordClass = (status) => {
+    const base = "relative w-full rounded-xl px-4 py-2 text-center font-black text-base tracking-widest transition-all duration-300";
+    if (status === "revealed") return base + " bg-emerald-500/20 border-2 border-emerald-400/60 text-emerald-200";
+    if (status === "solved")   return base + " bg-emerald-500/10 border border-emerald-400/40 text-emerald-300";
+    if (status === "skipped")  return base + " bg-slate-800/60 border border-slate-600/40 text-slate-400 line-through";
+    if (status === "current")  return base + " bg-teal-500/20 border-2 border-teal-400/50 text-white";
+    return base + " bg-slate-900/40 border border-white/5 text-slate-700";
+  };
+
+  const arrowClass = (status) => {
+    if (status === "revealed" || status === "solved") return "text-sm text-emerald-500/60";
+    return "text-sm text-slate-700";
+  };
+
+  const timerBtnClass = (t) => {
+    const base = "rounded-lg px-2 py-0.5 text-xs font-bold transition";
+    if (timerDuration === t) return base + " bg-emerald-500 text-white";
+    return base + " bg-white/10 text-slate-400";
+  };
+
+  const setupBtnClass = (t) => {
+    const base = "rounded-xl px-4 py-2 text-sm font-bold transition";
+    if (timerDuration === t) return base + " bg-emerald-500 text-white";
+    return base + " bg-white/10 text-slate-300";
+  };
+
   return (
     <div className="relative min-h-screen bg-slate-950 text-white flex flex-col overflow-hidden">
 
-      {/* Flash */}
       <AnimatePresence>
         {flashMode === "correct" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.25 }} exit={{ opacity: 0 }}
@@ -186,10 +213,9 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
         )}
       </AnimatePresence>
 
-      {/* Barra bottoni */}
       <div className="w-full border-b border-white/10">
         <div className="flex items-center justify-between px-4 py-2">
-          <button onClick={onBack} className="text-xs text-slate-400 hover:text-white transition">← Menu</button>
+          <button onClick={onBack} className="text-xs text-slate-400 hover:text-white transition">Menu</button>
           <div className="flex gap-2">
             <button onClick={() => fileInputRef.current?.click()}
               className="rounded-xl bg-white/10 px-2.5 py-1.5 text-xs hover:bg-white/15 transition">
@@ -203,78 +229,56 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
         </div>
       </div>
 
-      {/* Titolo */}
       <div className="w-full">
         <div className="h-0.5 w-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-60" />
         <div className="flex items-center justify-center gap-2 py-2">
-          <span className="text-xl">🔗</span>
+          <span className="text-xl">&#128279;</span>
           <h1 className="text-lg font-black bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
             La Catena
           </h1>
           {competitionMode && (
             <span className="ml-2 rounded-xl bg-emerald-500/20 border border-emerald-400/30 px-2 py-0.5 text-xs font-bold text-emerald-300">
-              ⭐ {score} pt
+              {score} pt
             </span>
           )}
         </div>
         <div className="h-0.5 w-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-60" />
       </div>
 
-      {/* SCHERMATA SETUP */}
       {!gameStarted && (
         <div className="flex flex-col items-center justify-center flex-1 px-4 gap-5">
           <div className="text-center">
-            <div className="text-3xl mb-1">🔗</div>
             <div className="text-base font-black text-emerald-300 mb-0.5">Pronta per iniziare?</div>
             <div className="text-xs text-slate-400">Imposta il timer prima di partire</div>
           </div>
-
-          {/* Timer preview */}
-          <div className="flex flex-col items-center gap-2 w-full max-w-xs">
-            <div className="text-5xl font-black tabular-nums" style={{ color: "#34d399" }}>
-              {timerDuration}s
-            </div>
-            <div className="relative h-2 w-full rounded-full bg-slate-800 overflow-hidden">
-              <div className="absolute left-0 top-0 h-full w-full rounded-full bg-emerald-400" />
-            </div>
+          <div className="text-5xl font-black tabular-nums text-emerald-400">{timerDuration}s</div>
+          <div className="relative h-2 w-full max-w-xs rounded-full bg-slate-800 overflow-hidden">
+            <div className="absolute left-0 top-0 h-full w-full rounded-full bg-emerald-400" />
           </div>
-
-          {/* Selezione timer */}
           <div className="flex flex-wrap justify-center gap-2">
             {TIMER_OPTIONS.map(t => (
               <button key={t} onClick={() => { setTimerDuration(t); setTimeLeft(t); }}
-                className={`rounded-xl px-4 py-2 text-sm font-bold transition ${timerDuration === t ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30" : "bg-white/10 text-slate-300 hover:bg-white/20"}`}>
+                className={setupBtnClass(t)}>
                 {t}s
               </button>
             ))}
           </div>
-
           <motion.button
-            onClick={() => { setGameStarted(true); }}
+            onClick={() => setGameStarted(true)}
             whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-            className="w-full max-w-xs flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 py-3 font-bold text-white shadow-lg shadow-emerald-500/30">
-            Inizia →
+            className="w-full max-w-xs rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 py-3 font-bold text-white shadow-lg">
+            Inizia
           </motion.button>
         </div>
-      </div>
       )}
 
-      {/* GIOCO */}
       {gameStarted && (
-        <div className="flex-1 flex flex-col items-center justify-center px-3 py-1 gap-0">
-
-          {/* Info catena */}
+        <div className="flex-1 flex flex-col items-center justify-center px-3 py-1">
           <div className="flex items-center gap-3 mb-2">
             <span className="text-sm font-bold text-emerald-300/80 uppercase tracking-widest">{chain.category}</span>
-            <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${
-              chain.difficulty === "Facile" ? "bg-emerald-500/20 text-emerald-300" :
-              chain.difficulty === "Difficile" ? "bg-rose-500/20 text-rose-300" :
-              "bg-amber-500/20 text-amber-300"
-            }`}>{chain.difficulty}</span>
+            <span className={"text-xs font-bold px-2 py-0.5 rounded-lg " + diffColor}>{chain.difficulty}</span>
             <span className="text-xs text-slate-500">{chainIdx + 1} / {chains.length}</span>
           </div>
-
-          {/* Parole verticali */}
           <div className="flex flex-col items-center gap-0.5 w-full max-w-xs">
             {chain.words.map((word, idx) => {
               const status = getWordStatus(idx);
@@ -285,26 +289,18 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className={`relative w-full rounded-xl px-4 py-2 text-center font-black text-base tracking-widest transition-all duration-300 ${
-                      status === "revealed"
-                        ? "bg-gradient-to-r from-emerald-500/30 to-teal-500/30 border-2 border-emerald-400/60 text-emerald-200 shadow-lg shadow-emerald-500/10"
-                        : status === "solved"
-                        ? "bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-400/40 text-emerald-300"
-                        : status === "skipped"
-                        ? "bg-slate-800/60 border border-slate-600/40 text-slate-400 line-through"
-                        : status === "current"
-                        ? "bg-gradient-to-r from-teal-500/20 to-cyan-500/20 border-2 border-teal-400/50 text-white shadow-lg shadow-teal-500/10"
-                        : "bg-slate-900/40 border border-white/5 text-slate-700"
-                    }`}
+                    className={wordClass(status)}
                   >
-                    {status === "revealed" || status === "solved" || status === "skipped" ? (
+                    {(status === "revealed" || status === "solved" || status === "skipped") && (
                       <span>{word}</span>
-                    ) : status === "current" ? (
+                    )}
+                    {status === "current" && (
                       <span>
                         <span className="text-teal-300">{revealed}</span>
-                        <span className="text-slate-500">{hidden.replace(/\S/g, "_")}</span>
+                        <span className="text-slate-500">{hidden.split("").map(() => "_").join("")}</span>
                       </span>
-                    ) : (
+                    )}
+                    {status === "locked" && (
                       <span className="text-slate-700">{"_".repeat(Math.min(word.length, 8))}</span>
                     )}
                     {status === "solved" && (() => {
@@ -317,9 +313,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
                     })()}
                   </motion.div>
                   {idx < chain.words.length - 1 && (
-                    <div className={`text-sm transition-colors duration-300 ${
-                      status === "revealed" || status === "solved" ? "text-emerald-500/60" : "text-slate-700"
-                    }`}>↓</div>
+                    <div className={arrowClass(status)}>|</div>
                   )}
                 </React.Fragment>
               );
@@ -328,83 +322,71 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
         </div>
       )}
 
-      {/* TIMER + PULSANTI */}
       {gameStarted && !chainDone && (
         <div className="w-full px-4 pb-2 flex flex-col gap-2">
-          {/* Modifica timer + pausa */}
           <div className="flex items-center justify-between">
             <div className="flex gap-1.5">
               {TIMER_OPTIONS.map(t => (
                 <button key={t} onClick={() => { setTimerDuration(t); setTimeLeft(t); }}
-                  className={`rounded-lg px-2 py-0.5 text-[10px] font-bold transition ${timerDuration === t ? "bg-emerald-500 text-white" : "bg-white/10 text-slate-400 hover:bg-white/20"}`}>
+                  className={timerBtnClass(t)}>
                   {t}s
                 </button>
               ))}
             </div>
             <button onClick={() => setPaused(p => !p)}
-              className={`rounded-xl px-3 py-1 text-xs font-bold transition ${paused ? "bg-amber-500 text-white" : "bg-white/10 text-slate-300 hover:bg-white/20"}`}>
-              {paused ? "▶ Riprendi" : "⏸ Pausa"}
+              className={"rounded-xl px-3 py-1 text-xs font-bold transition " + (paused ? "bg-amber-500 text-white" : "bg-white/10 text-slate-300")}>
+              {paused ? "Riprendi" : "Pausa"}
             </button>
           </div>
-
-          {/* Barra timer */}
           <div className="relative h-2 w-full rounded-full bg-slate-800 overflow-hidden">
             <motion.div className="absolute left-0 top-0 h-full rounded-full"
               style={{ backgroundColor: timerColor }}
-              animate={{ width: `${timerPct}%` }}
+              animate={{ width: timerPct + "%" }}
               transition={{ duration: 0.3 }} />
           </div>
           <div className="text-center">
             <span className="text-2xl font-black tabular-nums" style={{ color: timerColor }}>{timeLeft}</span>
           </div>
-
-          {/* Pulsanti */}
           <div className="grid grid-cols-3 gap-2">
             <motion.button onClick={addLetter} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
               disabled={lettersRevealed >= currentWord.length}
-              className="flex items-center justify-center gap-1.5 rounded-2xl bg-amber-500/20 border border-amber-400/30 py-2 text-sm font-bold text-amber-300 hover:bg-amber-500/30 transition disabled:opacity-30">
+              className="flex items-center justify-center gap-1.5 rounded-2xl bg-amber-500/20 border border-amber-400/30 py-2 text-sm font-bold text-amber-300 disabled:opacity-30">
               <Plus className="h-4 w-4" /> Lettera
             </motion.button>
             <motion.button onClick={markCorrect} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-1.5 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 py-2 text-sm font-bold text-emerald-300 hover:bg-emerald-500/30 transition">
+              className="flex items-center justify-center gap-1.5 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 py-2 text-sm font-bold text-emerald-300">
               <Check className="h-4 w-4" /> Indovinato
             </motion.button>
             <motion.button onClick={skipWord} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-700/40 border border-slate-600/30 py-2 text-sm font-bold text-slate-400 hover:bg-slate-700/60 transition">
+              className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-700/40 border border-slate-600/30 py-2 text-sm font-bold text-slate-400">
               <SkipForward className="h-4 w-4" /> Avanti
             </motion.button>
           </div>
         </div>
       )}
 
-      {/* CATENA COMPLETATA */}
-      <AnimatePresence>
-        {chainDone && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="w-full px-4 pb-4">
-            <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-3 text-center">
-              <div className="text-2xl mb-1">🎉</div>
-              <div className="text-base font-black text-emerald-300 mb-1">Catena completata!</div>
-              {competitionMode && (
-                <div className="text-sm text-slate-300 mb-2">
-                  Punti: <span className="font-bold text-emerald-400">
-                    {solved.reduce((acc, s) => acc + calcScore(s.lettersRevealed), 0)}
-                  </span>
-                </div>
-              )}
-              <div className="text-xs text-slate-400 mb-3">
-                {solved.length} indovinate · {skipped.length} saltate
+      {chainDone && (
+        <div className="w-full px-4 pb-4">
+          <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-3 text-center">
+            <div className="text-base font-black text-emerald-300 mb-1">Catena completata!</div>
+            {competitionMode && (
+              <div className="text-sm text-slate-300 mb-2">
+                Punti: <span className="font-bold text-emerald-400">
+                  {solved.reduce((acc, s) => acc + calcScore(s.lettersRevealed), 0)}
+                </span>
               </div>
-              <motion.button onClick={nextChain} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 py-2 font-bold text-white shadow-lg shadow-emerald-500/30">
-                <ChevronRight className="h-5 w-5" /> Prossima catena
-              </motion.button>
+            )}
+            <div className="text-xs text-slate-400 mb-3">
+              {solved.length} indovinate - {skipped.length} saltate
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-    </div>
+            <motion.button onClick={nextChain} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+              className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 py-2 font-bold text-white">
+              <ChevronRight className="h-5 w-5" /> Prossima catena
+            </motion.button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
