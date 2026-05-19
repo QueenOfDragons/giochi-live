@@ -57,6 +57,8 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
   const [timeLeft, setTimeLeft] = useState(10);
   const [timerRunning, setTimerRunning] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
   const [flashMode, setFlashMode] = useState("none"); // "correct" | "skip" | "none"
   const [score, setScore] = useState(0);
   const [solved, setSolved] = useState([]); // array di {wordIdx, lettersRevealed}
@@ -73,13 +75,13 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
 
   // ── TIMER ──────────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (timerRunning && timeLeft > 0) {
+    if (timerRunning && !paused && timeLeft > 0) {
       timerRef.current = setTimeout(() => setTimeLeft(t => t - 1), 1000);
-    } else if (timerRunning && timeLeft === 0) {
+    } else if (timerRunning && !paused && timeLeft === 0) {
       setTimerRunning(false);
     }
     return () => clearTimeout(timerRef.current);
-  }, [timerRunning, timeLeft]);
+  }, [timerRunning, paused, timeLeft]);
 
   const startTimer = useCallback(() => {
     setTimeLeft(timerDuration);
@@ -93,11 +95,12 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
 
   // avvia timer quando cambia parola
   useEffect(() => {
-    if (!chainDone) {
+    if (!chainDone && gameStarted) {
       setLettersRevealed(0);
+      setPaused(false);
       startTimer();
     }
-  }, [wordIdx, chainIdx]);
+  }, [wordIdx, chainIdx, gameStarted]);
 
   // ── AZIONI ─────────────────────────────────────────────────────────────────
   const addLetter = () => {
@@ -146,6 +149,8 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
     setSkipped([]);
     setChainDone(false);
     setFlashMode("none");
+    setPaused(false);
+    setGameStarted(false);
   };
 
   const reset = () => {
@@ -157,6 +162,8 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
     setChainDone(false);
     setScore(0);
     setFlashMode("none");
+    setPaused(false);
+    setGameStarted(false);
     stopTimer();
   };
 
@@ -238,10 +245,10 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
 
       {/* ── TITOLO ── */}
       <div className="w-full">
-        <div className="h-1 w-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-60" />
+        <div className="h-0.5 w-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-60" />
         <div className="flex items-center justify-center gap-2 py-2">
           <span className="text-2xl">🔗</span>
-          <h1 className="text-2xl font-black bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-lg font-black bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
             La Catena
           </h1>
           {competitionMode && (
@@ -250,7 +257,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
             </span>
           )}
         </div>
-        <div className="h-1 w-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-60" />
+        <div className="h-0.5 w-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-60" />
       </div>
 
       {/* ── SETTINGS PANEL ── */}
@@ -274,7 +281,36 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
       {/* ── CATENA ── */}
       <div className="flex-1 flex flex-col items-center justify-center px-3 py-1 gap-0">
 
-        {/* Info catena */}
+        {/* ── SCHERMATA SETUP ── */}
+      {!gameStarted && (
+        <div className="flex flex-col items-center justify-center flex-1 px-4 gap-6">
+          <div className="text-center">
+            <div className="text-4xl mb-2">🔗</div>
+            <div className="text-lg font-black text-emerald-300 mb-1">Pronta per iniziare?</div>
+            <div className="text-xs text-slate-400">Imposta il timer prima di partire</div>
+          </div>
+          <div className="w-full max-w-xs">
+            <div className="text-xs text-slate-400 text-center mb-3">Secondi per ogni parola</div>
+            <div className="flex flex-wrap justify-center gap-2">
+              {[5, 10, 15, 20, 30, 45, 60].map(t => (
+                <button key={t} onClick={() => { setTimerDuration(t); setTimeLeft(t); }}
+                  className={`rounded-xl px-4 py-2 text-sm font-bold transition ${timerDuration === t ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30" : "bg-white/10 text-slate-300 hover:bg-white/20"}`}>
+                  {t}s
+                </button>
+              ))}
+            </div>
+          </div>
+          <motion.button
+            onClick={() => { setGameStarted(true); startTimer(); }}
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            className="w-full max-w-xs flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 py-3 font-bold text-white shadow-lg shadow-emerald-500/30">
+            Inizia →
+          </motion.button>
+        </div>
+      )}
+
+      {gameStarted && <>
+      {/* Info catena */}
         <div className="flex items-center gap-3 mb-2">
           <span className="text-xs font-bold text-emerald-300/70 uppercase tracking-widest">{chain.category}</span>
           <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${
@@ -342,10 +378,27 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
         </div>
       </div>
 
+      </>}
+
       {/* ── TIMER + PULSANTI ── */}
-      {!chainDone && (
+      {gameStarted && !chainDone && (
         <div className="w-full px-4 pb-2 flex flex-col gap-2">
 
+          {/* Pausa + modifica timer al volo */}
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex gap-1.5">
+              {[5, 10, 15, 20, 30].map(t => (
+                <button key={t} onClick={() => { setTimerDuration(t); setTimeLeft(t); }}
+                  className={`rounded-lg px-2 py-0.5 text-[10px] font-bold transition ${timerDuration === t ? "bg-emerald-500 text-white" : "bg-white/10 text-slate-400 hover:bg-white/20"}`}>
+                  {t}s
+                </button>
+              ))}
+            </div>
+            <button onClick={() => setPaused(p => !p)}
+              className={`rounded-xl px-3 py-1 text-xs font-bold transition ${paused ? "bg-amber-500 text-white" : "bg-white/10 text-slate-300 hover:bg-white/20"}`}>
+              {paused ? "▶ Riprendi" : "⏸ Pausa"}
+            </button>
+          </div>
           {/* Timer bar */}
           <div className="relative h-2 w-full rounded-full bg-slate-800 overflow-hidden">
             <motion.div
