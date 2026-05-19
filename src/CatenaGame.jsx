@@ -349,10 +349,10 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
                   ) : status === "current" ? (
                     <span>
                       <span className="text-teal-300">{revealed}</span>
-                      <span className="text-slate-500">{hidden.replace(/./g, "·")}</span>
+                      <span className="text-slate-500">{hidden.replace(/./g, "_")}</span>
                     </span>
                   ) : (
-                    <span className="text-slate-700">{"·".repeat(Math.min(word.length, 8))}</span>
+                    <span className="text-slate-700">{"_".repeat(Math.min(word.length, 8))}</span>
                   )}
 
                   {/* Badge punti */}
