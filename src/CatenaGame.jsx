@@ -53,8 +53,8 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
   const [chainIdx, setChainIdx] = useState(0);
   const [wordIdx, setWordIdx] = useState(1); // 1..5 = parole da indovinare
   const [lettersRevealed, setLettersRevealed] = useState(0);
-  const [timerDuration, setTimerDuration] = useState(10);
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timerDuration, setTimerDuration] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [timerRunning, setTimerRunning] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -267,7 +267,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
             className="overflow-hidden border-b border-white/10 bg-slate-900/80">
             <div className="flex items-center gap-4 px-4 py-3">
               <span className="text-xs text-slate-400">Timer (secondi):</span>
-              {[5, 10, 15, 20, 30].map(t => (
+              {[30, 45, 60, 90, 120].map(t => (
                 <button key={t} onClick={() => { setTimerDuration(t); setTimeLeft(t); }}
                   className={`rounded-lg px-3 py-1 text-xs font-bold transition ${timerDuration === t ? "bg-emerald-500 text-white" : "bg-white/10 text-slate-300 hover:bg-white/20"}`}>
                   {t}s
@@ -292,12 +292,21 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
           <div className="w-full max-w-xs">
             <div className="text-xs text-slate-400 text-center mb-3">Secondi per ogni parola</div>
             <div className="flex flex-wrap justify-center gap-2">
-              {[5, 10, 15, 20, 30, 45, 60].map(t => (
+              {[30, 45, 60, 90, 120].map(t => (
                 <button key={t} onClick={() => { setTimerDuration(t); setTimeLeft(t); }}
                   className={`rounded-xl px-4 py-2 text-sm font-bold transition ${timerDuration === t ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30" : "bg-white/10 text-slate-300 hover:bg-white/20"}`}>
                   {t}s
                 </button>
               ))}
+            </div>
+          </div>
+          {/* Timer preview */}
+          <div className="flex flex-col items-center gap-2 w-full max-w-xs">
+            <div className="text-4xl font-black tabular-nums" style={{ color: "#34d399" }}>
+              {timerDuration}s
+            </div>
+            <div className="relative h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+              <div className="absolute left-0 top-0 h-full w-full rounded-full bg-emerald-400" />
             </div>
           </div>
           <motion.button
@@ -387,7 +396,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
           {/* Pausa + modifica timer al volo */}
           <div className="flex items-center justify-between mb-1">
             <div className="flex gap-1.5">
-              {[5, 10, 15, 20, 30].map(t => (
+              {[30, 45, 60, 90, 120].map(t => (
                 <button key={t} onClick={() => { setTimerDuration(t); setTimeLeft(t); }}
                   className={`rounded-lg px-2 py-0.5 text-[10px] font-bold transition ${timerDuration === t ? "bg-emerald-500 text-white" : "bg-white/10 text-slate-400 hover:bg-white/20"}`}>
                   {t}s
