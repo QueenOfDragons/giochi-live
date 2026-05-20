@@ -357,7 +357,7 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
       <div className="relative" style={{ width: 110, height: 112 }}>
 
         {/* PALLONCINI partono dall'aletta sinistra */}
-        <div className="absolute" style={{ left: 14, top: 24, width: 0, height: 0 }}>
+        <div className="absolute" style={{ left: 14, top: 38, width: 0, height: 0 }}>
           <svg style={{ position:"absolute", overflow:"visible", pointerEvents:"none" }} width="1" height="1">
             {balloons.map((_, i) => {
               if (i >= remaining) return null;
@@ -423,15 +423,15 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
           {/* lacrima */}
           {sadLevel >= 4 && <ellipse cx="62" cy="38" rx="1.2" ry="2.2" fill="#93c5fd" opacity="0.85" />}
           {sadLevel >= 5 && <ellipse cx="48" cy="38" rx="1.2" ry="2.2" fill="#93c5fd" opacity="0.85" />}
-          {/* sopracciglia — estremità interne alzate quando triste */}
+          {/* sopracciglia — corte, dentro la faccia bianca */}
           <line
-            x1="43" y1={30 + sadLevel*0.6}
-            x2="53" y2={27 - sadLevel*1.2}
-            stroke="#5a2d0c" strokeWidth="3" strokeLinecap="round" />
+            x1="46" y1={29 + sadLevel*0.5}
+            x2="52" y2={29 - sadLevel*0.8}
+            stroke="#5a2d0c" strokeWidth="2" strokeLinecap="round" />
           <line
-            x1="57" y1={27 - sadLevel*1.2}
-            x2="67" y2={30 + sadLevel*0.6}
-            stroke="#5a2d0c" strokeWidth="3" strokeLinecap="round" />
+            x1="58" y1={29 - sadLevel*0.8}
+            x2="64" y2={29 + sadLevel*0.5}
+            stroke="#5a2d0c" strokeWidth="2" strokeLinecap="round" />
           {/* becco */}
           <ellipse cx="55" cy="42" rx="5" ry="3" fill="#f97316" />
 
