@@ -174,7 +174,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
   };
 
   const wordClass = (status) => {
-    const base = "relative w-full rounded-xl px-4 py-2 font-black text-base tracking-widest transition-all duration-300 flex items-center justify-center min-h-[3rem]";
+    const base = "relative w-full rounded-xl px-4 py-2 font-black text-3xl tracking-widest transition-all duration-300 flex items-center justify-center min-h-[3rem]";
     if (status === "revealed") return base + " bg-emerald-500/20 border-2 border-emerald-400/60 text-emerald-200";
     if (status === "solved")   return base + " bg-emerald-500/10 border border-emerald-400/40 text-emerald-300";
     if (status === "skipped")  return base + " bg-slate-800/60 border border-slate-600/40 text-slate-400 line-through";
