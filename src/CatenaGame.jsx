@@ -390,8 +390,5 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
       )}
 
     </div>
-    </div>
-    </div>
-    </div>
   );
 }
