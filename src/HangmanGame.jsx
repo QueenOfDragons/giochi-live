@@ -341,18 +341,22 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
     >
       <div className="relative h-[112px] w-[90px] sm:h-[130px] sm:w-[104px]">
 
-        {/* BRACCIO DX alzato lateralmente */}
-        <svg className="absolute" style={{ left: "52px", top: "58px", width: "42px", height: "30px" }} viewBox="0 0 42 30">
-          {/* braccio superiore */}
-          <rect x="2" y="12" width="22" height="8" rx="4" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" transform="rotate(-30 2 16)" />
-          {/* avambraccio */}
-          <rect x="18" y="4" width="18" height="8" rx="4" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" transform="rotate(-50 18 8)" />
-          {/* mano */}
-          <circle cx="34" cy="4" r="5" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" />
+        {/* BRACCIO DX — curva naturale verso l'alto con manina */}
+        <svg className="absolute" style={{ left: "48px", top: "52px", width: "50px", height: "50px" }} viewBox="0 0 50 50">
+          {/* braccio come curva spessa */}
+          <path d="M8,42 Q6,30 12,22 Q18,14 28,8 Q34,4 38,6"
+            fill="none" stroke="#fde68a" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M8,42 Q6,30 12,22 Q18,14 28,8 Q34,4 38,6"
+            fill="none" stroke="#f59e0b" strokeWidth="11.5" strokeLinecap="round" strokeLinejoin="round"
+            style={{ zIndex: -1 }} />
+          {/* manina */}
+          <circle cx="38" cy="6" r="7" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.5" />
+          {/* ditino che tiene i fili */}
+          <circle cx="41" cy="3" r="3" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" />
         </svg>
 
         {/* PALLONCINI con fili dalla mano */}
-        <div className="absolute" style={{ left: "78px", top: "30px", width: 0, height: 0 }}>
+        <div className="absolute" style={{ left: "88px", top: "20px", width: 0, height: 0 }}>
           {/* fili SVG convergenti */}
           <svg className="absolute" style={{ left: "-10px", top: "0px", overflow: "visible", pointerEvents: "none" }} width="1" height="1">
             {balloons.map((_, i) => {
