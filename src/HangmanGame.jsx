@@ -329,96 +329,131 @@ function KidFace({ sadLevel = 0 }) {
 function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
   const remaining = maxHearts - wrongCount;
   const sadLevel = Math.min(5, Math.round((wrongCount / maxHearts) * 5));
-
-  // palloncini: indice 0..maxHearts-1, escaped se wrongCount > balloonIdx
   const balloons = BALLOON_COLORS.slice(0, maxHearts);
+
+  // Espressione pinguino
+  const mouthPath = [
+    "M10,20 Q16,25 22,20", // felice
+    "M10,20 Q16,24 22,20",
+    "M11,20 Q16,23 21,20",
+    "M11,20 Q16,20 21,20", // neutro
+    "M11,21 Q16,18 21,21", // triste
+    "M10,22 Q16,17 22,22", // pianto
+  ][Math.min(sadLevel, 5)];
 
   return (
     <motion.div
-      animate={isWon ? { scale:[1,1.04,1], y:[0,-3,0] } : isLost ? {} : { y:[0,-2,0] }}
+      animate={isWon ? { scale:[1,1.04,1], y:[0,-3,0] } : { y:[0,-2,0] }}
       transition={isWon ? { duration:1.1, repeat: Infinity } : { duration:2.5, repeat: Infinity }}
       className="relative flex h-[118px] items-center justify-center sm:h-[140px]"
     >
-      <div className="relative h-[112px] w-[90px] sm:h-[130px] sm:w-[104px]">
+      <div className="relative" style={{ width: 110, height: 112 }}>
 
-        {/* BRACCIO DX — curva naturale verso l'alto con manina */}
-        <svg className="absolute" style={{ left: "48px", top: "52px", width: "50px", height: "50px" }} viewBox="0 0 50 50">
-          {/* braccio come curva spessa */}
-          <path d="M8,42 Q6,30 12,22 Q18,14 28,8 Q34,4 38,6"
-            fill="none" stroke="#fde68a" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M8,42 Q6,30 12,22 Q18,14 28,8 Q34,4 38,6"
-            fill="none" stroke="#f59e0b" strokeWidth="11.5" strokeLinecap="round" strokeLinejoin="round"
-            style={{ zIndex: -1 }} />
-          {/* manina */}
-          <circle cx="38" cy="6" r="7" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.5" />
-          {/* ditino che tiene i fili */}
-          <circle cx="41" cy="3" r="3" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" />
-        </svg>
-
-        {/* PALLONCINI con fili dalla mano */}
-        <div className="absolute" style={{ left: "88px", top: "20px", width: 0, height: 0 }}>
-          {/* fili SVG convergenti */}
-          <svg className="absolute" style={{ left: "-10px", top: "0px", overflow: "visible", pointerEvents: "none" }} width="1" height="1">
+        {/* PALLONCINI — partono dall'aletta sinistra in alto */}
+        <div className="absolute" style={{ left: 12, top: 8, width: 0, height: 0 }}>
+          <svg style={{ position:"absolute", left:-8, top:0, overflow:"visible", pointerEvents:"none" }} width="1" height="1">
             {balloons.map((_, i) => {
               if (i >= remaining) return null;
-              const angle2 = balloons.length <= 1 ? 0 : -50 + (100 / Math.max(balloons.length - 1, 1)) * i;
-              const rad2 = (angle2 * Math.PI) / 180;
-              const d2 = 28 + (i % 2) * 8;
-              const bx2 = Math.round(Math.sin(rad2) * d2);
-              const by2 = Math.round(Math.cos(rad2) * d2);
-              return <line key={i} x1="0" y1="0" x2={-bx2} y2={-by2 - 6}
-                stroke="#94a3b8" strokeWidth="1" />;
+              const angle = balloons.length <= 1 ? 0 : -45 + (90 / Math.max(balloons.length-1,1)) * i;
+              const rad = (angle * Math.PI) / 180;
+              const dist = 26 + (i%2)*7;
+              const bx = Math.round(Math.sin(rad)*dist);
+              const by = Math.round(Math.cos(rad)*dist);
+              return <line key={i} x1="0" y1="0" x2={-bx} y2={-by} stroke="#94a3b8" strokeWidth="1" />;
             })}
           </svg>
-          {balloons.map((color, i) => (
-            <Balloon key={i} color={color} index={i} total={maxHearts}
-              escaped={i >= remaining} delay={i * 0.15} />
-          ))}
+          {balloons.map((color, i) => {
+            const angle = balloons.length <= 1 ? 0 : -45 + (90 / Math.max(balloons.length-1,1)) * i;
+            const rad = (angle * Math.PI) / 180;
+            const dist = 26 + (i%2)*7;
+            const bx = Math.round(Math.sin(rad)*dist);
+            const by = Math.round(Math.cos(rad)*dist);
+            return (
+              <AnimatePresence key={i}>
+                {i < remaining && (
+                  <motion.div
+                    initial={{ opacity:0, scale:0.3 }}
+                    animate={{ opacity:1, scale:1, x:[0, bx>0?1:-1, 0] }}
+                    exit={{ opacity:0, y:-90, x:-bx*3, scale:0.2 }}
+                    transition={{ duration:0.6, x:{ duration:2.5+(i*0.2), repeat:Infinity } }}
+                    style={{ position:"absolute", left:`${-bx-13}px`, top:`${-by-28}px` }}
+                  >
+                    <svg width="26" height="30" viewBox="0 0 26 30">
+                      <ellipse cx="13" cy="13" rx="11" ry="12" fill={color.fill} stroke={color.stroke} strokeWidth="1.5" />
+                      <ellipse cx="9" cy="7" rx="3.5" ry="4" fill="white" opacity="0.35" />
+                      <polygon points="11,25 15,25 13,30" fill={color.fill} />
+                    </svg>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            );
+          })}
         </div>
 
+        {/* PINGUINO SVG */}
+        <svg width="110" height="112" viewBox="0 0 110 112" style={{ position:"absolute", left:0, top:0 }}>
 
+          {/* corpo nero */}
+          <ellipse cx="55" cy="70" rx="28" ry="34" fill="#1e293b" />
 
-        {/* TESTA */}
-        <motion.div
-          animate={isWon ? { rotate:[0,5,-5,0] } : {}}
-          transition={{ duration:0.8, repeat: Infinity }}
-          className="absolute left-1/2 -translate-x-1/2 top-[30px] h-[34px] w-[34px] sm:h-[38px] sm:w-[38px]"
-        >
-          <KidFace sadLevel={isLost ? 5 : sadLevel} />
-        </motion.div>
+          {/* pancia bianca */}
+          <ellipse cx="55" cy="74" rx="18" ry="24" fill="white" />
 
-        {/* CORPO */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-[62px] h-[28px] w-[32px] rounded-lg bg-gradient-to-b from-[#1a6060] to-[#0f4040] border border-[#2a8080] flex items-center justify-center">
-          <span className="text-[9px] font-black text-orange-300 tracking-widest select-none">LV</span>
-        </div>
+          {/* LV sulla pancia */}
+          <text x="55" y="76" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0f4040" fontFamily="Arial">LV</text>
 
+          {/* testa */}
+          <ellipse cx="55" cy="36" rx="22" ry="22" fill="#1e293b" />
 
+          {/* faccia bianca */}
+          <ellipse cx="55" cy="38" rx="14" ry="14" fill="white" />
 
-        {/* GAMBE */}
-        <div className="absolute left-[28px] top-[88px] h-[18px] w-[8px] rounded-b-full bg-[#1a3838] border border-[#2a5050]" />
-        <div className="absolute left-[44px] top-[88px] h-[18px] w-[8px] rounded-b-full bg-[#1a3838] border border-[#2a5050]" />
+          {/* occhi */}
+          <circle cx="49" cy="34" r="3.5" fill="#1e293b" />
+          <circle cx="61" cy="34" r="3.5" fill="#1e293b" />
+          <circle cx="50" cy="33" r="1.2" fill="white" />
+          <circle cx="62" cy="33" r="1.2" fill="white" />
+          {sadLevel >= 4 && <ellipse cx="62" cy="40" rx="1.2" ry="2" fill="#93c5fd" opacity="0.9" />}
 
-        {/* PIEDINI */}
-        <div className="absolute left-[24px] top-[104px] h-[6px] w-[14px] rounded-full bg-amber-800" />
-        <div className="absolute left-[42px] top-[104px] h-[6px] w-[14px] rounded-full bg-amber-800" />
+          {/* sopracciglia */}
+          <line x1="45" y1={28 - sadLevel*0.8} x2="53" y2={29 + sadLevel*0.5}
+            stroke="#1e293b" strokeWidth="2" strokeLinecap="round" />
+          <line x1="57" y1={29 + sadLevel*0.5} x2="65" y2={28 - sadLevel*0.8}
+            stroke="#1e293b" strokeWidth="2" strokeLinecap="round" />
 
-        {/* Ombra */}
-        <motion.div
-          animate={isWon ? { opacity:[0.15,0.3,0.15], scaleX:[1,1.1,1] } : { opacity: 0.15 }}
-          transition={{ duration:1.5, repeat: Infinity }}
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 h-2 w-16 rounded-full bg-[#2a5050] blur-sm"
-        />
+          {/* becco */}
+          <ellipse cx="55" cy="43" rx="5" ry="3" fill="#f97316" />
+
+          {/* guance rosa */}
+          <ellipse cx="44" cy="40" rx="4" ry="3" fill="#fda4af" opacity={Math.max(0.1, 0.6 - sadLevel*0.12)} />
+          <ellipse cx="66" cy="40" rx="4" ry="3" fill="#fda4af" opacity={Math.max(0.1, 0.6 - sadLevel*0.12)} />
+
+          {/* ALETTA SX — alzata che tiene palloncini */}
+          <path d="M27,58 Q16,50 14,40 Q13,32 18,30 Q24,29 26,38 Q28,46 30,54Z"
+            fill="#1e293b" />
+          {/* manina aletta sx */}
+          <circle cx="16" cy="32" r="5" fill="#1e293b" />
+          <circle cx="12" cy="28" r="3" fill="#1e293b" />
+
+          {/* ALETTA DX */}
+          <path d="M83,58 Q92,52 94,64 Q95,72 90,76 Q84,78 82,70 Q80,62 83,58Z"
+            fill="#1e293b" />
+
+          {/* piedi arancioni */}
+          <ellipse cx="43" cy="103" rx="11" ry="5" fill="#f97316" />
+          <ellipse cx="67" cy="103" rx="11" ry="5" fill="#f97316" />
+
+          {/* ombra */}
+          <ellipse cx="55" cy="110" rx="22" ry="4" fill="#0f2a2a" opacity="0.4" />
+        </svg>
 
       </div>
     </motion.div>
   );
 }
 
-
 function SolutionRow({ masked, showAnswer }) {
   if (!masked || masked.length === 0) return null;
-
-  // Raggruppa le lettere in parole
   const words = [];
   let current = [];
   for (const ch of masked) {
@@ -430,7 +465,6 @@ function SolutionRow({ masked, showAnswer }) {
     }
   }
   if (current.length > 0) words.push(current);
-
   return (
     <div className="flex flex-wrap justify-center gap-x-3 gap-y-2">
       {words.map((word, wi) => (
@@ -439,7 +473,7 @@ function SolutionRow({ masked, showAnswer }) {
             <div key={ch.key}
               className="flex h-9 w-8 items-end justify-center border-b-2 border-[#2a8080] pb-0.5 sm:h-10 sm:w-9">
               <span className="text-sm font-bold text-white sm:text-base">
-                {showAnswer ? ch.hidden : ch.value}
+                {ch.type === "fixed" ? ch.value : (showAnswer ? ch.hidden : ch.value)}
               </span>
             </div>
           ))}
