@@ -4,9 +4,9 @@ import * as XLSX from "xlsx";
 import { RotateCcw, Upload, ChevronRight, Plus, Check, SkipForward } from "lucide-react";
 
 const DEFAULT_CHAINS = [
-  { words: ["FIUME", "LETTO", "CAMERA", "DEPUTATI", "GOVERNO", "MINISTRO", "PORTO"], category: "Politica", difficulty: "Media" },
-  { words: ["CANE", "PESCE", "FRITTURA", "OLIO", "OLIVA", "RAMO", "PACE"], category: "Natura", difficulty: "Facile" },
-  { words: ["SOLE", "MARE", "SALE", "GROSSO", "CALIBRO", "LUNGO", "RAGGIO"], category: "Misto", difficulty: "Difficile" },
+  { words: ["FIUME", "LETTO", "CAMERA", "DEPUTATI", "GOVERNO", "MINISTRO", "PORTAFOGLIO", "VUOTO"], category: "Politica", difficulty: "Media" },
+  { words: ["CANE", "PESCE", "SPADA", "LEGNO", "DURO", "TESTA", "CODA", "VOLPE"], category: "Misto", difficulty: "Facile" },
+  { words: ["SOLE", "MARE", "SALE", "GROSSO", "CALIBRO", "LUNGO", "RAGGIO", "VERDE"], category: "Misto", difficulty: "Difficile" },
 ];
 
 const TIMER_OPTIONS = [30, 45, 60, 90, 120];
@@ -15,7 +15,7 @@ function parseChains(rows) {
   if (!rows || rows.length < 2) return [];
   const header = rows[0].map(v => String(v ?? "").toLowerCase().trim());
   const w = (n) => header.findIndex(h => h.includes(n));
-  const idxs = [w("word1"), w("word2"), w("word3"), w("word4"), w("word5"), w("word6"), w("word7")];
+  const idxs = [w("word1"), w("word2"), w("word3"), w("word4"), w("word5"), w("word6"), w("word7"), w("word8")];
   const catIdx = w("category") >= 0 ? w("category") : w("categ");
   const diffIdx = w("difficulty") >= 0 ? w("difficulty") : w("diffi");
   if (idxs.some(i => i < 0)) return [];
@@ -23,7 +23,7 @@ function parseChains(rows) {
     words: idxs.map(i => String(row?.[i] ?? "").trim().toUpperCase()).filter(Boolean),
     category: catIdx >= 0 ? String(row?.[catIdx] ?? "").trim() : "",
     difficulty: diffIdx >= 0 ? String(row?.[diffIdx] ?? "").trim() : "Media",
-  })).filter(c => c.words.length === 7);
+  })).filter(c => c.words.length === 8);
 }
 
 function calcScore(lettersRevealed) {
@@ -56,7 +56,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
   const currentWord = chain.words[wordIdx] || "";
   const revealed = currentWord.slice(0, lettersRevealed);
   const hidden = currentWord.slice(lettersRevealed);
-  const isLastWord = wordIdx === 5;
+  const isLastWord = wordIdx === 6;
   const timerPct = (timeLeft / timerDuration) * 100;
   const timerColor = timeLeft > timerDuration * 0.5 ? "#34d399" : timeLeft > timerDuration * 0.25 ? "#fbbf24" : "#f87171";
 
@@ -166,7 +166,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
   };
 
   const getWordStatus = (idx) => {
-    if (idx === 0 || idx === 6) return "revealed";
+    if (idx === 0 || idx === 7) return "revealed";
     if (solved.find(s => s.wordIdx === idx)) return "solved";
     if (skipped.includes(idx)) return "skipped";
     if (idx === wordIdx && !chainDone) return "current";
@@ -174,7 +174,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
   };
 
   const wordClass = (status) => {
-    const base = "relative w-full rounded-xl px-4 py-2 text-center font-black text-base tracking-widest transition-all duration-300";
+    const base = "relative w-full rounded-xl px-4 py-2 font-black text-base tracking-widest transition-all duration-300 flex items-center justify-center min-h-[3rem]";
     if (status === "revealed") return base + " bg-emerald-500/20 border-2 border-emerald-400/60 text-emerald-200";
     if (status === "solved")   return base + " bg-emerald-500/10 border border-emerald-400/40 text-emerald-300";
     if (status === "skipped")  return base + " bg-slate-800/60 border border-slate-600/40 text-slate-400 line-through";
@@ -279,7 +279,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
             <span className={"text-xs font-bold px-2 py-0.5 rounded-lg " + diffColor}>{chain.difficulty}</span>
             <span className="text-xs text-slate-500">{chainIdx + 1} / {chains.length}</span>
           </div>
-          <div className="flex flex-col items-center gap-0.5 w-full max-w-xs">
+          <div className="flex flex-col items-center gap-0 w-full max-w-xs">
             {chain.words.map((word, idx) => {
               const status = getWordStatus(idx);
               return (
@@ -295,10 +295,10 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
                       <span>{word}</span>
                     )}
                     {status === "current" && (
-                      <span>
-                        <span className="text-teal-300">{revealed}</span>
-                        <span className="text-slate-500">{hidden.split("").map(() => "_").join("")}</span>
-                      </span>
+                      <div className="flex items-center justify-center w-full">
+                        <span className="text-white">{revealed}</span>
+                        <span className="text-slate-400 text-xl tracking-widest">{hidden.split("").map(() => "_").join(" ")}</span>
+                      </div>
                     )}
                     {status === "locked" && (
                       <span className="text-slate-700">{"_".repeat(Math.min(word.length, 8))}</span>
