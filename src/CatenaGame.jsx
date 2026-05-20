@@ -297,7 +297,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
                     {status === "current" && (
                       <div className="flex items-center justify-center w-full">
                         <span className="text-white">{revealed}</span>
-                        <span className="text-slate-400 text-xl tracking-widest">{hidden.split("").map(() => "_").join(" ")}</span>
+                        <span className="text-slate-400 text-5xl tracking-widest">{hidden.split("").map(() => "_").join(" ")}</span>
                       </div>
                     )}
                     {status === "locked" && (
