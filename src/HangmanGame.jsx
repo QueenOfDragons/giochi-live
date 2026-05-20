@@ -432,8 +432,17 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
             x1="58" y1={29 - sadLevel*0.8}
             x2="64" y2={29 + sadLevel*0.5}
             stroke="#5a2d0c" strokeWidth="2" strokeLinecap="round" />
-          {/* becco */}
-          <ellipse cx="55" cy="42" rx="5" ry="3" fill="#f97316" />
+          {/* becco — sorridente all'inizio, neutro alla fine */}
+          <path
+            d={[
+              "M50,41 Q55,46 60,41 Q55,38 50,41",  // 0 sorriso aperto
+              "M50,41 Q55,45 60,41 Q55,38 50,41",  // 1
+              "M50,41 Q55,44 60,41 Q55,38 50,41",  // 2
+              "M50,41 Q55,43 60,41 Q55,38 50,41",  // 3 neutro
+              "M50,41 Q55,42 60,41 Q55,38 50,41",  // 4
+              "M50,41 Q55,41 60,41 Q55,38 50,41",  // 5 piatto
+            ][Math.min(sadLevel, 5)]}
+            fill="#f97316" stroke="#ea580c" strokeWidth="0.8" />
 
           {/* guance */}
           <ellipse cx="43" cy="39" rx="4" ry="3" fill="#fda4af" opacity={Math.max(0.1, 0.55-sadLevel*0.1)} />
