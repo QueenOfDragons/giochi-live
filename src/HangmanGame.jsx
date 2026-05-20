@@ -242,23 +242,18 @@ function runSelfChecks() {
 
 if (typeof window !== "undefined") runSelfChecks();
 
-function RobotPiece({
-  show,
-  className = "",
-  children,
-  exitY = 120,
-  exitRotate = 28,
-  exitScale = 0.7,
-  duration = 0.35,
-}) {
+// ── PUPAZZO DI NEVE ──────────────────────────────────────────────────────────
+
+function SnowPiece({ show, className = "", children, duration = 0.6 }) {
   return (
     <AnimatePresence>
       {show ? (
         <motion.div
-          initial={{ opacity: 0, scale: 0.84, y: -6 }}
-          animate={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
-          exit={{ opacity: 0, y: exitY, rotate: exitRotate, scale: exitScale }}
-          transition={{ duration }}
+          initial={{ opacity: 0, scaleY: 0.5, y: 8 }}
+          animate={{ opacity: 1, scaleY: 1, y: 0 }}
+          exit={{ opacity: 0, scaleY: 0, y: 18 }}
+          transition={{ duration, ease: "easeInOut" }}
+          style={{ transformOrigin: "bottom center" }}
           className={className}
         >
           {children}
@@ -268,40 +263,32 @@ function RobotPiece({
   );
 }
 
-function CuteRobotFace({ state = "idle" }) {
+function SnowFace({ state = "idle" }) {
   const isSad = state === "lose";
   const isHappy = state === "win";
-
   return (
-    <div className="relative flex h-full w-full items-center justify-center rounded-full border-[2px] border-sky-400 bg-gradient-to-br from-orange-200 to-orange-300">
-      <div className="absolute top-[14px] flex gap-5">
-        {[0, 1].map((i) => (
-          <motion.div
-            key={i}
-            animate={isHappy ? { scaleY: [1, 0.4, 1] } : { scaleY: [1, 0.1, 1] }}
-            transition={{ duration: isHappy ? 0.6 : 2.5, repeat: Infinity, repeatDelay: isHappy ? 0.8 : 2 }}
-            className="relative h-2.5 w-2.5 rounded-full bg-sky-800"
-          >
-            {!isSad && <div className="absolute left-[1px] top-[1px] h-1 w-1 rounded-full bg-white" />}
-          </motion.div>
+    <div className="relative flex h-full w-full items-center justify-center rounded-full border-[3px] border-sky-300 bg-white shadow-inner">
+      {/* occhi */}
+      <div className="absolute top-[10px] flex gap-4">
+        {[0,1].map(i => (
+          <motion.div key={i}
+            animate={isHappy ? { scaleY:[1,0.3,1] } : { scaleY:[1,0.1,1] }}
+            transition={{ duration: isHappy ? 0.5 : 2.5, repeat: Infinity, repeatDelay: isHappy ? 0.6 : 2 }}
+            className="h-2 w-2 rounded-full bg-slate-700"
+          />
         ))}
       </div>
-
-      <div className="absolute bottom-[9px] flex w-full justify-center">
-        <div
-          className={`border-b-[3px] border-sky-700 ${isSad
-            ? "h-2 w-5 rounded-b-full border-t-0 border-b-2"
-            : isHappy
-              ? "h-3 w-6 rounded-b-full border-t-0 border-b-2"
-              : "h-2 w-5 rounded-b-full border-t-0 border-b-2"
-            }`}
-        />
+      {/* naso carota */}
+      <div className="absolute top-[17px] left-1/2 -translate-x-1/2 h-0 w-0"
+        style={{ borderLeft: "3px solid transparent", borderRight: "3px solid transparent", borderTop: "8px solid #f97316" }} />
+      {/* bocca */}
+      <div className="absolute bottom-[7px] left-1/2 -translate-x-1/2">
+        <div className={`border-b-[2px] border-slate-600 ${isSad ? "h-2 w-5 rounded-t-full border-t-[2px] border-b-0" : "h-2 w-5 rounded-b-full"}`} />
       </div>
-
       {isHappy && (
         <>
-          <div className="absolute bottom-[10px] left-[6px] h-2 w-2 rounded-full bg-pink-300 opacity-80" />
-          <div className="absolute bottom-[10px] right-[6px] h-2 w-2 rounded-full bg-pink-300 opacity-80" />
+          <div className="absolute bottom-[8px] left-[5px] h-1.5 w-1.5 rounded-full bg-pink-200 opacity-80" />
+          <div className="absolute bottom-[8px] right-[5px] h-1.5 w-1.5 rounded-full bg-pink-200 opacity-80" />
         </>
       )}
     </div>
@@ -309,111 +296,158 @@ function CuteRobotFace({ state = "idle" }) {
 }
 
 function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
-  // Parti visibili = maxHearts, ogni errore toglie una parte
-  // Facile (6): braccia, gambe, corpo, testa
-  // Media (8): + orecchie, antenna
-  // Difficile (10): + spalla sinistra, spalla destra, bacino
+  // Ordine scioglimento dal basso verso l'alto:
+  // 1=base, 2=gamba_sx, 3=gamba_dx, 4=braccio_sx, 5=braccio_dx
+  // 6=corpo (con LV), [7=sciarpa Media], [8=bottoni Media]
+  // [9=naso Difficile], [10=orecchie Difficile]
+  // cappello = sempre ultimo (maxHearts)
+  // testa = penultimo (maxHearts - 1) -- WAIT: testa ultima, cappello penultimo
+  // Corretto: ... cappello(maxHearts-1), testa(maxHearts)
 
-  const p = (n) => wrongCount < n; // parte visibile se errori < soglia
+  const p = (n) => wrongCount < n;
 
-  // Parti comuni a tutti i livelli (6)
-  const leftArmVisible  = p(1);
-  const rightArmVisible = p(2);
-  const leftLegVisible  = p(3);
-  const rightLegVisible = p(4);
-  const bodyVisible     = p(5);
-  const headVisible     = p(6);
+  // Facile (6): base, gamba_sx, gamba_dx, braccio_sx, braccio_dx, corpo → testa(6) ultima
+  const baseVisible      = p(1);
+  const leftLegVisible   = p(2);
+  const rightLegVisible  = p(3);
+  const leftArmVisible   = p(4);
+  const rightArmVisible  = p(5);
+  const bodyVisible      = p(6);
+  // testa sempre penultima, cappello ultimo dei "base"
+  // per Facile: testa=7 ma maxHearts=6 → usiamo maxHearts-1 e maxHearts
+  const hatVisible       = p(maxHearts);
+  const headVisible      = p(maxHearts - 0); // testa = ultimo errore
 
-  // Parti aggiuntive Media (8): orecchie e antenna
-  const earsVisible     = maxHearts >= 8 ? p(7) : p(5);
-  const antennaVisible  = maxHearts >= 8 ? p(8) : p(6);
+  // Extra Media (8): sciarpa p(7), bottoni p(8) — cappello=8, testa=7? No:
+  // riordino: base(1) gambe(2,3) braccia(4,5) corpo(6) sciarpa(7) testa(8-1=7) cappello(8)
+  const scarfVisible     = maxHearts >= 8 ? p(7) : false;
+  const buttonsVisible   = maxHearts >= 8 ? p(6) : false; // parte del corpo
 
-  // Parti aggiuntive Difficile (10): spalle e bacino
-  const leftShoulderVisible  = maxHearts >= 10 ? p(9)  : false;
-  const rightShoulderVisible = maxHearts >= 10 ? p(10) : false;
+  // Extra Difficile (10): naso(7) orecchie(8) sciarpa(9) testa(9) cappello(10)
+  const noseVisible      = maxHearts >= 10 ? p(7) : true; // naso sempre visibile in facile/media
+  const earsVisible      = maxHearts >= 10 ? p(8) : false;
 
-  const leftArmOuter = isWon
-    ? "absolute left-[6px] top-[58px] h-[34px] w-[30px]"
-    : "absolute left-[8px] top-[62px] h-[34px] w-[28px]";
-  const rightArmOuter = isWon
-    ? "absolute right-[6px] top-[58px] h-[34px] w-[30px]"
-    : "absolute right-[8px] top-[62px] h-[34px] w-[28px]";
+  const snowState = isWon ? "win" : isLost ? "lose" : "idle";
 
   return (
     <motion.div
-      animate={isWon ? { scale: [1, 1.03, 1], rotate: [0, 1, -1, 0], y: [0, -2, 0] } : isLost ? { y: 0, rotate: 0 } : { y: [0, -2, 0] }}
-      transition={isWon ? { duration: 1.2, repeat: Infinity } : isLost ? { duration: 0.2 } : { duration: 2.2, repeat: Infinity }}
+      animate={isWon ? { scale:[1,1.03,1], rotate:[0,1,-1,0], y:[0,-2,0] } : { y:[0,-2,0] }}
+      transition={isWon ? { duration:1.2, repeat: Infinity } : { duration:2.2, repeat: Infinity }}
       className="relative flex h-[118px] items-center justify-center sm:h-[140px]"
     >
+      {/* ombra */}
       <motion.div
-        animate={isWon ? { opacity: [0.18, 0.35, 0.18], scale: [1, 1.04, 1] } : { opacity: 0.18 }}
-        transition={{ duration: 1.5, repeat: Infinity }}
-        className="absolute bottom-2 h-3 w-20 rounded-full bg-cyan-400/25 blur-md"
+        animate={isWon ? { opacity:[0.2,0.4,0.2], scale:[1,1.04,1] } : { opacity: 0.2 }}
+        transition={{ duration:1.5, repeat: Infinity }}
+        className="absolute bottom-1 h-3 w-20 rounded-full bg-sky-300/30 blur-md"
       />
 
       <div className="relative h-[112px] w-[86px] sm:h-[132px] sm:w-[100px]">
-        <RobotPiece show={antennaVisible && !isLost} className="absolute left-[38px] top-[1px] h-4 w-3 sm:left-[45px] sm:h-5" exitY={80} exitRotate={18}>
-          <div className="absolute left-[5px] top-1 h-3.5 w-[2px] rounded-full bg-lime-400 sm:h-4" />
-          <div className="absolute left-0 top-0 h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-        </RobotPiece>
 
-        <RobotPiece show={headVisible && !isLost} className="absolute left-[14px] top-[6px] h-[40px] w-[58px] sm:left-[18px] sm:top-[8px] sm:h-[46px] sm:w-[64px]" exitY={104} exitRotate={300} exitScale={0.9} duration={1.15}>
-          <CuteRobotFace state={isWon ? "win" : "idle"} />
-        </RobotPiece>
+        {/* BASE — sfera grande in basso */}
+        <SnowPiece show={baseVisible} className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[32px] w-[52px]">
+          <div className="h-full w-full rounded-full border-[3px] border-sky-200 bg-white shadow-md" />
+        </SnowPiece>
 
+        {/* GAMBA SX */}
+        <SnowPiece show={leftLegVisible} className="absolute bottom-[22px] left-[10px] h-[18px] w-[12px]">
+          <div className="h-full w-full rounded-full border-[2px] border-sky-200 bg-white" />
+        </SnowPiece>
+
+        {/* GAMBA DX */}
+        <SnowPiece show={rightLegVisible} className="absolute bottom-[22px] right-[10px] h-[18px] w-[12px]">
+          <div className="h-full w-full rounded-full border-[2px] border-sky-200 bg-white" />
+        </SnowPiece>
+
+        {/* BRACCIO SX — ramoscello */}
+        <SnowPiece show={leftArmVisible} className="absolute left-[2px] top-[52px] h-[18px] w-[16px]">
+          <div className="absolute left-0 top-[4px] h-[2px] w-[14px] rotate-[20deg] rounded-full bg-amber-800" />
+          <div className="absolute left-[3px] top-[7px] h-[2px] w-[8px] -rotate-[30deg] rounded-full bg-amber-700" />
+          <div className="absolute left-[6px] top-[1px] h-[2px] w-[8px] rotate-[50deg] rounded-full bg-amber-700" />
+        </SnowPiece>
+
+        {/* BRACCIO DX — ramoscello */}
+        <SnowPiece show={rightArmVisible} className="absolute right-[2px] top-[52px] h-[18px] w-[16px]">
+          <div className="absolute right-0 top-[4px] h-[2px] w-[14px] -rotate-[20deg] rounded-full bg-amber-800" />
+          <div className="absolute right-[3px] top-[7px] h-[2px] w-[8px] rotate-[30deg] rounded-full bg-amber-700" />
+          <div className="absolute right-[6px] top-[1px] h-[2px] w-[8px] -rotate-[50deg] rounded-full bg-amber-700" />
+        </SnowPiece>
+
+        {/* CORPO — sfera media con LV */}
+        <SnowPiece show={bodyVisible} className="absolute left-1/2 top-[46px] -translate-x-1/2 h-[36px] w-[46px]">
+          <div className="relative h-full w-full rounded-full border-[3px] border-sky-200 bg-white shadow-md flex items-center justify-center">
+            <span className="text-[10px] font-black tracking-widest text-slate-500 select-none">LV</span>
+            {/* bottoni */}
+            {buttonsVisible && (
+              <div className="absolute left-1/2 -translate-x-1/2 flex flex-col gap-[3px] top-[6px]">
+                <div className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                <div className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+              </div>
+            )}
+          </div>
+        </SnowPiece>
+
+        {/* SCIARPA — solo Media/Difficile */}
+        <SnowPiece show={scarfVisible} className="absolute left-1/2 -translate-x-1/2 top-[38px] h-[10px] w-[38px]">
+          <div className="h-full w-full rounded-full bg-orange-400 border border-orange-500" />
+        </SnowPiece>
+
+        {/* ORECCHIE — solo Difficile */}
+        <SnowPiece show={earsVisible} className="absolute left-[8px] top-[14px] h-[10px] w-[10px]">
+          <div className="h-full w-full rounded-full border-[2px] border-sky-200 bg-white" />
+        </SnowPiece>
+        <SnowPiece show={earsVisible} className="absolute right-[8px] top-[14px] h-[10px] w-[10px]">
+          <div className="h-full w-full rounded-full border-[2px] border-sky-200 bg-white" />
+        </SnowPiece>
+
+        {/* TESTA — penultimo a sciogliersi */}
+        <SnowPiece show={headVisible && !isLost} className="absolute left-1/2 -translate-x-1/2 top-[4px] h-[42px] w-[42px]">
+          <SnowFace state={snowState} />
+        </SnowPiece>
+
+        {/* Testa persa — animazione caduta */}
         <AnimatePresence>
           {isLost ? (
             <motion.div
-              initial={{ opacity: 1, x: 0, y: 6, rotate: 0 }}
-              animate={{ opacity: 1, x: [0, 8, 18, 30], y: [6, 58, 88, 98], rotate: [0, 80, 180, 300] }}
-              transition={{ duration: 1.25, ease: "easeInOut" }}
-              className="absolute left-[14px] top-[6px] h-[40px] w-[58px] sm:left-[18px] sm:top-[8px] sm:h-[46px] sm:w-[64px]"
+              initial={{ opacity:1, x:0, y:4, rotate:0 }}
+              animate={{ opacity:1, x:[0,10,22,36], y:[4,50,80,92], rotate:[0,60,160,280] }}
+              transition={{ duration:1.2, ease:"easeInOut" }}
+              className="absolute left-1/2 -translate-x-1/2 top-[4px] h-[42px] w-[42px]"
             >
-              <CuteRobotFace state="lose" />
+              <SnowFace state="lose" />
             </motion.div>
           ) : null}
         </AnimatePresence>
 
-        <RobotPiece show={earsVisible} className="absolute left-[9px] top-[28px] h-3.5 w-3.5 rounded-full border-[2px] border-sky-500 bg-sky-300 sm:left-[11px] sm:top-[33px]" exitY={70} exitRotate={-25} />
-        <RobotPiece show={earsVisible} className="absolute right-[9px] top-[28px] h-3.5 w-3.5 rounded-full border-[2px] border-sky-500 bg-sky-300 sm:right-[11px] sm:top-[33px]" exitY={70} exitRotate={25} />
-        {/* Spalle — solo Difficile */}
-        <RobotPiece show={leftShoulderVisible} className="absolute left-[4px] top-[52px] h-3 w-3 rounded-sm bg-orange-400 border border-orange-500 sm:left-[6px] sm:top-[62px]" exitY={80} exitRotate={-30} />
-        <RobotPiece show={rightShoulderVisible} className="absolute right-[4px] top-[52px] h-3 w-3 rounded-sm bg-orange-400 border border-orange-500 sm:right-[6px] sm:top-[62px]" exitY={80} exitRotate={30} />
+        {/* CAPPELLO — primo a sciogliersi (ultimo errore) */}
+        <SnowPiece show={hatVisible && !isLost} className="absolute left-1/2 -translate-x-1/2 top-0 h-[12px] w-[30px]">
+          <div className="relative h-full w-full">
+            <div className="absolute bottom-0 h-[2px] w-full bg-slate-700 rounded-sm" />
+            <div className="absolute bottom-[2px] left-1/2 -translate-x-1/2 h-[10px] w-[18px] bg-slate-700 rounded-t-sm" />
+          </div>
+        </SnowPiece>
 
-        <RobotPiece show={bodyVisible} className="absolute left-[20px] top-[48px] h-[34px] w-[42px] sm:left-[24px] sm:top-[58px] sm:h-[38px] sm:w-[48px]" exitY={82} exitRotate={20}>
-          <div className="absolute inset-0 rounded-[16px] border-[2px] border-sky-400 bg-gradient-to-br from-orange-200 to-orange-300 shadow-md" />
-          <div className="absolute left-1/2 top-[5px] -translate-x-1/2 text-[9px] font-black tracking-wide text-black sm:text-[11px]">LV</div>
-          <div className="absolute left-[7px] top-[17px] h-2 w-[28px] rounded-full bg-orange-200/85 sm:top-[20px] sm:w-[32px]" />
-          <div className="absolute bottom-[6px] left-1/2 h-2 w-6 -translate-x-1/2 rounded-full bg-cyan-300/70 sm:w-7" />
-        </RobotPiece>
-
-        <RobotPiece show={leftArmVisible} className={leftArmOuter} exitY={80} exitRotate={-34}>
-          <div className="absolute left-[14px] top-[3px] h-3 w-3 rounded-full border-[2px] border-sky-600 bg-sky-400" />
-          <div className={`absolute left-[9px] top-[8px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[14px] rotate-[8deg]" : "w-[12px] rotate-[22deg]"}`} />
-          <div className={`absolute left-[3px] top-[16px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[12px] -rotate-[28deg]" : "w-[10px] rotate-[30deg]"}`} />
-          <div className="absolute left-0 top-[22px] h-4.5 w-4.5 rounded-full border-[2px] border-sky-600 bg-cyan-300" />
-        </RobotPiece>
-
-        <RobotPiece show={rightArmVisible} className={rightArmOuter} exitY={80} exitRotate={34}>
-          <div className="absolute right-[14px] top-[3px] h-3 w-3 rounded-full border-[2px] border-sky-600 bg-sky-400" />
-          <div className={`absolute right-[9px] top-[8px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[14px] -rotate-[8deg]" : "w-[12px] -rotate-[22deg]"}`} />
-          <div className={`absolute right-[3px] top-[16px] h-2 rounded-full bg-sky-300 ${isWon ? "w-[12px] rotate-[28deg]" : "w-[10px] -rotate-[30deg]"}`} />
-          <div className="absolute right-0 top-[22px] h-4.5 w-4.5 rounded-full border-[2px] border-sky-600 bg-cyan-300" />
-        </RobotPiece>
-
-        <RobotPiece show={leftLegVisible} className="absolute left-[24px] top-[80px] h-[24px] w-[10px] sm:left-[29px] sm:top-[96px] sm:h-[28px] sm:w-[12px]" exitY={84} exitRotate={-16}>
-          <div className="absolute left-0 top-0 h-[22px] w-[10px] rounded-[8px] border-[3px] border-orange-500 bg-orange-200 sm:h-[24px] sm:w-[12px]" />
-        </RobotPiece>
-
-        <RobotPiece show={rightLegVisible} className="absolute left-[52px] top-[80px] h-[24px] w-[10px] sm:left-[60px] sm:top-[96px] sm:h-[28px] sm:w-[12px]" exitY={84} exitRotate={16}>
-          <div className="absolute left-0 top-0 h-[22px] w-[10px] rounded-[8px] border-[3px] border-orange-500 bg-orange-200 sm:h-[24px] sm:w-[12px]" />
-        </RobotPiece>
       </div>
     </motion.div>
   );
 }
 
-function SolutionRow({ masked, showAnswer }) {
+// ── LEGACY alias per compatibilità ───────────────────────────────────────────
+function RobotPiece({ show, className="", children, exitY=120, exitRotate=28, exitScale=0.7, duration=0.35 }) {
+  return (
+    <AnimatePresence>
+      {show ? (
+        <motion.div
+          initial={{ opacity:0, scale:0.84, y:-6 }}
+          animate={{ opacity:1, scale:1, y:0, rotate:0 }}
+          exit={{ opacity:0, y:exitY, rotate:exitRotate, scale:exitScale }}
+          transition={{ duration }}
+          className={className}
+        >{children}</motion.div>
+      ) : null}
+    </AnimatePresence>
+  );
+}function SolutionRow({ masked, showAnswer }) {
   const displayItems = masked.map((item) => {
     if (item.type === "space") return item;
 
