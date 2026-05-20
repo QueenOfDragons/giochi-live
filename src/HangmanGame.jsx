@@ -258,36 +258,26 @@ const BALLOON_COLORS = [
 ];
 
 function Balloon({ color, index, total, escaped, delay = 0 }) {
-  // Posizione angolare attorno al punto di tenuta
-  const angle = total <= 1 ? 0 : -40 + (80 / (total - 1)) * index;
+  const angle = total <= 1 ? 0 : -50 + (100 / Math.max(total - 1, 1)) * index;
   const rad = (angle * Math.PI) / 180;
-  const dist = 22 + (index % 2) * 6;
+  const dist = 28 + (index % 2) * 8;
   const bx = Math.round(Math.sin(rad) * dist);
-  const by = -Math.round(Math.cos(rad) * dist) - 10;
-
+  const by = Math.round(Math.cos(rad) * dist);
   return (
     <AnimatePresence>
       {!escaped && (
         <motion.div
           initial={{ opacity: 0, y: 10, scale: 0.5 }}
-          animate={{ opacity: 1, y: 0, scale: 1,
-            x: [0, bx > 0 ? 1 : -1, 0],
-          }}
-          exit={{ opacity: 0, y: -80, x: bx * 3, scale: 0.3, rotate: bx > 0 ? 30 : -30 }}
-          transition={{ duration: 0.7, exit: { duration: 0.8 }, x: { duration: 2.5, repeat: Infinity, ease: "easeInOut", delay } }}
+          animate={{ opacity: 1, y: 0, scale: 1, x: [0, bx > 0 ? 1.5 : -1.5, 0] }}
+          exit={{ opacity: 0, y: -100, x: bx * 4, scale: 0.2, rotate: bx > 0 ? 40 : -40 }}
+          transition={{ duration: 0.7, x: { duration: 2.5, repeat: Infinity, ease: "easeInOut" } }}
           className="absolute"
-          style={{ left: `calc(50% + 16px + ${bx}px - 12px)`, top: `calc(62px + ${by}px)` }}
+          style={{ left: `${-bx - 13}px`, bottom: `${by + 6}px` }}
         >
-          {/* filo */}
-          <svg width="24" height="28" className="absolute" style={{ top: "20px", left: "6px" }}>
-            <path d={`M12 0 Q${12 + bx * 0.3} 14 ${12 - bx * 0.1} 28`}
-              stroke="#94a3b8" strokeWidth="1.2" fill="none" />
-          </svg>
-          {/* palloncino */}
-          <svg width="24" height="28" viewBox="0 0 24 28">
-            <ellipse cx="12" cy="12" rx="10" ry="11" fill={color.fill} stroke={color.stroke} strokeWidth="1.5" />
-            <ellipse cx="8" cy="7" rx="3" ry="3.5" fill="white" opacity="0.35" />
-            <polygon points="10,23 14,23 12,28" fill={color.fill} />
+          <svg width="26" height="30" viewBox="0 0 26 30">
+            <ellipse cx="13" cy="13" rx="11" ry="12" fill={color.fill} stroke={color.stroke} strokeWidth="1.5" />
+            <ellipse cx="9" cy="7" rx="3.5" ry="4" fill="white" opacity="0.35" />
+            <polygon points="11,25 15,25 13,30" fill={color.fill} />
           </svg>
         </motion.div>
       )}
@@ -351,17 +341,31 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
     >
       <div className="relative h-[112px] w-[90px] sm:h-[130px] sm:w-[104px]">
 
-        {/* PALLONCINI — volano via dall'ultimo al primo */}
-        <div className="absolute left-1/2 top-0" style={{ width: 0, height: 0 }}>
+        {/* BRACCIO DX cartoon spesso */}
+        <svg className="absolute" style={{ left: "54px", top: "56px", width: "40px", height: "50px" }} viewBox="0 0 40 50">
+          <path d="M6,40 Q4,28 8,18 Q12,8 18,4 Q22,2 24,6 Q26,10 22,18 Q18,26 16,34 Q14,40 12,44 Q10,46 8,44 Q6,42 6,40Z"
+            fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" />
+          <circle cx="21" cy="5" r="6" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" />
+        </svg>
+
+        {/* PALLONCINI sopra la testa con fili dalla mano */}
+        <div className="absolute" style={{ left: "75px", top: "10px", width: 0, height: 0 }}>
+          {/* fili SVG convergenti */}
+          <svg className="absolute" style={{ left: "-10px", top: "0px", overflow: "visible", pointerEvents: "none" }} width="1" height="1">
+            {balloons.map((_, i) => {
+              if (i >= remaining) return null;
+              const angle2 = balloons.length <= 1 ? 0 : -50 + (100 / Math.max(balloons.length - 1, 1)) * i;
+              const rad2 = (angle2 * Math.PI) / 180;
+              const d2 = 28 + (i % 2) * 8;
+              const bx2 = Math.round(Math.sin(rad2) * d2);
+              const by2 = Math.round(Math.cos(rad2) * d2);
+              return <line key={i} x1="0" y1="0" x2={-bx2} y2={-by2 - 6}
+                stroke="#94a3b8" strokeWidth="1" />;
+            })}
+          </svg>
           {balloons.map((color, i) => (
-            <Balloon
-              key={i}
-              color={color}
-              index={i}
-              total={maxHearts}
-              escaped={i >= remaining}
-              delay={i * 0.15}
-            />
+            <Balloon key={i} color={color} index={i} total={maxHearts}
+              escaped={i >= remaining} delay={i * 0.15} />
           ))}
         </div>
 
@@ -381,12 +385,7 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
           <span className="text-[9px] font-black text-orange-300 tracking-widest select-none">LV</span>
         </div>
 
-        {/* BRACCIO DX alzato che tiene i fili */}
-        <div className="absolute" style={{ left: "52px", top: "64px", width: "22px", height: "3px", background: "#fde68a", borderRadius: "9999px", transform: "rotate(-45deg)", transformOrigin: "left center" }} />
-        {/* avambraccio */}
-        <div className="absolute" style={{ left: "64px", top: "56px", width: "16px", height: "3px", background: "#fde68a", borderRadius: "9999px", transform: "rotate(-70deg)", transformOrigin: "left center" }} />
-        {/* mano */}
-        <div className="absolute rounded-full bg-amber-200" style={{ width: "7px", height: "7px", left: "68px", top: "48px" }} />
+
 
         {/* GAMBE */}
         <div className="absolute left-[28px] top-[88px] h-[18px] w-[8px] rounded-b-full bg-[#1a3838] border border-[#2a5050]" />
