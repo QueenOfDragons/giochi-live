@@ -420,9 +420,13 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
           <circle cx="61" cy="33" r="1.2" fill="#1e293b" />
           <circle cx="50" cy="32" r="0.5" fill="white" />
           <circle cx="62" cy="32" r="0.5" fill="white" />
-          {/* lacrima */}
-          {sadLevel >= 4 && <ellipse cx="62" cy="38" rx="1.2" ry="2.2" fill="#93c5fd" opacity="0.85" />}
-          {sadLevel >= 5 && <ellipse cx="48" cy="38" rx="1.2" ry="2.2" fill="#93c5fd" opacity="0.85" />}
+          {/* lacrime lunghe stile emoji */}
+          {sadLevel >= 4 && (
+            <path d="M62,37 Q63,42 62,50 Q61,55 62,58" stroke="#60a5fa" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.9" />
+          )}
+          {sadLevel >= 5 && (
+            <path d="M48,37 Q47,42 48,50 Q49,55 48,58" stroke="#60a5fa" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.9" />
+          )}
           {/* sopracciglia — corte, dentro la faccia bianca */}
           <line
             x1="46" y1={29 + sadLevel*0.5}
