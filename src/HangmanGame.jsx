@@ -341,15 +341,18 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
     >
       <div className="relative h-[112px] w-[90px] sm:h-[130px] sm:w-[104px]">
 
-        {/* BRACCIO DX cartoon spesso */}
-        <svg className="absolute" style={{ left: "54px", top: "56px", width: "40px", height: "50px" }} viewBox="0 0 40 50">
-          <path d="M6,40 Q4,28 8,18 Q12,8 18,4 Q22,2 24,6 Q26,10 22,18 Q18,26 16,34 Q14,40 12,44 Q10,46 8,44 Q6,42 6,40Z"
-            fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" />
-          <circle cx="21" cy="5" r="6" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" />
+        {/* BRACCIO DX alzato lateralmente */}
+        <svg className="absolute" style={{ left: "52px", top: "58px", width: "42px", height: "30px" }} viewBox="0 0 42 30">
+          {/* braccio superiore */}
+          <rect x="2" y="12" width="22" height="8" rx="4" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" transform="rotate(-30 2 16)" />
+          {/* avambraccio */}
+          <rect x="18" y="4" width="18" height="8" rx="4" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" transform="rotate(-50 18 8)" />
+          {/* mano */}
+          <circle cx="34" cy="4" r="5" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.2" />
         </svg>
 
-        {/* PALLONCINI sopra la testa con fili dalla mano */}
-        <div className="absolute" style={{ left: "75px", top: "10px", width: 0, height: 0 }}>
+        {/* PALLONCINI con fili dalla mano */}
+        <div className="absolute" style={{ left: "78px", top: "30px", width: 0, height: 0 }}>
           {/* fili SVG convergenti */}
           <svg className="absolute" style={{ left: "-10px", top: "0px", overflow: "visible", pointerEvents: "none" }} width="1" height="1">
             {balloons.map((_, i) => {
