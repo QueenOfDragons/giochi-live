@@ -349,8 +349,8 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
     >
       <div className="relative" style={{ width: 110, height: 112 }}>
 
-        {/* PALLONCINI — partono dall'aletta sinistra in alto */}
-        <div className="absolute" style={{ left: 12, top: 8, width: 0, height: 0 }}>
+        {/* PALLONCINI — partono dall'aletta sinistra */}
+        <div className="absolute" style={{ left: 18, top: 22, width: 0, height: 0 }}>
           <svg style={{ position:"absolute", left:-8, top:0, overflow:"visible", pointerEvents:"none" }} width="1" height="1">
             {balloons.map((_, i) => {
               if (i >= remaining) return null;
@@ -391,60 +391,48 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
         </div>
 
         {/* PINGUINO SVG */}
-        <svg width="110" height="112" viewBox="0 0 110 112" style={{ position:"absolute", left:0, top:0 }}>
-
+        <svg width="88" height="96" viewBox="0 0 88 96" style={{ position:"absolute", left:11, top:8 }}>
           {/* corpo nero */}
-          <ellipse cx="55" cy="70" rx="28" ry="34" fill="#1e293b" />
-
+          <ellipse cx="44" cy="62" rx="24" ry="28" fill="#1e3a3a" stroke="#2a5050" strokeWidth="1.5" />
           {/* pancia bianca */}
-          <ellipse cx="55" cy="74" rx="18" ry="24" fill="white" />
-
-          {/* LV sulla pancia */}
-          <text x="55" y="76" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0f4040" fontFamily="Arial">LV</text>
-
+          <ellipse cx="44" cy="65" rx="15" ry="20" fill="white" />
+          {/* LV */}
+          <text x="44" y="67" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0f4040" fontFamily="Arial">LV</text>
           {/* testa */}
-          <ellipse cx="55" cy="36" rx="22" ry="22" fill="#1e293b" />
-
+          <ellipse cx="44" cy="30" rx="19" ry="19" fill="#1e3a3a" stroke="#2a5050" strokeWidth="1.5" />
           {/* faccia bianca */}
-          <ellipse cx="55" cy="38" rx="14" ry="14" fill="white" />
-
+          <ellipse cx="44" cy="31" rx="12" ry="12" fill="white" />
           {/* occhi */}
-          <circle cx="49" cy="34" r="3.5" fill="#1e293b" />
-          <circle cx="61" cy="34" r="3.5" fill="#1e293b" />
-          <circle cx="50" cy="33" r="1.2" fill="white" />
-          <circle cx="62" cy="33" r="1.2" fill="white" />
-          {sadLevel >= 4 && <ellipse cx="62" cy="40" rx="1.2" ry="2" fill="#93c5fd" opacity="0.9" />}
-
+          <circle cx="38" cy="28" r="3" fill="#1e3a3a" />
+          <circle cx="50" cy="28" r="3" fill="#1e3a3a" />
+          <circle cx="39" cy="27" r="1" fill="white" />
+          <circle cx="51" cy="27" r="1" fill="white" />
+          {sadLevel >= 4 && <ellipse cx="50" cy="33" rx="1" ry="1.8" fill="#93c5fd" opacity="0.9" />}
           {/* sopracciglia */}
-          <line x1="45" y1={28 - sadLevel*0.8} x2="53" y2={29 + sadLevel*0.5}
-            stroke="#1e293b" strokeWidth="2" strokeLinecap="round" />
-          <line x1="57" y1={29 + sadLevel*0.5} x2="65" y2={28 - sadLevel*0.8}
-            stroke="#1e293b" strokeWidth="2" strokeLinecap="round" />
-
+          <line x1="35" y1={22 - sadLevel*0.7} x2="42" y2={23 + sadLevel*0.4}
+            stroke="#1e3a3a" strokeWidth="1.8" strokeLinecap="round" />
+          <line x1="46" y1={23 + sadLevel*0.4} x2="53" y2={22 - sadLevel*0.7}
+            stroke="#1e3a3a" strokeWidth="1.8" strokeLinecap="round" />
           {/* becco */}
-          <ellipse cx="55" cy="43" rx="5" ry="3" fill="#f97316" />
-
-          {/* guance rosa */}
-          <ellipse cx="44" cy="40" rx="4" ry="3" fill="#fda4af" opacity={Math.max(0.1, 0.6 - sadLevel*0.12)} />
-          <ellipse cx="66" cy="40" rx="4" ry="3" fill="#fda4af" opacity={Math.max(0.1, 0.6 - sadLevel*0.12)} />
-
-          {/* ALETTA SX — alzata che tiene palloncini */}
-          <path d="M27,58 Q16,50 14,40 Q13,32 18,30 Q24,29 26,38 Q28,46 30,54Z"
-            fill="#1e293b" />
-          {/* manina aletta sx */}
-          <circle cx="16" cy="32" r="5" fill="#1e293b" />
-          <circle cx="12" cy="28" r="3" fill="#1e293b" />
-
+          <ellipse cx="44" cy="36" rx="4.5" ry="2.5" fill="#f97316" />
+          {/* sorriso sul becco */}
+          <path d={["M40,37 Q44,40 48,37","M40,37 Q44,39 48,37","M41,37 Q44,38 47,37","M41,37 Q44,37 47,37","M41,38 Q44,36 47,38","M40,39 Q44,35 48,39"][Math.min(sadLevel,5)]}
+            stroke="#c2410c" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+          {/* guance */}
+          <ellipse cx="34" cy="33" rx="3.5" ry="2.5" fill="#fda4af" opacity={Math.max(0.1, 0.55-sadLevel*0.1)} />
+          <ellipse cx="54" cy="33" rx="3.5" ry="2.5" fill="#fda4af" opacity={Math.max(0.1, 0.55-sadLevel*0.1)} />
+          {/* ALETTA SX alzata — tiene palloncini */}
+          <path d="M20,52 Q10,44 10,36 Q10,28 16,27 Q22,27 22,36 Q22,44 24,50Z"
+            fill="#1e3a3a" stroke="#2a5050" strokeWidth="1" />
+          <circle cx="10" cy="27" r="4" fill="#1e3a3a" stroke="#2a5050" strokeWidth="1" />
           {/* ALETTA DX */}
-          <path d="M83,58 Q92,52 94,64 Q95,72 90,76 Q84,78 82,70 Q80,62 83,58Z"
-            fill="#1e293b" />
-
-          {/* piedi arancioni */}
-          <ellipse cx="43" cy="103" rx="11" ry="5" fill="#f97316" />
-          <ellipse cx="67" cy="103" rx="11" ry="5" fill="#f97316" />
-
+          <path d="M68,52 Q76,46 78,56 Q79,64 74,67 Q68,68 67,60 Q66,54 68,52Z"
+            fill="#1e3a3a" stroke="#2a5050" strokeWidth="1" />
+          {/* piedi */}
+          <ellipse cx="34" cy="89" rx="10" ry="4.5" fill="#f97316" />
+          <ellipse cx="54" cy="89" rx="10" ry="4.5" fill="#f97316" />
           {/* ombra */}
-          <ellipse cx="55" cy="110" rx="22" ry="4" fill="#0f2a2a" opacity="0.4" />
+          <ellipse cx="44" cy="95" rx="20" ry="3" fill="#0f2a2a" opacity="0.3" />
         </svg>
 
       </div>
@@ -489,7 +477,7 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows, slotHighlight = nul
   const wrongSet = new Set(wrong);
 
   return (
-    <div className="rounded-3xl border border-[#2a5050]/60 bg-[#0a1e1e]/40 p-2.5">
+    <div className="rounded-3xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 p-2.5">
       <div className="space-y-1">
         {rows.map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-center gap-1">
@@ -516,7 +504,7 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows, slotHighlight = nul
         ))}
       </div>
 
-      <div className="mt-2 rounded-2xl border border-[#2a5050]/60 bg-[#0f2a2a]/70 p-2 shadow-inner">
+      <div className="mt-2 rounded-2xl border border-[#2a5050]/60 bg-[#163636]/70 p-2 shadow-inner">
         <div className="mx-auto h-2 w-16 rounded-t-full border border-slate-600/70 bg-[#1a3030]/70" />
         <div className="mt-1 h-1 rounded-full bg-[#1a3838]" />
       </div>
@@ -559,7 +547,7 @@ function TopControls({
 
         {/* Menu a tendina */}
         {menuOpen && (
-          <div className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-2xl border border-[#2a5050]/60 bg-[#0f2a2a] shadow-2xl p-2 flex flex-col gap-1">
+          <div className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-2xl border border-[#2a5050]/60 bg-[#163636] shadow-2xl p-2 flex flex-col gap-1">
             <button onClick={() => { onBack(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#b0d4d4] hover:bg-[#2a5050]/40 transition text-left">← {t.home.backToMenu}</button>
             <div className="h-px bg-[#2a5050]/40 my-1" />
             {/* Selezione lingua */}
@@ -1049,7 +1037,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
   const canGoNext = true; // sempre attivo: Avanti se non iniziato, Abbandona se iniziato
 
   return (
-    <div className={`relative bg-[#0a1e1e] text-slate-100 ${compactMode ? "h-screen p-0 overflow-hidden" : "min-h-screen p-4 md:p-8"}`}>
+    <div className={`relative bg-[#0f2e2e] text-slate-100 ${compactMode ? "h-screen p-0 overflow-hidden" : "min-h-screen p-4 md:p-8"}`}>
       <style>{`img.twemoji-small { height: 0.9em; width: 0.9em; vertical-align: -0.12em; display: inline-block; }`}</style>
 
       <AnimatePresence>
@@ -1143,7 +1131,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
             </div>
 
             {/* Riga 6 — Lettere (altezza fissa ~80px) */}
-            <div className="flex-none mx-4 mt-2 rounded-3xl border border-[#2a5050]/60 bg-[#0f2a2a]/60 p-2.5">
+            <div className="flex-none mx-4 mt-2 rounded-3xl border border-[#2a5050]/60 bg-[#163636]/60 p-2.5">
               <SolutionRow masked={masked} showAnswer={showAnswer} />
             </div>
 
@@ -1240,19 +1228,19 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 </div>
               </div>
 
-              <div className="mb-4 rounded-3xl border border-[#2a5050]/60 bg-[#0a1e1e]/40 p-3">
+              <div className="mb-4 rounded-3xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 p-3">
                 <SolutionRow masked={masked} showAnswer={showAnswer} />
               </div>
-              <div className="rounded-3xl border border-[#2a5050]/60 bg-[#0a1e1e]/40 p-4"><Keyboard guessed={[...guessed]} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} /></div>
+              <div className="rounded-3xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 p-4"><Keyboard guessed={[...guessed]} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} /></div>
             </motion.div>
 
             <div className="space-y-6">
               <div className="rounded-3xl border border-[#2a5050]/60 bg-white/5 p-5 shadow-2xl">
                 <h2 className="mb-4 text-xl font-bold">{t.hangman.addItemTitle}</h2>
                 <div className="space-y-3">
-                  <input value={customText} onChange={(event) => setCustomText(event.target.value)} placeholder={t.hangman.itemPlaceholder} className="w-full rounded-2xl border border-[#2a5050]/60 bg-[#0a1e1e]/40 px-4 py-3 outline-none focus:border-pink-400" />
-                  <textarea value={customHint} onChange={(event) => setCustomHint(event.target.value)} placeholder={t.hangman.cluePlaceholder} rows={4} className="w-full resize-none rounded-2xl border border-[#2a5050]/60 bg-[#0a1e1e]/40 px-4 py-3 outline-none focus:border-pink-400" />
-                  <select value={customDifficulty} onChange={(event) => setCustomDifficulty(event.target.value)} className="w-full rounded-2xl border border-[#2a5050]/60 bg-[#0a1e1e]/40 px-4 py-3 outline-none focus:border-pink-400">
+                  <input value={customText} onChange={(event) => setCustomText(event.target.value)} placeholder={t.hangman.itemPlaceholder} className="w-full rounded-2xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 px-4 py-3 outline-none focus:border-pink-400" />
+                  <textarea value={customHint} onChange={(event) => setCustomHint(event.target.value)} placeholder={t.hangman.cluePlaceholder} rows={4} className="w-full resize-none rounded-2xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 px-4 py-3 outline-none focus:border-pink-400" />
+                  <select value={customDifficulty} onChange={(event) => setCustomDifficulty(event.target.value)} className="w-full rounded-2xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 px-4 py-3 outline-none focus:border-pink-400">
                     <option value="Facile">{t.hangman.easy}</option>
                     <option value="Media">{t.hangman.medium}</option>
                     <option value="Difficile">{t.hangman.hard}</option>
@@ -1281,7 +1269,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 </div>
                 <div className="max-h-[320px] space-y-2 overflow-auto pr-1">
                   {items.map((item, idx) => (
-                    <button key={`${idx}-${item.difficulty}`} onClick={() => { setCurrentIndex(idx); setPlayMode("sequential"); remainingIndexesRef.current = buildRemainingPool(items.length, idx); clearRoundState(); }} className={`w-full rounded-2xl border px-4 py-3 text-left transition ${idx === currentIndex ? "border-pink-400/40 bg-pink-500/15" : "border-[#2a5050]/60 bg-[#0a1e1e]/40 hover:bg-[#2a5050]/40"}`}>
+                    <button key={`${idx}-${item.difficulty}`} onClick={() => { setCurrentIndex(idx); setPlayMode("sequential"); remainingIndexesRef.current = buildRemainingPool(items.length, idx); clearRoundState(); }} className={`w-full rounded-2xl border px-4 py-3 text-left transition ${idx === currentIndex ? "border-pink-400/40 bg-pink-500/15" : "border-[#2a5050]/60 bg-[#0f2e2e]/40 hover:bg-[#2a5050]/40"}`}>
                       <div className="flex items-center justify-between">
                         <div className="text-xs font-bold text-[#8ab8b8] uppercase tracking-wider">{t.hangman.roundLabel} {idx + 1}</div>
                         <div className="flex items-center gap-1.5">
