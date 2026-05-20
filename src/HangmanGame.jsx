@@ -4,17 +4,17 @@ import { UI_TEXT } from "./texts/uiText";
 
 // ── TEMA COLORI — modifica qui per cambiare tutta la palette ─────────────────
 const THEME = {
-  bg:         "#0d1f1f",   // sfondo principale
-  bgCard:     "#1a3838",   // sfondo card/box
-  bgCardAlt:  "#0f2a2a",   // sfondo secondario
-  border:     "#2a5050",   // bordi
-  borderGlow: "#3a7070",   // bordi luminosi
-  accent:     "#f97316",   // arancio principale
-  accentAlt:  "#fbbf24",   // ambra/oro
-  accentSoft: "#fed7aa",   // arancio chiaro
-  text:       "#e0f0f0",   // testo principale
-  textMuted:  "#8ab8b8",   // testo secondario
-  textFaint:  "#4a7878",   // testo sfumato
+  bg:         "#3a1a0a",   // sfondo principale — terracotta scuro
+  bgCard:     "#2a0f05",   // sfondo card/box
+  bgCardAlt:  "#1a0800",   // sfondo secondario
+  border:     "#6a3520",   // bordi
+  borderGlow: "#a05030",   // bordi luminosi
+  accent:     "#fb923c",   // corallo principale
+  accentAlt:  "#fbbf24",   // oro
+  accentSoft: "#fed7aa",   // corallo chiaro
+  text:       "#fff1ee",   // testo principale
+  textMuted:  "#d4956a",   // testo secondario
+  textFaint:  "#8a4a2a",   // testo sfumato
   correct:    "#22c55e",   // verde corretto
   wrong:      "#ef4444",   // rosso sbagliato
   heart:      "#f43f5e",   // cuori
@@ -604,7 +604,7 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows, slotHighlight = nul
   const wrongSet = new Set(wrong);
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-black/20 p-2.5">
+    <div className="rounded-3xl border border-[#6a3520]/40 bg-black/20 p-2.5">
       <div className="space-y-1">
         {rows.map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-center gap-1">
@@ -619,7 +619,7 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows, slotHighlight = nul
                   ? "border-emerald-400 bg-emerald-500 text-white font-bold"
                   : isWrong
                     ? "border-rose-400 bg-rose-500 text-white font-bold"
-                    : "border-white/20 bg-white/10 text-slate-100 hover:bg-white/20";
+                    : "border-white/20 bg-white/10 text-[#fff1ee] hover:bg-white/20";
 
               return (
                 <button key={key} type="button" disabled={disabled || isUsed || competitionMode} onClick={() => !competitionMode && onGuess(key)} className={`flex h-7 w-7 items-center justify-center rounded-lg border text-[11px] font-semibold uppercase transition sm:h-8 sm:w-8 sm:text-xs ${stateClass} ${disabled || isUsed || competitionMode ? "cursor-default" : ""}`}>
@@ -631,9 +631,9 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows, slotHighlight = nul
         ))}
       </div>
 
-      <div className="mt-2 rounded-2xl border border-white/10 bg-slate-900/70 p-2 shadow-inner">
+      <div className="mt-2 rounded-2xl border border-[#6a3520]/40 bg-[#2a0f05]/70 p-2 shadow-inner">
         <div className="mx-auto h-2 w-16 rounded-t-full border border-slate-600/70 bg-slate-700/70" />
-        <div className="mt-1 h-1 rounded-full bg-slate-800" />
+        <div className="mt-1 h-1 rounded-full bg-[#1a0800]" />
       </div>
     </div>
   );
@@ -674,8 +674,8 @@ function TopControls({
 
         {/* Menu a tendina */}
         {menuOpen && (
-          <div className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-2xl border border-white/10 bg-slate-900 shadow-2xl p-2 flex flex-col gap-1">
-            <button onClick={() => { onBack(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition text-left">← {t.home.backToMenu}</button>
+          <div className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-2xl border border-[#6a3520]/40 bg-[#2a0f05] shadow-2xl p-2 flex flex-col gap-1">
+            <button onClick={() => { onBack(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#f0c8a0] hover:bg-white/10 transition text-left">← {t.home.backToMenu}</button>
             <div className="h-px bg-white/10 my-1" />
             {/* Selezione lingua */}
             <div className="flex items-center gap-1 px-3 py-1">
@@ -692,13 +692,13 @@ function TopControls({
               ))}
             </div>
             <div className="h-px bg-white/10 my-1" />
-            <button onClick={() => { onReset(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><RotateCcw className="h-3.5 w-3.5" />{t.hangman.restart}</button>
-            <button onClick={() => { onImport(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-emerald-500/20 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.import}</button>
-            <button onClick={() => { onRandom(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-pink-500/20 transition"><Shuffle className="h-3.5 w-3.5" />{t.hangman.random}</button>
-            <button onClick={() => { onDownloadTemplate(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.downloadTemplate}</button>
-            <button onClick={() => { onFullscreen(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-cyan-500/20 transition"><Monitor className="h-3.5 w-3.5" />{fullscreenMode ? t.hangman.fullscreenExit : t.hangman.fullscreenEnter}</button>
-            <button onClick={() => { onToggleSound(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition">{soundOn ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}{soundOn ? t.hangman.soundOn : t.hangman.soundOff}</button>
-            <button onClick={() => { onToggleCompact(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><PanelsTopLeft className="h-3.5 w-3.5" />{compactMode ? t.hangman.showPanels : t.hangman.hidePanels}</button>
+            <button onClick={() => { onReset(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#f0c8a0] hover:bg-white/10 transition"><RotateCcw className="h-3.5 w-3.5" />{t.hangman.restart}</button>
+            <button onClick={() => { onImport(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#f0c8a0] hover:bg-emerald-500/20 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.import}</button>
+            <button onClick={() => { onRandom(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#f0c8a0] hover:bg-pink-500/20 transition"><Shuffle className="h-3.5 w-3.5" />{t.hangman.random}</button>
+            <button onClick={() => { onDownloadTemplate(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#f0c8a0] hover:bg-white/10 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.downloadTemplate}</button>
+            <button onClick={() => { onFullscreen(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#f0c8a0] hover:bg-cyan-500/20 transition"><Monitor className="h-3.5 w-3.5" />{fullscreenMode ? t.hangman.fullscreenExit : t.hangman.fullscreenEnter}</button>
+            <button onClick={() => { onToggleSound(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#f0c8a0] hover:bg-white/10 transition">{soundOn ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}{soundOn ? t.hangman.soundOn : t.hangman.soundOff}</button>
+            <button onClick={() => { onToggleCompact(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#f0c8a0] hover:bg-white/10 transition"><PanelsTopLeft className="h-3.5 w-3.5" />{compactMode ? t.hangman.showPanels : t.hangman.hidePanels}</button>
           </div>
         )}
       </div>
@@ -1164,7 +1164,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
   const canGoNext = true; // sempre attivo: Avanti se non iniziato, Abbandona se iniziato
 
   return (
-    <div className={`relative bg-slate-950 text-slate-100 ${compactMode ? "h-screen p-0 overflow-hidden" : "min-h-screen p-4 md:p-8"}`}>
+    <div className={`relative bg-[#3a1a0a] text-[#fff1ee] ${compactMode ? "h-screen p-0 overflow-hidden" : "min-h-screen p-4 md:p-8"}`}>
       <style>{`img.twemoji-small { height: 0.9em; width: 0.9em; vertical-align: -0.12em; display: inline-block; }`}</style>
 
       <AnimatePresence>
@@ -1180,7 +1180,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
             animate={boardShake ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }}
             transition={{ duration: 0.35 }}
             style={{ width: "100%", height: "100vh", maxHeight: "100vh" }}
-            className="flex flex-col rounded-[28px] border border-white/10 bg-white/5 shadow-2xl backdrop-blur-sm overflow-hidden"
+            className="flex flex-col rounded-[28px] border border-[#6a3520]/40 bg-white/5 shadow-2xl backdrop-blur-sm overflow-hidden"
           >
             {/* Riga 1 — Bottoni (altezza fissa ~52px) */}
             <div className="flex-none px-4 pt-3 pb-1">
@@ -1189,7 +1189,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
 
             {/* Riga 2 — Progresso + difficoltà (altezza fissa ~28px) */}
             <div className="flex-none flex items-center justify-between px-5 py-1">
-              <span className="text-[11px] text-slate-400 font-medium">{currentIndex + 1} / {items.length}</span>
+              <span className="text-[11px] text-[#d4956a] font-medium">{currentIndex + 1} / {items.length}</span>
               <span className={`text-[11px] font-bold px-2 py-0.5 rounded-lg ${
                 ["Facile","Easy","Ușor"].includes(currentItem.difficulty) ? "bg-emerald-500/20 text-emerald-300" :
                 ["Difficile","Hard","Dificil"].includes(currentItem.difficulty) ? "bg-rose-500/20 text-rose-300" :
@@ -1198,7 +1198,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
             </div>
 
             {/* Riga 3 — Indizio (altezza fissa ~90px) */}
-            <div className="flex-none mx-4 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 px-5 py-3 text-center" style={{ minHeight: "60px", maxHeight: "90px" }}>
+            <div className="flex-none mx-4 rounded-3xl border border-[#6a3520]/40 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 px-5 py-3 text-center" style={{ minHeight: "60px", maxHeight: "90px" }}>
               {currentItem.category && (
                 <div className="text-xs font-bold uppercase tracking-widest text-purple-300/90 mb-1">
                   {currentItem.category}
@@ -1222,8 +1222,8 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                   {hearts.map((alive, idx) => {
                     const isBurst = heartBurstIndex === idx;
                     return (
-                      <motion.div key={idx} initial={false} animate={alive ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 0.3 }} transition={{ duration: 0.2 }} className={`relative rounded-xl border px-1.5 py-0.5 ${alive ? "border-rose-400/50 bg-rose-500/20" : "border-slate-700 bg-slate-800"}`}>
-                        <Heart className={`h-3.5 w-3.5 ${alive ? "fill-rose-400 text-rose-300" : "text-slate-600"}`} />
+                      <motion.div key={idx} initial={false} animate={alive ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 0.3 }} transition={{ duration: 0.2 }} className={`relative rounded-xl border px-1.5 py-0.5 ${alive ? "border-rose-400/50 bg-rose-500/20" : "border-[#6a3520] bg-[#1a0800]"}`}>
+                        <Heart className={`h-3.5 w-3.5 ${alive ? "fill-rose-400 text-rose-300" : "text-[#8a4a2a]"}`} />
                         <AnimatePresence>
                           {isBurst ? <motion.div initial={{ scale: 0.4, opacity: 0.9 }} animate={{ scale: 1.8, opacity: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45 }} className="absolute inset-0 rounded-xl border-2 border-rose-300" /> : null}
                         </AnimatePresence>
@@ -1231,7 +1231,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                     );
                   })}
                 </div>
-                <div className={`text-[11px] font-semibold ${status === "won" ? "text-emerald-400" : status === "lost" ? "text-rose-400" : "text-slate-400"}`}>
+                <div className={`text-[11px] font-semibold ${status === "won" ? "text-emerald-400" : status === "lost" ? "text-rose-400" : "text-[#d4956a]"}`}>
                   {status === "playing" ? `${t.hangman.errors}: ${wrong.length}/${maxHearts}` : status === "won" ? `🎉 ${t.hangman.won}!` : `💀 ${t.hangman.lost}`}
                 </div>
                 {status === "playing" && (
@@ -1258,7 +1258,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
             </div>
 
             {/* Riga 6 — Lettere (altezza fissa ~80px) */}
-            <div className="flex-none mx-4 mt-2 rounded-3xl border border-white/10 bg-slate-900/60 p-2.5">
+            <div className="flex-none mx-4 mt-2 rounded-3xl border border-[#6a3520]/40 bg-[#2a0f05]/60 p-2.5">
               <SolutionRow masked={masked} showAnswer={showAnswer} />
             </div>
 
@@ -1275,7 +1275,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                       slotSpinning
                         ? "bg-yellow-400 text-black animate-pulse cursor-not-allowed"
                         : status !== "playing"
-                          ? "bg-white/10 text-slate-500 cursor-not-allowed"
+                          ? "bg-white/10 text-[#b07050] cursor-not-allowed"
                           : "bg-gradient-to-r from-yellow-400 to-orange-400 text-black hover:from-yellow-300 hover:to-orange-300 shadow-yellow-500/30"
                     }`}
                   >
@@ -1290,22 +1290,22 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
           </motion.div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
-            <motion.div animate={boardShake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }} transition={{ duration: 0.4 }} className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl backdrop-blur-sm md:p-8">
+            <motion.div animate={boardShake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }} transition={{ duration: 0.4 }} className="rounded-3xl border border-[#6a3520]/40 bg-white/5 p-5 shadow-2xl backdrop-blur-sm md:p-8">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-5">
                 <div>
                   <p className="text-sm uppercase tracking-[0.25em] text-pink-300/80">{t.hangman.liveGame}</p>
                   <h1 className="text-2xl font-bold md:text-4xl">{t.hangman.title}</h1>
                 </div>
-                <div className="mb-2 flex justify-center"><button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">{t.home.backToMenu}</button></div>
+                <div className="mb-2 flex justify-center"><button onClick={onBack} className="text-xs text-[#d4956a] transition hover:text-white">{t.home.backToMenu}</button></div>
                 <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} onBack={onBack} onLanguageChange={onLanguageChange} currentLanguage={selectedLanguage} t={t} />
               </div>
 
-              <div className="mb-5 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4">
+              <div className="mb-5 rounded-3xl border border-[#6a3520]/40 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4">
                 <div>
                   {currentItem.category && (
                   <p className="text-[10px] font-bold uppercase tracking-widest text-purple-300/70 mb-0.5">{currentItem.category}</p>
                 )}
-                <p className="mb-2 text-sm text-slate-300">{t.hangman.clue}</p>
+                <p className="mb-2 text-sm text-[#f0c8a0]">{t.hangman.clue}</p>
                   <p className="text-xl md:text-2xl font-semibold leading-relaxed tracking-wide" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI", sans-serif' }} dangerouslySetInnerHTML={{ __html: twemoji.parse(currentItem.hint, { folder: "svg", ext: ".svg", className: "twemoji-small" }) }} />
                 </div>
               </div>
@@ -1314,8 +1314,8 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 {hearts.map((alive, idx) => {
                   const isBurst = heartBurstIndex === idx;
                   return (
-                    <motion.div key={idx} initial={false} animate={alive ? { scale: [1, 1.08, 1] } : { scale: 1, opacity: 0.45 }} transition={{ duration: 0.35 }} className={`relative rounded-2xl border px-3 py-2 ${alive ? "border-rose-400/40 bg-rose-500/15" : "border-slate-700 bg-slate-800 opacity-40"}`}>
-                      <Heart className={`h-5 w-5 ${alive ? "fill-rose-400 text-rose-300" : "text-slate-500"}`} />
+                    <motion.div key={idx} initial={false} animate={alive ? { scale: [1, 1.08, 1] } : { scale: 1, opacity: 0.45 }} transition={{ duration: 0.35 }} className={`relative rounded-2xl border px-3 py-2 ${alive ? "border-rose-400/40 bg-rose-500/15" : "border-[#6a3520] bg-[#1a0800] opacity-40"}`}>
+                      <Heart className={`h-5 w-5 ${alive ? "fill-rose-400 text-rose-300" : "text-[#b07050]"}`} />
                       <AnimatePresence>
                         {isBurst ? <motion.div initial={{ scale: 0.4, opacity: 0.9 }} animate={{ scale: 1.8, opacity: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} className="absolute inset-0 rounded-2xl border-2 border-rose-300" /> : null}
                       </AnimatePresence>
@@ -1355,19 +1355,19 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 </div>
               </div>
 
-              <div className="mb-4 rounded-3xl border border-white/10 bg-black/20 p-3">
+              <div className="mb-4 rounded-3xl border border-[#6a3520]/40 bg-black/20 p-3">
                 <SolutionRow masked={masked} showAnswer={showAnswer} />
               </div>
-              <div className="rounded-3xl border border-white/10 bg-black/20 p-4"><Keyboard guessed={[...guessed]} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} /></div>
+              <div className="rounded-3xl border border-[#6a3520]/40 bg-black/20 p-4"><Keyboard guessed={[...guessed]} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} /></div>
             </motion.div>
 
             <div className="space-y-6">
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl">
+              <div className="rounded-3xl border border-[#6a3520]/40 bg-white/5 p-5 shadow-2xl">
                 <h2 className="mb-4 text-xl font-bold">{t.hangman.addItemTitle}</h2>
                 <div className="space-y-3">
-                  <input value={customText} onChange={(event) => setCustomText(event.target.value)} placeholder={t.hangman.itemPlaceholder} className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 outline-none focus:border-pink-400" />
-                  <textarea value={customHint} onChange={(event) => setCustomHint(event.target.value)} placeholder={t.hangman.cluePlaceholder} rows={4} className="w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-4 py-3 outline-none focus:border-pink-400" />
-                  <select value={customDifficulty} onChange={(event) => setCustomDifficulty(event.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 outline-none focus:border-pink-400">
+                  <input value={customText} onChange={(event) => setCustomText(event.target.value)} placeholder={t.hangman.itemPlaceholder} className="w-full rounded-2xl border border-[#6a3520]/40 bg-black/20 px-4 py-3 outline-none focus:border-pink-400" />
+                  <textarea value={customHint} onChange={(event) => setCustomHint(event.target.value)} placeholder={t.hangman.cluePlaceholder} rows={4} className="w-full resize-none rounded-2xl border border-[#6a3520]/40 bg-black/20 px-4 py-3 outline-none focus:border-pink-400" />
+                  <select value={customDifficulty} onChange={(event) => setCustomDifficulty(event.target.value)} className="w-full rounded-2xl border border-[#6a3520]/40 bg-black/20 px-4 py-3 outline-none focus:border-pink-400">
                     <option value="Facile">{t.hangman.easy}</option>
                     <option value="Media">{t.hangman.medium}</option>
                     <option value="Difficile">{t.hangman.hard}</option>
@@ -1376,7 +1376,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl">
+              <div className="rounded-3xl border border-[#6a3520]/40 bg-white/5 p-5 shadow-2xl">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-xl font-bold">{t.hangman.archiveTitle}</h2>
                   <button
@@ -1388,7 +1388,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                       clearRoundState();
                       saveItemsToStorage(selectedLanguage, defaults);
                     }}
-                    className="text-[10px] text-slate-500 hover:text-rose-400 transition rounded-lg px-2 py-1 hover:bg-rose-500/10"
+                    className="text-[10px] text-[#b07050] hover:text-rose-400 transition rounded-lg px-2 py-1 hover:bg-rose-500/10"
                     title="Cancella lista e torna ai default"
                   >
                     🗑 reset
@@ -1396,15 +1396,15 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 </div>
                 <div className="max-h-[320px] space-y-2 overflow-auto pr-1">
                   {items.map((item, idx) => (
-                    <button key={`${idx}-${item.difficulty}`} onClick={() => { setCurrentIndex(idx); setPlayMode("sequential"); remainingIndexesRef.current = buildRemainingPool(items.length, idx); clearRoundState(); }} className={`w-full rounded-2xl border px-4 py-3 text-left transition ${idx === currentIndex ? "border-pink-400/40 bg-pink-500/15" : "border-white/10 bg-black/20 hover:bg-white/10"}`}>
+                    <button key={`${idx}-${item.difficulty}`} onClick={() => { setCurrentIndex(idx); setPlayMode("sequential"); remainingIndexesRef.current = buildRemainingPool(items.length, idx); clearRoundState(); }} className={`w-full rounded-2xl border px-4 py-3 text-left transition ${idx === currentIndex ? "border-pink-400/40 bg-pink-500/15" : "border-[#6a3520]/40 bg-black/20 hover:bg-white/10"}`}>
                       <div className="flex items-center justify-between">
-                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.hangman.roundLabel} {idx + 1}</div>
+                        <div className="text-xs font-bold text-[#d4956a] uppercase tracking-wider">{t.hangman.roundLabel} {idx + 1}</div>
                         <div className="flex items-center gap-1.5">
                           <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-semibold ${["Facile","Easy","Ușor"].includes(item.difficulty) ? "bg-emerald-500/20 text-emerald-300" : ["Difficile","Hard","Dificil"].includes(item.difficulty) ? "bg-rose-500/20 text-rose-300" : "bg-amber-500/20 text-amber-300"}`}>{getDifficultyLabel(item.difficulty)}</span>
-                          <span className="text-[10px] text-slate-500">{item.text.replace(/ /g, "").length} {selectedLanguage === "it" ? "lett." : "ltrs"}</span>
+                          <span className="text-[10px] text-[#b07050]">{item.text.replace(/ /g, "").length} {selectedLanguage === "it" ? "lett." : "ltrs"}</span>
                         </div>
                       </div>
-                      <div className="mt-1 text-sm text-slate-200 truncate">{item.hint}</div>
+                      <div className="mt-1 text-sm text-[#fff1ee] truncate">{item.hint}</div>
                     </button>
                   ))}
                 </div>
