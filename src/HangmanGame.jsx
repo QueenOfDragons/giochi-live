@@ -242,342 +242,172 @@ function runSelfChecks() {
 
 if (typeof window !== "undefined") runSelfChecks();
 
-// ── PUPAZZO DI NEVE ──────────────────────────────────────────────────────────
+// ── BAMBINO CON PALLONCINI ──────────────────────────────────────────────────
 
-function SnowPiece({ show, className = "", children, duration = 0.6 }) {
+const BALLOON_COLORS = [
+  { fill: "#ef4444", stroke: "#b91c1c" }, // rosso
+  { fill: "#f97316", stroke: "#c2410c" }, // arancio
+  { fill: "#eab308", stroke: "#a16207" }, // giallo
+  { fill: "#22c55e", stroke: "#15803d" }, // verde
+  { fill: "#3b82f6", stroke: "#1d4ed8" }, // blu
+  { fill: "#a855f7", stroke: "#7e22ce" }, // viola
+  { fill: "#ec4899", stroke: "#be185d" }, // rosa
+  { fill: "#14b8a6", stroke: "#0f766e" }, // teal
+  { fill: "#f43f5e", stroke: "#be123c" }, // cremisi
+  { fill: "#84cc16", stroke: "#4d7c0f" }, // lime
+];
+
+function Balloon({ color, index, total, escaped, delay = 0 }) {
+  // Posizione angolare attorno al punto di tenuta
+  const angle = total <= 1 ? 0 : -40 + (80 / (total - 1)) * index;
+  const rad = (angle * Math.PI) / 180;
+  const dist = 22 + (index % 2) * 6;
+  const bx = Math.round(Math.sin(rad) * dist);
+  const by = -Math.round(Math.cos(rad) * dist) - 10;
+
   return (
     <AnimatePresence>
-      {show ? (
+      {!escaped && (
         <motion.div
-          initial={{ opacity: 0, scaleY: 0.5, y: 8 }}
-          animate={{ opacity: 1, scaleY: 1, y: 0 }}
-          exit={{ opacity: 0, scaleY: 0, y: 18 }}
-          transition={{ duration, ease: "easeInOut" }}
-          style={{ transformOrigin: "bottom center" }}
-          className={className}
+          initial={{ opacity: 0, y: 10, scale: 0.5 }}
+          animate={{ opacity: 1, y: 0, scale: 1,
+            x: [0, bx > 0 ? 1 : -1, 0],
+          }}
+          exit={{ opacity: 0, y: -80, x: bx * 3, scale: 0.3, rotate: bx > 0 ? 30 : -30 }}
+          transition={{ duration: 0.7, exit: { duration: 0.8 }, x: { duration: 2.5, repeat: Infinity, ease: "easeInOut", delay } }}
+          className="absolute"
+          style={{ left: `calc(50% + ${bx}px - 8px)`, top: `${by - 10}px` }}
         >
-          {children}
+          {/* filo */}
+          <svg width="16" height="20" className="absolute" style={{ top: "14px", left: "4px" }}>
+            <path d={`M8 0 Q${8 + bx * 0.3} 10 ${8 - bx * 0.1} 20`}
+              stroke="#94a3b8" strokeWidth="1" fill="none" />
+          </svg>
+          {/* palloncino */}
+          <svg width="16" height="20" viewBox="0 0 16 20">
+            <ellipse cx="8" cy="9" rx="7" ry="8" fill={color.fill} stroke={color.stroke} strokeWidth="1" />
+            <ellipse cx="5.5" cy="5.5" rx="2" ry="2.5" fill="white" opacity="0.35" />
+            <polygon points="7,17 9,17 8,20" fill={color.fill} />
+          </svg>
         </motion.div>
-      ) : null}
+      )}
     </AnimatePresence>
   );
 }
 
-function SnowFace({ state = "idle" }) {
-  const isSad = state === "lose";
-  const isHappy = state === "win";
+function KidFace({ sadLevel = 0 }) {
+  // sadLevel 0=felice, 1=sorriso, 2=neutro, 3=preoccupato, 4=triste, 5=disperato
+  const eyebrowTilt = [0, 0, 0, -8, -14, -20][Math.min(sadLevel, 5)];
+  const mouthCurve = ["M3,12 Q8,16 13,12", "M3,12 Q8,15 13,12", "M3,12 Q8,12 13,12",
+                      "M3,12 Q8,10 13,12", "M3,12 Q8,9 13,12", "M2,13 Q8,8 14,13"][Math.min(sadLevel, 5)];
+  const eyeShape = sadLevel >= 4 ? "😢" : null;
+  const cheekOpacity = Math.max(0, 1 - sadLevel * 0.25);
+
   return (
-    <div className="relative flex h-full w-full items-center justify-center rounded-full border-[3px] border-sky-300 bg-white shadow-inner">
-      {/* occhi */}
-      <div className="absolute top-[10px] flex gap-4">
-        {[0,1].map(i => (
-          <motion.div key={i}
-            animate={isHappy ? { scaleY:[1,0.3,1] } : { scaleY:[1,0.1,1] }}
-            transition={{ duration: isHappy ? 0.5 : 2.5, repeat: Infinity, repeatDelay: isHappy ? 0.6 : 2 }}
-            className="h-2 w-2 rounded-full bg-[#1a3030]"
-          />
-        ))}
-      </div>
-      {/* naso carota */}
-      <div className="absolute top-[17px] left-1/2 -translate-x-1/2 h-0 w-0"
-        style={{ borderLeft: "3px solid transparent", borderRight: "3px solid transparent", borderTop: "8px solid #f97316" }} />
-      {/* bocca */}
-      <div className="absolute bottom-[7px] left-1/2 -translate-x-1/2">
-        <div className={`border-b-[2px] border-slate-600 ${isSad ? "h-2 w-5 rounded-t-full border-t-[2px] border-b-0" : "h-2 w-5 rounded-b-full"}`} />
-      </div>
-      {isHappy && (
-        <>
-          <div className="absolute bottom-[8px] left-[5px] h-1.5 w-1.5 rounded-full bg-pink-200 opacity-80" />
-          <div className="absolute bottom-[8px] right-[5px] h-1.5 w-1.5 rounded-full bg-pink-200 opacity-80" />
-        </>
-      )}
+    <div className="relative h-full w-full rounded-full border-[2.5px] border-amber-200 bg-gradient-to-br from-amber-100 to-amber-200 shadow-md overflow-hidden">
+      {/* guance */}
+      <div className="absolute bottom-[8px] left-[4px] h-3 w-3 rounded-full bg-pink-300" style={{ opacity: cheekOpacity * 0.6 }} />
+      <div className="absolute bottom-[8px] right-[4px] h-3 w-3 rounded-full bg-pink-300" style={{ opacity: cheekOpacity * 0.6 }} />
+      {/* sopracciglia */}
+      <svg width="100%" height="100%" viewBox="0 0 32 32" className="absolute inset-0">
+        {/* sopracciglio sx */}
+        <motion.line animate={{ rotate: eyebrowTilt }} style={{ transformOrigin: "8px 9px" }}
+          x1="5" y1="9" x2="12" y2="9" stroke="#92400e" strokeWidth="1.5" strokeLinecap="round" />
+        {/* sopracciglio dx */}
+        <motion.line animate={{ rotate: -eyebrowTilt }} style={{ transformOrigin: "24px 9px" }}
+          x1="20" y1="9" x2="27" y2="9" stroke="#92400e" strokeWidth="1.5" strokeLinecap="round" />
+        {/* occhi */}
+        <motion.ellipse cx="10" cy="14" rx="2" ry={sadLevel >= 5 ? 1 : 2}
+          animate={{ scaleY: [1, sadLevel >= 3 ? 0.6 : 0.2, 1] }}
+          transition={{ duration: sadLevel >= 3 ? 1.5 : 3, repeat: Infinity, repeatDelay: 2 }}
+          fill="#1c1917" />
+        <motion.ellipse cx="22" cy="14" rx="2" ry={sadLevel >= 5 ? 1 : 2}
+          animate={{ scaleY: [1, sadLevel >= 3 ? 0.6 : 0.2, 1] }}
+          transition={{ duration: sadLevel >= 3 ? 1.5 : 3, repeat: Infinity, repeatDelay: 2 }}
+          fill="#1c1917" />
+        {/* lucentezza occhi */}
+        {sadLevel < 4 && <><circle cx="11" cy="13" r="0.7" fill="white" /><circle cx="23" cy="13" r="0.7" fill="white" /></>}
+        {/* lacrima */}
+        {sadLevel >= 4 && <ellipse cx="22" cy="18" rx="1" ry="1.5" fill="#93c5fd" opacity="0.8" />}
+        {/* bocca */}
+        <path d={mouthCurve} stroke="#92400e" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      </svg>
     </div>
   );
 }
 
 function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
-  // Ordine scioglimento dal basso verso l'alto:
-  // 1=base, 2=gamba_sx, 3=gamba_dx, 4=braccio_sx, 5=braccio_dx
-  // 6=corpo (con LV), [7=sciarpa Media], [8=bottoni Media]
-  // [9=naso Difficile], [10=orecchie Difficile]
-  // cappello = sempre ultimo (maxHearts)
-  // testa = penultimo (maxHearts - 1) -- WAIT: testa ultima, cappello penultimo
-  // Corretto: ... cappello(maxHearts-1), testa(maxHearts)
+  const remaining = maxHearts - wrongCount;
+  const sadLevel = Math.min(5, Math.round((wrongCount / maxHearts) * 5));
 
-  const p = (n) => wrongCount < n;
-
-  // Facile (6): base, gamba_sx, gamba_dx, braccio_sx, braccio_dx, corpo → testa(6) ultima
-  const baseVisible      = p(1);
-  const leftLegVisible   = p(2);
-  const rightLegVisible  = p(3);
-  const leftArmVisible   = p(4);
-  const rightArmVisible  = p(5);
-  const bodyVisible      = p(6);
-  // testa sempre penultima, cappello ultimo dei "base"
-  // per Facile: testa=7 ma maxHearts=6 → usiamo maxHearts-1 e maxHearts
-  const hatVisible       = p(maxHearts);
-  const headVisible      = p(maxHearts - 0); // testa = ultimo errore
-
-  // Extra Media (8): sciarpa p(7), bottoni p(8) — cappello=8, testa=7? No:
-  // riordino: base(1) gambe(2,3) braccia(4,5) corpo(6) sciarpa(7) testa(8-1=7) cappello(8)
-  const scarfVisible     = maxHearts >= 8 ? p(7) : false;
-  const buttonsVisible   = maxHearts >= 8 ? p(6) : false; // parte del corpo
-
-  // Extra Difficile (10): naso(7) orecchie(8) sciarpa(9) testa(9) cappello(10)
-  const noseVisible      = maxHearts >= 10 ? p(7) : true; // naso sempre visibile in facile/media
-  const earsVisible      = maxHearts >= 10 ? p(8) : false;
-
-  const snowState = isWon ? "win" : isLost ? "lose" : "idle";
+  // palloncini: indice 0..maxHearts-1, escaped se wrongCount > balloonIdx
+  const balloons = BALLOON_COLORS.slice(0, maxHearts);
 
   return (
     <motion.div
-      animate={isWon ? { scale:[1,1.03,1], rotate:[0,1,-1,0], y:[0,-2,0] } : { y:[0,-2,0] }}
-      transition={isWon ? { duration:1.2, repeat: Infinity } : { duration:2.2, repeat: Infinity }}
+      animate={isWon ? { scale:[1,1.04,1], y:[0,-3,0] } : isLost ? {} : { y:[0,-2,0] }}
+      transition={isWon ? { duration:1.1, repeat: Infinity } : { duration:2.5, repeat: Infinity }}
       className="relative flex h-[118px] items-center justify-center sm:h-[140px]"
     >
-      {/* ombra */}
-      <motion.div
-        animate={isWon ? { opacity:[0.2,0.4,0.2], scale:[1,1.04,1] } : { opacity: 0.2 }}
-        transition={{ duration:1.5, repeat: Infinity }}
-        className="absolute bottom-1 h-3 w-20 rounded-full bg-orange-300/30 blur-md"
-      />
+      <div className="relative h-[112px] w-[90px] sm:h-[130px] sm:w-[104px]">
 
-      <div className="relative h-[112px] w-[86px] sm:h-[132px] sm:w-[100px]">
+        {/* PALLONCINI — volano via dall'ultimo al primo */}
+        <div className="absolute left-1/2 top-0" style={{ width: 0, height: 0 }}>
+          {balloons.map((color, i) => (
+            <Balloon
+              key={i}
+              color={color}
+              index={i}
+              total={maxHearts}
+              escaped={i >= remaining}
+              delay={i * 0.15}
+            />
+          ))}
+        </div>
 
-        {/* BASE — sfera grande in basso */}
-        <SnowPiece show={baseVisible} className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[32px] w-[52px]">
-          <div className="h-full w-full rounded-full border-[3px] border-sky-200 bg-white shadow-md" />
-        </SnowPiece>
+        {/* FILO che il bambino tiene */}
+        {remaining > 0 && (
+          <div className="absolute left-1/2 -translate-x-1/2 top-[14px] w-px bg-slate-400" style={{ height: "22px" }} />
+        )}
 
-        {/* GAMBA SX */}
-        <SnowPiece show={leftLegVisible} className="absolute bottom-[22px] left-[10px] h-[18px] w-[12px]">
-          <div className="h-full w-full rounded-full border-[2px] border-sky-200 bg-white" />
-        </SnowPiece>
+        {/* TESTA */}
+        <motion.div
+          animate={isWon ? { rotate:[0,5,-5,0] } : {}}
+          transition={{ duration:0.8, repeat: Infinity }}
+          className="absolute left-1/2 -translate-x-1/2 top-[30px] h-[34px] w-[34px] sm:h-[38px] sm:w-[38px]"
+        >
+          <KidFace sadLevel={isLost ? 5 : sadLevel} />
+        </motion.div>
 
-        {/* GAMBA DX */}
-        <SnowPiece show={rightLegVisible} className="absolute bottom-[22px] right-[10px] h-[18px] w-[12px]">
-          <div className="h-full w-full rounded-full border-[2px] border-sky-200 bg-white" />
-        </SnowPiece>
+        {/* CORPO */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-[62px] h-[28px] w-[32px] rounded-lg bg-gradient-to-b from-[#1a6060] to-[#0f4040] border border-[#2a8080] flex items-center justify-center">
+          <span className="text-[9px] font-black text-orange-300 tracking-widest select-none">LV</span>
+        </div>
 
-        {/* BRACCIO SX — ramoscello */}
-        <SnowPiece show={leftArmVisible} className="absolute left-[2px] top-[52px] h-[18px] w-[16px]">
-          <div className="absolute left-0 top-[4px] h-[2px] w-[14px] rotate-[20deg] rounded-full bg-amber-800" />
-          <div className="absolute left-[3px] top-[7px] h-[2px] w-[8px] -rotate-[30deg] rounded-full bg-amber-700" />
-          <div className="absolute left-[6px] top-[1px] h-[2px] w-[8px] rotate-[50deg] rounded-full bg-amber-700" />
-        </SnowPiece>
+        {/* BRACCIO che tiene i fili */}
+        <div className="absolute left-1/2 top-[68px] h-[3px] w-[20px] -translate-x-[2px] rounded-full bg-amber-200 origin-left"
+          style={{ transform: "translateX(-2px) rotate(-30deg)" }} />
 
-        {/* BRACCIO DX — ramoscello */}
-        <SnowPiece show={rightArmVisible} className="absolute right-[2px] top-[52px] h-[18px] w-[16px]">
-          <div className="absolute right-0 top-[4px] h-[2px] w-[14px] -rotate-[20deg] rounded-full bg-amber-800" />
-          <div className="absolute right-[3px] top-[7px] h-[2px] w-[8px] rotate-[30deg] rounded-full bg-amber-700" />
-          <div className="absolute right-[6px] top-[1px] h-[2px] w-[8px] -rotate-[50deg] rounded-full bg-amber-700" />
-        </SnowPiece>
+        {/* GAMBE */}
+        <div className="absolute left-[28px] top-[88px] h-[18px] w-[8px] rounded-b-full bg-[#1a3838] border border-[#2a5050]" />
+        <div className="absolute left-[44px] top-[88px] h-[18px] w-[8px] rounded-b-full bg-[#1a3838] border border-[#2a5050]" />
 
-        {/* CORPO — sfera media con LV */}
-        <SnowPiece show={bodyVisible} className="absolute left-1/2 top-[46px] -translate-x-1/2 h-[36px] w-[46px]">
-          <div className="relative h-full w-full rounded-full border-[3px] border-sky-200 bg-white shadow-md flex items-center justify-center">
-            <span className="text-[10px] font-black tracking-widest text-[#6a9898] select-none">LV</span>
-            {/* bottoni */}
-            {buttonsVisible && (
-              <div className="absolute left-1/2 -translate-x-1/2 flex flex-col gap-[3px] top-[6px]">
-                <div className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-                <div className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-              </div>
-            )}
-          </div>
-        </SnowPiece>
+        {/* PIEDINI */}
+        <div className="absolute left-[24px] top-[104px] h-[6px] w-[14px] rounded-full bg-amber-800" />
+        <div className="absolute left-[42px] top-[104px] h-[6px] w-[14px] rounded-full bg-amber-800" />
 
-        {/* SCIARPA — solo Media/Difficile */}
-        <SnowPiece show={scarfVisible} className="absolute left-1/2 -translate-x-1/2 top-[38px] h-[10px] w-[38px]">
-          <div className="h-full w-full rounded-full bg-orange-400 border border-orange-500" />
-        </SnowPiece>
-
-        {/* ORECCHIE — solo Difficile */}
-        <SnowPiece show={earsVisible} className="absolute left-[8px] top-[14px] h-[10px] w-[10px]">
-          <div className="h-full w-full rounded-full border-[2px] border-sky-200 bg-white" />
-        </SnowPiece>
-        <SnowPiece show={earsVisible} className="absolute right-[8px] top-[14px] h-[10px] w-[10px]">
-          <div className="h-full w-full rounded-full border-[2px] border-sky-200 bg-white" />
-        </SnowPiece>
-
-        {/* TESTA — penultimo a sciogliersi */}
-        <SnowPiece show={headVisible && !isLost} className="absolute left-1/2 -translate-x-1/2 top-[4px] h-[42px] w-[42px]">
-          <SnowFace state={snowState} />
-        </SnowPiece>
-
-        {/* Testa persa — animazione caduta */}
-        <AnimatePresence>
-          {isLost ? (
-            <motion.div
-              initial={{ opacity:1, x:0, y:4, rotate:0 }}
-              animate={{ opacity:1, x:[0,10,22,36], y:[4,50,80,92], rotate:[0,60,160,280] }}
-              transition={{ duration:1.2, ease:"easeInOut" }}
-              className="absolute left-1/2 -translate-x-1/2 top-[4px] h-[42px] w-[42px]"
-            >
-              <SnowFace state="lose" />
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-
-        {/* CAPPELLO — primo a sciogliersi (ultimo errore) */}
-        <SnowPiece show={hatVisible && !isLost} className="absolute left-1/2 -translate-x-1/2 top-0 h-[12px] w-[30px]">
-          <div className="relative h-full w-full">
-            <div className="absolute bottom-0 h-[2px] w-full bg-[#1a3030] rounded-sm" />
-            <div className="absolute bottom-[2px] left-1/2 -translate-x-1/2 h-[10px] w-[18px] bg-[#1a3030] rounded-t-sm" />
-          </div>
-        </SnowPiece>
+        {/* Ombra */}
+        <motion.div
+          animate={isWon ? { opacity:[0.15,0.3,0.15], scaleX:[1,1.1,1] } : { opacity: 0.15 }}
+          transition={{ duration:1.5, repeat: Infinity }}
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 h-2 w-16 rounded-full bg-[#2a5050] blur-sm"
+        />
 
       </div>
     </motion.div>
   );
 }
 
-// ── LEGACY alias per compatibilità ───────────────────────────────────────────
-function RobotPiece({ show, className="", children, exitY=120, exitRotate=28, exitScale=0.7, duration=0.35 }) {
-  return (
-    <AnimatePresence>
-      {show ? (
-        <motion.div
-          initial={{ opacity:0, scale:0.84, y:-6 }}
-          animate={{ opacity:1, scale:1, y:0, rotate:0 }}
-          exit={{ opacity:0, y:exitY, rotate:exitRotate, scale:exitScale }}
-          transition={{ duration }}
-          className={className}
-        >{children}</motion.div>
-      ) : null}
-    </AnimatePresence>
-  );
-}function SolutionRow({ masked, showAnswer }) {
-  const displayItems = masked.map((item) => {
-    if (item.type === "space") return item;
-
-    const displayValue =
-      showAnswer && item.type === "letter" ? item.hidden : item.value;
-
-    return {
-      ...item,
-      displayValue,
-      isVisible: item.type === "letter" && item.value,
-    };
-  });
-
-  // Raggruppa per parole, così il wrap avviene tra parole e non in mezzo
-  const words = [];
-  let currentWord = [];
-
-  displayItems.forEach((item) => {
-    if (item.type === "space") {
-      if (currentWord.length > 0) {
-        words.push(currentWord);
-        currentWord = [];
-      }
-    } else {
-      currentWord.push(item);
-    }
-  });
-
-  if (currentWord.length > 0) {
-    words.push(currentWord);
-  }
-
-  const total = displayItems.length;
-
-  let boxClass =
-    "flex h-[56px] w-[30px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[28px] font-extrabold uppercase leading-none shadow-md";
-
-  let wordGapClass = "gap-5";
-  let letterGapClass = "gap-1";
-
-  if (total >= 26) {
-    boxClass =
-      "flex h-[46px] w-[24px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[22px] font-extrabold uppercase leading-none shadow-md";
-    wordGapClass = "gap-4";
-    letterGapClass = "gap-[3px]";
-  } else if (total >= 20) {
-    boxClass =
-      "flex h-[50px] w-[26px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[24px] font-extrabold uppercase leading-none shadow-md";
-    wordGapClass = "gap-3";
-    letterGapClass = "gap-[4px]";
-  }
-
-  return (
-    <div className="overflow-hidden py-1">
-      <div className="flex min-h-[92px] items-center justify-center">
-        <div className={`flex max-w-full flex-wrap justify-center ${wordGapClass} gap-y-3`}>
-          {words.map((word, wordIndex) => {
-            const isWordComplete = word.every(
-              (item) => item.type !== "letter" || item.value
-            );
-
-            return (
-              <motion.div
-                key={wordIndex}
-                initial={false}
-                animate={
-                  isWordComplete
-                    ? {
-                      boxShadow: [
-                        "0 0 8px rgba(34,197,94,0.35)",
-                        "0 0 16px rgba(34,197,94,0.65)",
-                        "0 0 8px rgba(34,197,94,0.35)",
-                      ],
-                      scale: [1, 1.02, 1],
-                    }
-                    : {
-                      boxShadow: "0 0 6px rgba(34,211,238,0.3)",
-                      scale: 1,
-                    }
-                }
-                transition={{
-                  duration: isWordComplete ? 1.2 : 0.2,
-                  repeat: isWordComplete ? Infinity : 0,
-                }}
-                className={`
-                  flex ${letterGapClass} px-2 py-1 rounded-xl border
-                  ${isWordComplete
-                    ? "border-emerald-400 bg-emerald-500/10"
-                    : "border-cyan-300/40 bg-[#2a5050]/40"
-                  }
-                `}
-              >
-                {word.map((item) => (
-                  <motion.div
-                    key={item.key}
-                    initial={false}
-                    animate={
-                      item.type === "letter" && item.value
-                        ? {
-                          rotateX: [90, 0],
-                          scale: [1, 1.06, 1],
-                        }
-                        : {
-                          rotateX: 0,
-                          scale: 1,
-                        }
-                    }
-                    transition={{
-                      duration: 0.35,
-                      ease: "easeOut",
-                    }}
-                    style={{
-                      transformStyle: "preserve-3d",
-                      ...(item.isVisible
-                        ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" }
-                        : {}),
-                    }}
-                    className={boxClass}
-                  >
-                    {item.displayValue}
-                  </motion.div>
-                ))}
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function Keyboard({ guessed, wrong, onGuess, disabled, rows, slotHighlight = null, competitionMode = false }) {
   const guessedSet = new Set(guessed);
