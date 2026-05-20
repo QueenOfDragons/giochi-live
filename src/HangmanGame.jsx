@@ -1,6 +1,26 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import twemoji from "twemoji";
 import { UI_TEXT } from "./texts/uiText";
+
+// ── TEMA COLORI — modifica qui per cambiare tutta la palette ─────────────────
+const THEME = {
+  bg:         "#0d1f1f",   // sfondo principale
+  bgCard:     "#1a3838",   // sfondo card/box
+  bgCardAlt:  "#0f2a2a",   // sfondo secondario
+  border:     "#2a5050",   // bordi
+  borderGlow: "#3a7070",   // bordi luminosi
+  accent:     "#f97316",   // arancio principale
+  accentAlt:  "#fbbf24",   // ambra/oro
+  accentSoft: "#fed7aa",   // arancio chiaro
+  text:       "#e0f0f0",   // testo principale
+  textMuted:  "#8ab8b8",   // testo secondario
+  textFaint:  "#4a7878",   // testo sfumato
+  correct:    "#22c55e",   // verde corretto
+  wrong:      "#ef4444",   // rosso sbagliato
+  heart:      "#f43f5e",   // cuori
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
 import {
@@ -327,12 +347,12 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
   const balloons = BALLOON_COLORS.slice(0, maxHearts);
 
   const mouthPath = [
-    "M39,37 Q44,41 49,37",
-    "M39,37 Q44,40 49,37",
-    "M40,37 Q44,39 48,37",
-    "M40,37 Q44,37 48,37",
-    "M40,38 Q44,36 48,38",
-    "M39,39 Q44,35 49,39",
+    "M38,40 Q44,45 50,40",   // felice — sorriso ampio
+    "M39,40 Q44,44 49,40",   // sorriso
+    "M40,40 Q44,43 48,40",   // sorriso lieve
+    "M40,40 Q44,40 48,40",   // neutro
+    "M40,41 Q44,38 48,41",   // triste
+    "M38,42 Q44,37 50,42",   // molto triste
   ][Math.min(sadLevel, 5)];
 
   return (
@@ -398,20 +418,31 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
           <ellipse cx="55" cy="36" rx="21" ry="21" fill="#1e293b" />
           {/* faccia */}
           <ellipse cx="55" cy="37" rx="13" ry="13" fill="white" />
-          {/* occhi */}
-          <circle cx="49" cy="33" r="3" fill="#1e293b" />
-          <circle cx="61" cy="33" r="3" fill="#1e293b" />
-          <circle cx="50" cy="32" r="1" fill="white" />
-          <circle cx="62" cy="32" r="1" fill="white" />
+          {/* occhi kawaii — cerchio esterno scuro + interno bianco + pupilla */}
+          <circle cx="49" cy="33" r="4" fill="#1e293b" />
+          <circle cx="61" cy="33" r="4" fill="#1e293b" />
+          <circle cx="49" cy="33" r="2.5" fill="white" />
+          <circle cx="61" cy="33" r="2.5" fill="white" />
+          <circle cx="49" cy="33" r="1.2" fill="#1e293b" />
+          <circle cx="61" cy="33" r="1.2" fill="#1e293b" />
+          <circle cx="50" cy="32" r="0.5" fill="white" />
+          <circle cx="62" cy="32" r="0.5" fill="white" />
           {/* lacrima */}
-          {sadLevel >= 4 && <ellipse cx="61" cy="38" rx="1.2" ry="2" fill="#93c5fd" opacity="0.9" />}
-          {/* sopracciglia */}
-          <line x1="44" y1={27 - sadLevel*0.7} x2="52" y2={28 + sadLevel*0.4} stroke="#1e293b" strokeWidth="2" strokeLinecap="round" />
-          <line x1="58" y1={28 + sadLevel*0.4} x2="66" y2={27 - sadLevel*0.7} stroke="#1e293b" strokeWidth="2" strokeLinecap="round" />
+          {sadLevel >= 4 && <ellipse cx="62" cy="38" rx="1.2" ry="2.2" fill="#93c5fd" opacity="0.85" />}
+          {sadLevel >= 5 && <ellipse cx="48" cy="38" rx="1.2" ry="2.2" fill="#93c5fd" opacity="0.85" />}
+          {/* sopracciglia tristi — estremità interne alzate */}
+          <line
+            x1="44" y1={28 + sadLevel*0.5}
+            x2="52" y2={27 - sadLevel*0.8}
+            stroke="#1e293b" strokeWidth="2.2" strokeLinecap="round" />
+          <line
+            x1="58" y1={27 - sadLevel*0.8}
+            x2="66" y2={28 + sadLevel*0.5}
+            stroke="#1e293b" strokeWidth="2.2" strokeLinecap="round" />
           {/* becco */}
           <ellipse cx="55" cy="42" rx="5" ry="3" fill="#f97316" />
-          {/* bocca sul becco */}
-          <path d={mouthPath} stroke="#c2410c" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+          {/* bocca — sorriso visibile */}
+          <path d={mouthPath} stroke="#7c2d12" strokeWidth="1.8" fill="none" strokeLinecap="round" />
           {/* guance */}
           <ellipse cx="43" cy="39" rx="4" ry="3" fill="#fda4af" opacity={Math.max(0.1, 0.55-sadLevel*0.1)} />
           <ellipse cx="67" cy="39" rx="4" ry="3" fill="#fda4af" opacity={Math.max(0.1, 0.55-sadLevel*0.1)} />
