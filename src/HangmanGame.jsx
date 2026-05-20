@@ -409,6 +409,41 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
 }
 
 
+function SolutionRow({ masked, showAnswer }) {
+  if (!masked || masked.length === 0) return null;
+
+  // Raggruppa le lettere in parole
+  const words = [];
+  let current = [];
+  for (const ch of masked) {
+    if (ch.type === "space") {
+      if (current.length > 0) words.push(current);
+      current = [];
+    } else {
+      current.push(ch);
+    }
+  }
+  if (current.length > 0) words.push(current);
+
+  return (
+    <div className="flex flex-wrap justify-center gap-x-3 gap-y-2">
+      {words.map((word, wi) => (
+        <div key={wi} className="flex gap-1">
+          {word.map((ch) => (
+            <div key={ch.key}
+              className="flex h-9 w-8 items-end justify-center border-b-2 border-[#2a8080] pb-0.5 sm:h-10 sm:w-9">
+              <span className="text-sm font-bold text-white sm:text-base">
+                {showAnswer ? ch.hidden : ch.value}
+              </span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
 function Keyboard({ guessed, wrong, onGuess, disabled, rows, slotHighlight = null, competitionMode = false }) {
   const guessedSet = new Set(guessed);
   const wrongSet = new Set(wrong);
