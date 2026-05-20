@@ -276,7 +276,7 @@ function Balloon({ color, index, total, escaped, delay = 0 }) {
           exit={{ opacity: 0, y: -80, x: bx * 3, scale: 0.3, rotate: bx > 0 ? 30 : -30 }}
           transition={{ duration: 0.7, exit: { duration: 0.8 }, x: { duration: 2.5, repeat: Infinity, ease: "easeInOut", delay } }}
           className="absolute"
-          style={{ left: `calc(50% + ${bx}px - 12px)`, top: `${by - 16}px` }}
+          style={{ left: `calc(50% + 16px + ${bx}px - 12px)`, top: `calc(62px + ${by}px)` }}
         >
           {/* filo */}
           <svg width="24" height="28" className="absolute" style={{ top: "20px", left: "6px" }}>
@@ -299,12 +299,12 @@ function KidFace({ sadLevel = 0 }) {
   const cheekOpacity = Math.max(0, 1 - sadLevel * 0.22);
   // bocca: da grande sorriso a pianto
   const mouths = [
-    "M6,21 Q16,27 26,21",   // 0 grande sorriso
-    "M7,21 Q16,26 25,21",   // 1 sorriso
-    "M8,21 Q16,24 24,21",   // 2 sorriso lieve
-    "M8,21 Q16,21 24,21",   // 3 neutro
-    "M8,22 Q16,19 24,22",   // 4 triste
-    "M6,23 Q16,17 26,23",   // 5 pianto
+    "M11,24 Q16,28 21,24",   // 0 grande sorriso
+    "M11,24 Q16,27 21,24",   // 1 sorriso
+    "M11,24 Q16,26 21,24",   // 2 sorriso lieve
+    "M11,24 Q16,24 21,24",   // 3 neutro
+    "M11,25 Q16,22 21,25",   // 4 triste
+    "M10,26 Q16,21 22,26",   // 5 pianto
   ];
   const eyebrowY = [9, 9, 10, 11, 12, 13][Math.min(sadLevel, 5)];
   const eyebrowTilt = [0, 0, 2, 5, 9, 14][Math.min(sadLevel, 5)];
@@ -365,10 +365,7 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
           ))}
         </div>
 
-        {/* FILO che il bambino tiene */}
-        {remaining > 0 && (
-          <div className="absolute left-1/2 -translate-x-1/2 top-[14px] w-px bg-slate-400" style={{ height: "22px" }} />
-        )}
+
 
         {/* TESTA */}
         <motion.div
@@ -384,9 +381,12 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
           <span className="text-[9px] font-black text-orange-300 tracking-widest select-none">LV</span>
         </div>
 
-        {/* BRACCIO che tiene i fili */}
-        <div className="absolute left-1/2 top-[68px] h-[3px] w-[20px] -translate-x-[2px] rounded-full bg-amber-200 origin-left"
-          style={{ transform: "translateX(-2px) rotate(-30deg)" }} />
+        {/* BRACCIO DX alzato che tiene i fili */}
+        <div className="absolute" style={{ left: "52px", top: "64px", width: "22px", height: "3px", background: "#fde68a", borderRadius: "9999px", transform: "rotate(-45deg)", transformOrigin: "left center" }} />
+        {/* avambraccio */}
+        <div className="absolute" style={{ left: "64px", top: "56px", width: "16px", height: "3px", background: "#fde68a", borderRadius: "9999px", transform: "rotate(-70deg)", transformOrigin: "left center" }} />
+        {/* mano */}
+        <div className="absolute rounded-full bg-amber-200" style={{ width: "7px", height: "7px", left: "68px", top: "48px" }} />
 
         {/* GAMBE */}
         <div className="absolute left-[28px] top-[88px] h-[18px] w-[8px] rounded-b-full bg-[#1a3838] border border-[#2a5050]" />
