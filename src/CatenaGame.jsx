@@ -213,9 +213,20 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
         )}
       </AnimatePresence>
 
-      <div className="w-full border-b border-white/10">
+      <div className="w-full">
         <div className="flex items-center justify-between px-4 py-2">
           <button onClick={onBack} className="text-xs text-slate-400 hover:text-white transition">Menu</button>
+          <div className="flex items-center gap-2">
+            <span className="text-xl">&#128279;</span>
+            <h1 className="text-lg font-black bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
+              La Catena
+            </h1>
+            {competitionMode && (
+              <span className="rounded-xl bg-emerald-500/20 border border-emerald-400/30 px-2 py-0.5 text-xs font-bold text-emerald-300">
+                {score} pt
+              </span>
+            )}
+          </div>
           <div className="flex gap-2">
             <button onClick={() => fileInputRef.current?.click()}
               className="rounded-xl bg-white/10 px-2.5 py-1.5 text-xs hover:bg-white/15 transition">
@@ -226,21 +237,6 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
             </button>
           </div>
           <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleImport} className="hidden" />
-        </div>
-      </div>
-
-      <div className="w-full">
-        <div className="h-0.5 w-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-60" />
-        <div className="flex items-center justify-center gap-2 py-2">
-          <span className="text-xl">&#128279;</span>
-          <h1 className="text-lg font-black bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
-            La Catena
-          </h1>
-          {competitionMode && (
-            <span className="ml-2 rounded-xl bg-emerald-500/20 border border-emerald-400/30 px-2 py-0.5 text-xs font-bold text-emerald-300">
-              {score} pt
-            </span>
-          )}
         </div>
         <div className="h-0.5 w-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-60" />
       </div>
@@ -273,13 +269,31 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
       )}
 
       {gameStarted && (
-        <div className="flex-1 flex flex-col items-center justify-center px-3 py-1">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-sm font-bold text-emerald-300/80 uppercase tracking-widest">{chain.category}</span>
-            <span className={"text-xs font-bold px-2 py-0.5 rounded-lg " + diffColor}>{chain.difficulty}</span>
-            <span className="text-xs text-slate-500">{chainIdx + 1} / {chains.length}</span>
-          </div>
-          <div className="flex flex-col items-center gap-0 w-full max-w-xs">
+        <div className="flex-1 flex flex-row items-center justify-center px-2 py-1 gap-2">
+
+          {/* Timer a sinistra */}
+          {!chainDone && (
+            <div className="flex flex-col items-center gap-1 w-16 flex-shrink-0">
+              <div className="relative w-2 flex-1 rounded-full bg-slate-800 overflow-hidden min-h-[200px]">
+                <motion.div className="absolute bottom-0 left-0 w-full rounded-full"
+                  style={{ backgroundColor: timerColor }}
+                  animate={{ height: timerPct + "%" }}
+                  transition={{ duration: 0.3 }} />
+              </div>
+              <span className="text-lg font-black tabular-nums" style={{ color: timerColor }}>{timeLeft}</span>
+              <button onClick={() => setPaused(p => !p)}
+                className={"rounded-lg px-1.5 py-1 text-[10px] font-bold transition w-full " + (paused ? "bg-amber-500 text-white" : "bg-white/10 text-slate-300")}>
+                {paused ? "Go" : "Stop"}
+              </button>
+            </div>
+          )}
+
+          {/* Parole al centro */}
+          <div className="flex flex-col items-center gap-0 flex-1">
+            <div className="flex items-center justify-center mb-1">
+              <span className="text-xs text-slate-500">{chainIdx + 1} / {chains.length}</span>
+            </div>
+            <div className="flex flex-col items-center gap-0 w-full">
             {chain.words.map((word, idx) => {
               const status = getWordStatus(idx);
               return (
@@ -322,48 +336,7 @@ export default function CatenaGame({ onBack, competitionMode = false }) {
         </div>
       )}
 
-      {gameStarted && !chainDone && (
-        <div className="w-full px-4 pb-2 flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <div className="flex gap-1.5">
-              {TIMER_OPTIONS.map(t => (
-                <button key={t} onClick={() => { setTimerDuration(t); setTimeLeft(t); }}
-                  className={timerBtnClass(t)}>
-                  {t}s
-                </button>
-              ))}
-            </div>
-            <button onClick={() => setPaused(p => !p)}
-              className={"rounded-xl px-3 py-1 text-xs font-bold transition " + (paused ? "bg-amber-500 text-white" : "bg-white/10 text-slate-300")}>
-              {paused ? "Riprendi" : "Pausa"}
-            </button>
-          </div>
-          <div className="relative h-2 w-full rounded-full bg-slate-800 overflow-hidden">
-            <motion.div className="absolute left-0 top-0 h-full rounded-full"
-              style={{ backgroundColor: timerColor }}
-              animate={{ width: timerPct + "%" }}
-              transition={{ duration: 0.3 }} />
-          </div>
-          <div className="text-center">
-            <span className="text-2xl font-black tabular-nums" style={{ color: timerColor }}>{timeLeft}</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <motion.button onClick={addLetter} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-              disabled={lettersRevealed >= currentWord.length}
-              className="flex items-center justify-center gap-1.5 rounded-2xl bg-amber-500/20 border border-amber-400/30 py-2 text-sm font-bold text-amber-300 disabled:opacity-30">
-              <Plus className="h-4 w-4" /> Lettera
-            </motion.button>
-            <motion.button onClick={markCorrect} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-1.5 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 py-2 text-sm font-bold text-emerald-300">
-              <Check className="h-4 w-4" /> Indovinato
-            </motion.button>
-            <motion.button onClick={skipWord} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-700/40 border border-slate-600/30 py-2 text-sm font-bold text-slate-400">
-              <SkipForward className="h-4 w-4" /> Avanti
-            </motion.button>
-          </div>
-        </div>
-      )}
+
 
       {chainDone && (
         <div className="w-full px-4 pb-4">
