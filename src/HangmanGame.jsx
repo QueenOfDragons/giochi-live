@@ -242,86 +242,68 @@ function runSelfChecks() {
 
 if (typeof window !== "undefined") runSelfChecks();
 
-// ── BAMBINO CON PALLONCINI ──────────────────────────────────────────────────
-
-const BALLOON_COLORS = [
-  { fill: "#ef4444", stroke: "#b91c1c" }, // rosso
-  { fill: "#f97316", stroke: "#c2410c" }, // arancio
-  { fill: "#eab308", stroke: "#a16207" }, // giallo
-  { fill: "#22c55e", stroke: "#15803d" }, // verde
-  { fill: "#3b82f6", stroke: "#1d4ed8" }, // blu
-  { fill: "#a855f7", stroke: "#7e22ce" }, // viola
-  { fill: "#ec4899", stroke: "#be185d" }, // rosa
-  { fill: "#14b8a6", stroke: "#0f766e" }, // teal
-  { fill: "#f43f5e", stroke: "#be123c" }, // cremisi
-  { fill: "#84cc16", stroke: "#4d7c0f" }, // lime
-];
-
-function Balloon({ color, index, total, escaped, delay = 0 }) {
-  const angle = total <= 1 ? 0 : -50 + (100 / Math.max(total - 1, 1)) * index;
-  const rad = (angle * Math.PI) / 180;
-  const dist = 28 + (index % 2) * 8;
-  const bx = Math.round(Math.sin(rad) * dist);
-  const by = Math.round(Math.cos(rad) * dist);
+function RobotPiece({
+  show,
+  className = "",
+  children,
+  exitY = 120,
+  exitRotate = 28,
+  exitScale = 0.7,
+  duration = 0.35,
+}) {
   return (
     <AnimatePresence>
-      {!escaped && (
+      {show ? (
         <motion.div
-          initial={{ opacity: 0, y: 10, scale: 0.5 }}
-          animate={{ opacity: 1, y: 0, scale: 1, x: [0, bx > 0 ? 1.5 : -1.5, 0] }}
-          exit={{ opacity: 0, y: -100, x: bx * 4, scale: 0.2, rotate: bx > 0 ? 40 : -40 }}
-          transition={{ duration: 0.7, x: { duration: 2.5, repeat: Infinity, ease: "easeInOut" } }}
-          className="absolute"
-          style={{ left: `${-bx - 13}px`, bottom: `${by + 6}px` }}
+          initial={{ opacity: 0, scale: 0.84, y: -6 }}
+          animate={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
+          exit={{ opacity: 0, y: exitY, rotate: exitRotate, scale: exitScale }}
+          transition={{ duration }}
+          className={className}
         >
-          <svg width="26" height="30" viewBox="0 0 26 30">
-            <ellipse cx="13" cy="13" rx="11" ry="12" fill={color.fill} stroke={color.stroke} strokeWidth="1.5" />
-            <ellipse cx="9" cy="7" rx="3.5" ry="4" fill="white" opacity="0.35" />
-            <polygon points="11,25 15,25 13,30" fill={color.fill} />
-          </svg>
+          {children}
         </motion.div>
-      )}
+      ) : null}
     </AnimatePresence>
   );
 }
 
-function KidFace({ sadLevel = 0 }) {
-  const cheekOpacity = Math.max(0, 1 - sadLevel * 0.22);
-  // bocca: da grande sorriso a pianto
-  const mouths = [
-    "M11,24 Q16,28 21,24",   // 0 grande sorriso
-    "M11,24 Q16,27 21,24",   // 1 sorriso
-    "M11,24 Q16,26 21,24",   // 2 sorriso lieve
-    "M11,24 Q16,24 21,24",   // 3 neutro
-    "M11,25 Q16,22 21,25",   // 4 triste
-    "M10,26 Q16,21 22,26",   // 5 pianto
-  ];
-  const eyebrowY = [9, 9, 10, 11, 12, 13][Math.min(sadLevel, 5)];
-  const eyebrowTilt = [0, 0, 2, 5, 9, 14][Math.min(sadLevel, 5)];
+function CuteRobotFace({ state = "idle" }) {
+  const isSad = state === "lose";
+  const isHappy = state === "win";
 
   return (
-    <div className="relative h-full w-full rounded-full border-[2.5px] border-amber-300 bg-gradient-to-br from-amber-100 to-yellow-200 shadow-md overflow-hidden">
-      {/* guance rosa */}
-      <div className="absolute rounded-full bg-pink-300" style={{ width: 10, height: 7, bottom: 8, left: 3, opacity: cheekOpacity * 0.7, borderRadius: "50%" }} />
-      <div className="absolute rounded-full bg-pink-300" style={{ width: 10, height: 7, bottom: 8, right: 3, opacity: cheekOpacity * 0.7, borderRadius: "50%" }} />
-      <svg width="100%" height="100%" viewBox="0 0 32 32" className="absolute inset-0">
-        {/* sopracciglia */}
-        <line x1={6} y1={eyebrowY - eyebrowTilt * 0.3} x2={13} y2={eyebrowY + eyebrowTilt * 0.3}
-          stroke="#92400e" strokeWidth="1.8" strokeLinecap="round" />
-        <line x1={19} y1={eyebrowY + eyebrowTilt * 0.3} x2={26} y2={eyebrowY - eyebrowTilt * 0.3}
-          stroke="#92400e" strokeWidth="1.8" strokeLinecap="round" />
-        {/* occhi grandi e rotondi */}
-        <circle cx="10" cy="16" r={sadLevel >= 4 ? 2.5 : 3} fill="#1c1917" />
-        <circle cx="22" cy="16" r={sadLevel >= 4 ? 2.5 : 3} fill="#1c1917" />
-        {/* lucentezza */}
-        <circle cx="11.5" cy="14.5" r="1" fill="white" />
-        <circle cx="23.5" cy="14.5" r="1" fill="white" />
-        {/* lacrime */}
-        {sadLevel >= 4 && <ellipse cx="23" cy="20" rx="1.2" ry="2" fill="#93c5fd" opacity="0.85" />}
-        {sadLevel >= 5 && <ellipse cx="9" cy="20" rx="1.2" ry="2" fill="#93c5fd" opacity="0.85" />}
-        {/* bocca */}
-        <path d={mouths[Math.min(sadLevel, 5)]} stroke="#92400e" strokeWidth="2" fill="none" strokeLinecap="round" />
-      </svg>
+    <div className="relative flex h-full w-full items-center justify-center rounded-full border-[2px] border-sky-400 bg-gradient-to-br from-orange-200 to-orange-300">
+      <div className="absolute top-[14px] flex gap-5">
+        {[0, 1].map((i) => (
+          <motion.div
+            key={i}
+            animate={isHappy ? { scaleY: [1, 0.4, 1] } : { scaleY: [1, 0.1, 1] }}
+            transition={{ duration: isHappy ? 0.6 : 2.5, repeat: Infinity, repeatDelay: isHappy ? 0.8 : 2 }}
+            className="relative h-2.5 w-2.5 rounded-full bg-sky-800"
+          >
+            {!isSad && <div className="absolute left-[1px] top-[1px] h-1 w-1 rounded-full bg-white" />}
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="absolute bottom-[9px] flex w-full justify-center">
+        <div
+          className={`border-b-[3px] border-sky-700 ${isSad
+            ? "h-2 w-5 rounded-b-full border-t-0 border-b-2"
+            : isHappy
+              ? "h-3 w-6 rounded-b-full border-t-0 border-b-2"
+              : "h-2 w-5 rounded-b-full border-t-0 border-b-2"
+            }`}
+        />
+      </div>
+
+      {isHappy && (
+        <>
+          <div className="absolute bottom-[10px] left-[6px] h-2 w-2 rounded-full bg-pink-300 opacity-80" />
+          <div className="absolute bottom-[10px] right-[6px] h-2 w-2 rounded-full bg-pink-300 opacity-80" />
+        </>
+      )}
     </div>
   );
 }
@@ -329,34 +311,46 @@ function KidFace({ sadLevel = 0 }) {
 function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
   const remaining = maxHearts - wrongCount;
   const sadLevel = Math.min(5, Math.round((wrongCount / maxHearts) * 5));
+
+  const BALLOON_COLORS = [
+    { fill: "#ef4444", stroke: "#b91c1c" },
+    { fill: "#f97316", stroke: "#c2410c" },
+    { fill: "#eab308", stroke: "#a16207" },
+    { fill: "#22c55e", stroke: "#15803d" },
+    { fill: "#3b82f6", stroke: "#1d4ed8" },
+    { fill: "#a855f7", stroke: "#7e22ce" },
+    { fill: "#ec4899", stroke: "#be185d" },
+    { fill: "#14b8a6", stroke: "#0f766e" },
+    { fill: "#f43f5e", stroke: "#be123c" },
+    { fill: "#84cc16", stroke: "#4d7c0f" },
+  ];
   const balloons = BALLOON_COLORS.slice(0, maxHearts);
 
-  // Espressione pinguino
   const mouthPath = [
-    "M10,20 Q16,25 22,20", // felice
-    "M10,20 Q16,24 22,20",
-    "M11,20 Q16,23 21,20",
-    "M11,20 Q16,20 21,20", // neutro
-    "M11,21 Q16,18 21,21", // triste
-    "M10,22 Q16,17 22,22", // pianto
+    "M39,37 Q44,41 49,37",
+    "M39,37 Q44,40 49,37",
+    "M40,37 Q44,39 48,37",
+    "M40,37 Q44,37 48,37",
+    "M40,38 Q44,36 48,38",
+    "M39,39 Q44,35 49,39",
   ][Math.min(sadLevel, 5)];
 
   return (
     <motion.div
-      animate={isWon ? { scale:[1,1.04,1], y:[0,-3,0] } : { y:[0,-2,0] }}
-      transition={isWon ? { duration:1.1, repeat: Infinity } : { duration:2.5, repeat: Infinity }}
+      animate={isWon ? { scale:[1,1.03,1], rotate:[0,1,-1,0], y:[0,-2,0] } : isLost ? {} : { y:[0,-2,0] }}
+      transition={isWon ? { duration:1.2, repeat: Infinity } : { duration:2.2, repeat: Infinity }}
       className="relative flex h-[118px] items-center justify-center sm:h-[140px]"
     >
       <div className="relative" style={{ width: 110, height: 112 }}>
 
-        {/* PALLONCINI — partono dall'aletta sinistra */}
-        <div className="absolute" style={{ left: 18, top: 22, width: 0, height: 0 }}>
-          <svg style={{ position:"absolute", left:-8, top:0, overflow:"visible", pointerEvents:"none" }} width="1" height="1">
+        {/* PALLONCINI partono dall'aletta sinistra */}
+        <div className="absolute" style={{ left: 14, top: 24, width: 0, height: 0 }}>
+          <svg style={{ position:"absolute", overflow:"visible", pointerEvents:"none" }} width="1" height="1">
             {balloons.map((_, i) => {
               if (i >= remaining) return null;
               const angle = balloons.length <= 1 ? 0 : -45 + (90 / Math.max(balloons.length-1,1)) * i;
               const rad = (angle * Math.PI) / 180;
-              const dist = 26 + (i%2)*7;
+              const dist = 28 + (i%2)*8;
               const bx = Math.round(Math.sin(rad)*dist);
               const by = Math.round(Math.cos(rad)*dist);
               return <line key={i} x1="0" y1="0" x2={-bx} y2={-by} stroke="#94a3b8" strokeWidth="1" />;
@@ -365,7 +359,7 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
           {balloons.map((color, i) => {
             const angle = balloons.length <= 1 ? 0 : -45 + (90 / Math.max(balloons.length-1,1)) * i;
             const rad = (angle * Math.PI) / 180;
-            const dist = 26 + (i%2)*7;
+            const dist = 28 + (i%2)*8;
             const bx = Math.round(Math.sin(rad)*dist);
             const by = Math.round(Math.cos(rad)*dist);
             return (
@@ -373,7 +367,7 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
                 {i < remaining && (
                   <motion.div
                     initial={{ opacity:0, scale:0.3 }}
-                    animate={{ opacity:1, scale:1, x:[0, bx>0?1:-1, 0] }}
+                    animate={{ opacity:1, scale:1, x:[0, bx>0?1.2:-1.2, 0] }}
                     exit={{ opacity:0, y:-90, x:-bx*3, scale:0.2 }}
                     transition={{ duration:0.6, x:{ duration:2.5+(i*0.2), repeat:Infinity } }}
                     style={{ position:"absolute", left:`${-bx-13}px`, top:`${-by-28}px` }}
@@ -390,49 +384,45 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
           })}
         </div>
 
-        {/* PINGUINO SVG */}
-        <svg width="88" height="96" viewBox="0 0 88 96" style={{ position:"absolute", left:11, top:8 }}>
-          {/* corpo nero */}
-          <ellipse cx="44" cy="62" rx="24" ry="28" fill="#1e3a3a" stroke="#2a5050" strokeWidth="1.5" />
-          {/* pancia bianca */}
-          <ellipse cx="44" cy="65" rx="15" ry="20" fill="white" />
-          {/* LV */}
-          <text x="44" y="67" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0f4040" fontFamily="Arial">LV</text>
-          {/* testa */}
-          <ellipse cx="44" cy="30" rx="19" ry="19" fill="#1e3a3a" stroke="#2a5050" strokeWidth="1.5" />
-          {/* faccia bianca */}
-          <ellipse cx="44" cy="31" rx="12" ry="12" fill="white" />
-          {/* occhi */}
-          <circle cx="38" cy="28" r="3" fill="#1e3a3a" />
-          <circle cx="50" cy="28" r="3" fill="#1e3a3a" />
-          <circle cx="39" cy="27" r="1" fill="white" />
-          <circle cx="51" cy="27" r="1" fill="white" />
-          {sadLevel >= 4 && <ellipse cx="50" cy="33" rx="1" ry="1.8" fill="#93c5fd" opacity="0.9" />}
-          {/* sopracciglia */}
-          <line x1="35" y1={22 - sadLevel*0.7} x2="42" y2={23 + sadLevel*0.4}
-            stroke="#1e3a3a" strokeWidth="1.8" strokeLinecap="round" />
-          <line x1="46" y1={23 + sadLevel*0.4} x2="53" y2={22 - sadLevel*0.7}
-            stroke="#1e3a3a" strokeWidth="1.8" strokeLinecap="round" />
-          {/* becco */}
-          <ellipse cx="44" cy="36" rx="4.5" ry="2.5" fill="#f97316" />
-          {/* sorriso sul becco */}
-          <path d={["M40,37 Q44,40 48,37","M40,37 Q44,39 48,37","M41,37 Q44,38 47,37","M41,37 Q44,37 47,37","M41,38 Q44,36 47,38","M40,39 Q44,35 48,39"][Math.min(sadLevel,5)]}
-            stroke="#c2410c" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-          {/* guance */}
-          <ellipse cx="34" cy="33" rx="3.5" ry="2.5" fill="#fda4af" opacity={Math.max(0.1, 0.55-sadLevel*0.1)} />
-          <ellipse cx="54" cy="33" rx="3.5" ry="2.5" fill="#fda4af" opacity={Math.max(0.1, 0.55-sadLevel*0.1)} />
-          {/* ALETTA SX alzata — tiene palloncini */}
-          <path d="M20,52 Q10,44 10,36 Q10,28 16,27 Q22,27 22,36 Q22,44 24,50Z"
-            fill="#1e3a3a" stroke="#2a5050" strokeWidth="1" />
-          <circle cx="10" cy="27" r="4" fill="#1e3a3a" stroke="#2a5050" strokeWidth="1" />
-          {/* ALETTA DX */}
-          <path d="M68,52 Q76,46 78,56 Q79,64 74,67 Q68,68 67,60 Q66,54 68,52Z"
-            fill="#1e3a3a" stroke="#2a5050" strokeWidth="1" />
-          {/* piedi */}
-          <ellipse cx="34" cy="89" rx="10" ry="4.5" fill="#f97316" />
-          <ellipse cx="54" cy="89" rx="10" ry="4.5" fill="#f97316" />
+        {/* PINGUINO */}
+        <svg width="110" height="112" viewBox="0 0 110 112" style={{ position:"absolute", left:0, top:0 }}>
           {/* ombra */}
-          <ellipse cx="44" cy="95" rx="20" ry="3" fill="#0f2a2a" opacity="0.3" />
+          <ellipse cx="55" cy="108" rx="24" ry="4" fill="#000" opacity="0.2" />
+          {/* corpo */}
+          <ellipse cx="55" cy="72" rx="26" ry="30" fill="#1e293b" />
+          {/* pancia */}
+          <ellipse cx="55" cy="76" rx="17" ry="22" fill="white" />
+          {/* LV */}
+          <text x="55" y="78" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0f766e" fontFamily="Arial">LV</text>
+          {/* testa */}
+          <ellipse cx="55" cy="36" rx="21" ry="21" fill="#1e293b" />
+          {/* faccia */}
+          <ellipse cx="55" cy="37" rx="13" ry="13" fill="white" />
+          {/* occhi */}
+          <circle cx="49" cy="33" r="3" fill="#1e293b" />
+          <circle cx="61" cy="33" r="3" fill="#1e293b" />
+          <circle cx="50" cy="32" r="1" fill="white" />
+          <circle cx="62" cy="32" r="1" fill="white" />
+          {/* lacrima */}
+          {sadLevel >= 4 && <ellipse cx="61" cy="38" rx="1.2" ry="2" fill="#93c5fd" opacity="0.9" />}
+          {/* sopracciglia */}
+          <line x1="44" y1={27 - sadLevel*0.7} x2="52" y2={28 + sadLevel*0.4} stroke="#1e293b" strokeWidth="2" strokeLinecap="round" />
+          <line x1="58" y1={28 + sadLevel*0.4} x2="66" y2={27 - sadLevel*0.7} stroke="#1e293b" strokeWidth="2" strokeLinecap="round" />
+          {/* becco */}
+          <ellipse cx="55" cy="42" rx="5" ry="3" fill="#f97316" />
+          {/* bocca sul becco */}
+          <path d={mouthPath} stroke="#c2410c" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+          {/* guance */}
+          <ellipse cx="43" cy="39" rx="4" ry="3" fill="#fda4af" opacity={Math.max(0.1, 0.55-sadLevel*0.1)} />
+          <ellipse cx="67" cy="39" rx="4" ry="3" fill="#fda4af" opacity={Math.max(0.1, 0.55-sadLevel*0.1)} />
+          {/* aletta SX alzata */}
+          <path d="M29,60 Q18,52 16,42 Q15,33 21,31 Q27,30 28,40 Q29,48 31,56Z" fill="#1e293b" />
+          <circle cx="17" cy="31" r="5" fill="#1e293b" />
+          {/* aletta DX */}
+          <path d="M81,60 Q90,54 92,64 Q93,73 88,76 Q82,78 81,69 Q79,62 81,60Z" fill="#1e293b" />
+          {/* piedi */}
+          <ellipse cx="43" cy="101" rx="12" ry="5" fill="#f97316" />
+          <ellipse cx="67" cy="101" rx="12" ry="5" fill="#f97316" />
         </svg>
 
       </div>
@@ -440,44 +430,145 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
   );
 }
 
+
 function SolutionRow({ masked, showAnswer }) {
-  if (!masked || masked.length === 0) return null;
+  const displayItems = masked.map((item) => {
+    if (item.type === "space") return item;
+
+    const displayValue =
+      showAnswer && item.type === "letter" ? item.hidden : item.value;
+
+    return {
+      ...item,
+      displayValue,
+      isVisible: item.type === "letter" && item.value,
+    };
+  });
+
+  // Raggruppa per parole, così il wrap avviene tra parole e non in mezzo
   const words = [];
-  let current = [];
-  for (const ch of masked) {
-    if (ch.type === "space") {
-      if (current.length > 0) words.push(current);
-      current = [];
+  let currentWord = [];
+
+  displayItems.forEach((item) => {
+    if (item.type === "space") {
+      if (currentWord.length > 0) {
+        words.push(currentWord);
+        currentWord = [];
+      }
     } else {
-      current.push(ch);
+      currentWord.push(item);
     }
+  });
+
+  if (currentWord.length > 0) {
+    words.push(currentWord);
   }
-  if (current.length > 0) words.push(current);
+
+  const total = displayItems.length;
+
+  let boxClass =
+    "flex h-[56px] w-[30px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[28px] font-extrabold uppercase leading-none shadow-md";
+
+  let wordGapClass = "gap-5";
+  let letterGapClass = "gap-1";
+
+  if (total >= 26) {
+    boxClass =
+      "flex h-[46px] w-[24px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[22px] font-extrabold uppercase leading-none shadow-md";
+    wordGapClass = "gap-4";
+    letterGapClass = "gap-[3px]";
+  } else if (total >= 20) {
+    boxClass =
+      "flex h-[50px] w-[26px] items-center justify-center rounded-md border border-gray-300 bg-white text-black text-[24px] font-extrabold uppercase leading-none shadow-md";
+    wordGapClass = "gap-3";
+    letterGapClass = "gap-[4px]";
+  }
+
   return (
-    <div className="flex flex-wrap justify-center gap-x-3 gap-y-2">
-      {words.map((word, wi) => (
-        <div key={wi} className="flex gap-1">
-          {word.map((ch) => (
-            <div key={ch.key}
-              className="flex h-9 w-8 items-end justify-center border-b-2 border-[#2a8080] pb-0.5 sm:h-10 sm:w-9">
-              <span className="text-sm font-bold text-white sm:text-base">
-                {ch.type === "fixed" ? ch.value : (showAnswer ? ch.hidden : ch.value)}
-              </span>
-            </div>
-          ))}
+    <div className="overflow-hidden py-1">
+      <div className="flex min-h-[92px] items-center justify-center">
+        <div className={`flex max-w-full flex-wrap justify-center ${wordGapClass} gap-y-3`}>
+          {words.map((word, wordIndex) => {
+            const isWordComplete = word.every(
+              (item) => item.type !== "letter" || item.value
+            );
+
+            return (
+              <motion.div
+                key={wordIndex}
+                initial={false}
+                animate={
+                  isWordComplete
+                    ? {
+                      boxShadow: [
+                        "0 0 8px rgba(34,197,94,0.35)",
+                        "0 0 16px rgba(34,197,94,0.65)",
+                        "0 0 8px rgba(34,197,94,0.35)",
+                      ],
+                      scale: [1, 1.02, 1],
+                    }
+                    : {
+                      boxShadow: "0 0 6px rgba(34,211,238,0.3)",
+                      scale: 1,
+                    }
+                }
+                transition={{
+                  duration: isWordComplete ? 1.2 : 0.2,
+                  repeat: isWordComplete ? Infinity : 0,
+                }}
+                className={`
+                  flex ${letterGapClass} px-2 py-1 rounded-xl border
+                  ${isWordComplete
+                    ? "border-emerald-400 bg-emerald-500/10"
+                    : "border-cyan-300/40 bg-white/10"
+                  }
+                `}
+              >
+                {word.map((item) => (
+                  <motion.div
+                    key={item.key}
+                    initial={false}
+                    animate={
+                      item.type === "letter" && item.value
+                        ? {
+                          rotateX: [90, 0],
+                          scale: [1, 1.06, 1],
+                        }
+                        : {
+                          rotateX: 0,
+                          scale: 1,
+                        }
+                    }
+                    transition={{
+                      duration: 0.35,
+                      ease: "easeOut",
+                    }}
+                    style={{
+                      transformStyle: "preserve-3d",
+                      ...(item.isVisible
+                        ? { textShadow: "0 0 6px rgba(0,0,0,0.18)" }
+                        : {}),
+                    }}
+                    className={boxClass}
+                  >
+                    {item.displayValue}
+                  </motion.div>
+                ))}
+              </motion.div>
+            );
+          })}
         </div>
-      ))}
+      </div>
     </div>
   );
 }
-
 
 function Keyboard({ guessed, wrong, onGuess, disabled, rows, slotHighlight = null, competitionMode = false }) {
   const guessedSet = new Set(guessed);
   const wrongSet = new Set(wrong);
 
   return (
-    <div className="rounded-3xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 p-2.5">
+    <div className="rounded-3xl border border-white/10 bg-black/20 p-2.5">
       <div className="space-y-1">
         {rows.map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-center gap-1">
@@ -492,7 +583,7 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows, slotHighlight = nul
                   ? "border-emerald-400 bg-emerald-500 text-white font-bold"
                   : isWrong
                     ? "border-rose-400 bg-rose-500 text-white font-bold"
-                    : "border-white/20 bg-[#2a5050]/40 text-slate-100 hover:bg-[#2a5050]/70";
+                    : "border-white/20 bg-white/10 text-slate-100 hover:bg-white/20";
 
               return (
                 <button key={key} type="button" disabled={disabled || isUsed || competitionMode} onClick={() => !competitionMode && onGuess(key)} className={`flex h-7 w-7 items-center justify-center rounded-lg border text-[11px] font-semibold uppercase transition sm:h-8 sm:w-8 sm:text-xs ${stateClass} ${disabled || isUsed || competitionMode ? "cursor-default" : ""}`}>
@@ -504,9 +595,9 @@ function Keyboard({ guessed, wrong, onGuess, disabled, rows, slotHighlight = nul
         ))}
       </div>
 
-      <div className="mt-2 rounded-2xl border border-[#2a5050]/60 bg-[#163636]/70 p-2 shadow-inner">
-        <div className="mx-auto h-2 w-16 rounded-t-full border border-slate-600/70 bg-[#1a3030]/70" />
-        <div className="mt-1 h-1 rounded-full bg-[#1a3838]" />
+      <div className="mt-2 rounded-2xl border border-white/10 bg-slate-900/70 p-2 shadow-inner">
+        <div className="mx-auto h-2 w-16 rounded-t-full border border-slate-600/70 bg-slate-700/70" />
+        <div className="mt-1 h-1 rounded-full bg-slate-800" />
       </div>
     </div>
   );
@@ -540,16 +631,16 @@ function TopControls({
       <div className="relative">
         <button
           onClick={() => setMenuOpen(prev => !prev)}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-[#2a5050]/40 px-2.5 py-2 text-[11px] transition hover:bg-[#2a5050]/60"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-2.5 py-2 text-[11px] transition hover:bg-white/15"
         >
           ⚙️
         </button>
 
         {/* Menu a tendina */}
         {menuOpen && (
-          <div className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-2xl border border-[#2a5050]/60 bg-[#163636] shadow-2xl p-2 flex flex-col gap-1">
-            <button onClick={() => { onBack(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#b0d4d4] hover:bg-[#2a5050]/40 transition text-left">← {t.home.backToMenu}</button>
-            <div className="h-px bg-[#2a5050]/40 my-1" />
+          <div className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-2xl border border-white/10 bg-slate-900 shadow-2xl p-2 flex flex-col gap-1">
+            <button onClick={() => { onBack(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition text-left">← {t.home.backToMenu}</button>
+            <div className="h-px bg-white/10 my-1" />
             {/* Selezione lingua */}
             <div className="flex items-center gap-1 px-3 py-1">
               {[
@@ -559,19 +650,19 @@ function TopControls({
                 { code: "ro", img: "https://hatscripts.github.io/circle-flags/flags/ro.svg" },
               ].map(({ code, img }) => (
                 <button key={code} onClick={() => { onLanguageChange(code); setMenuOpen(false); }}
-                  className={`rounded-lg p-1 transition ${currentLanguage === code ? "bg-[#2a5050]/70 ring-2 ring-white/40" : "hover:bg-[#2a5050]/40"}`}>
+                  className={`rounded-lg p-1 transition ${currentLanguage === code ? "bg-white/20 ring-2 ring-white/40" : "hover:bg-white/10"}`}>
                   <img src={img} alt={code} className="h-5 w-8 rounded-sm object-cover" />
                 </button>
               ))}
             </div>
-            <div className="h-px bg-[#2a5050]/40 my-1" />
-            <button onClick={() => { onReset(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#b0d4d4] hover:bg-[#2a5050]/40 transition"><RotateCcw className="h-3.5 w-3.5" />{t.hangman.restart}</button>
-            <button onClick={() => { onImport(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#b0d4d4] hover:bg-emerald-500/20 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.import}</button>
-            <button onClick={() => { onRandom(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#b0d4d4] hover:bg-pink-500/20 transition"><Shuffle className="h-3.5 w-3.5" />{t.hangman.random}</button>
-            <button onClick={() => { onDownloadTemplate(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#b0d4d4] hover:bg-[#2a5050]/40 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.downloadTemplate}</button>
-            <button onClick={() => { onFullscreen(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#b0d4d4] hover:bg-cyan-500/20 transition"><Monitor className="h-3.5 w-3.5" />{fullscreenMode ? t.hangman.fullscreenExit : t.hangman.fullscreenEnter}</button>
-            <button onClick={() => { onToggleSound(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#b0d4d4] hover:bg-[#2a5050]/40 transition">{soundOn ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}{soundOn ? t.hangman.soundOn : t.hangman.soundOff}</button>
-            <button onClick={() => { onToggleCompact(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-[#b0d4d4] hover:bg-[#2a5050]/40 transition"><PanelsTopLeft className="h-3.5 w-3.5" />{compactMode ? t.hangman.showPanels : t.hangman.hidePanels}</button>
+            <div className="h-px bg-white/10 my-1" />
+            <button onClick={() => { onReset(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><RotateCcw className="h-3.5 w-3.5" />{t.hangman.restart}</button>
+            <button onClick={() => { onImport(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-emerald-500/20 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.import}</button>
+            <button onClick={() => { onRandom(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-pink-500/20 transition"><Shuffle className="h-3.5 w-3.5" />{t.hangman.random}</button>
+            <button onClick={() => { onDownloadTemplate(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><Upload className="h-3.5 w-3.5" />{t.hangman.downloadTemplate}</button>
+            <button onClick={() => { onFullscreen(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-cyan-500/20 transition"><Monitor className="h-3.5 w-3.5" />{fullscreenMode ? t.hangman.fullscreenExit : t.hangman.fullscreenEnter}</button>
+            <button onClick={() => { onToggleSound(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition">{soundOn ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}{soundOn ? t.hangman.soundOn : t.hangman.soundOff}</button>
+            <button onClick={() => { onToggleCompact(); setMenuOpen(false); }} className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] text-slate-300 hover:bg-white/10 transition"><PanelsTopLeft className="h-3.5 w-3.5" />{compactMode ? t.hangman.showPanels : t.hangman.hidePanels}</button>
           </div>
         )}
       </div>
@@ -1037,7 +1128,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
   const canGoNext = true; // sempre attivo: Avanti se non iniziato, Abbandona se iniziato
 
   return (
-    <div className={`relative bg-[#0f2e2e] text-slate-100 ${compactMode ? "h-screen p-0 overflow-hidden" : "min-h-screen p-4 md:p-8"}`}>
+    <div className={`relative bg-slate-950 text-slate-100 ${compactMode ? "h-screen p-0 overflow-hidden" : "min-h-screen p-4 md:p-8"}`}>
       <style>{`img.twemoji-small { height: 0.9em; width: 0.9em; vertical-align: -0.12em; display: inline-block; }`}</style>
 
       <AnimatePresence>
@@ -1053,7 +1144,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
             animate={boardShake ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }}
             transition={{ duration: 0.35 }}
             style={{ width: "100%", height: "100vh", maxHeight: "100vh" }}
-            className="flex flex-col rounded-[28px] border border-[#2a5050]/60 bg-white/5 shadow-2xl backdrop-blur-sm overflow-hidden"
+            className="flex flex-col rounded-[28px] border border-white/10 bg-white/5 shadow-2xl backdrop-blur-sm overflow-hidden"
           >
             {/* Riga 1 — Bottoni (altezza fissa ~52px) */}
             <div className="flex-none px-4 pt-3 pb-1">
@@ -1062,16 +1153,16 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
 
             {/* Riga 2 — Progresso + difficoltà (altezza fissa ~28px) */}
             <div className="flex-none flex items-center justify-between px-5 py-1">
-              <span className="text-[11px] text-[#8ab8b8] font-medium">{currentIndex + 1} / {items.length}</span>
+              <span className="text-[11px] text-slate-400 font-medium">{currentIndex + 1} / {items.length}</span>
               <span className={`text-[11px] font-bold px-2 py-0.5 rounded-lg ${
-                ["Facile","Easy","Ușor"].includes(currentItem.difficulty) ? "bg-emerald-500/20 text-orange-300" :
+                ["Facile","Easy","Ușor"].includes(currentItem.difficulty) ? "bg-emerald-500/20 text-emerald-300" :
                 ["Difficile","Hard","Dificil"].includes(currentItem.difficulty) ? "bg-rose-500/20 text-rose-300" :
                 "bg-amber-500/20 text-amber-300"
               }`}>{getDifficultyLabel(currentItem.difficulty)}</span>
             </div>
 
             {/* Riga 3 — Indizio (altezza fissa ~90px) */}
-            <div className="flex-none mx-4 rounded-3xl border border-[#2a5050]/60 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 px-5 py-3 text-center" style={{ minHeight: "60px", maxHeight: "90px" }}>
+            <div className="flex-none mx-4 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 px-5 py-3 text-center" style={{ minHeight: "60px", maxHeight: "90px" }}>
               {currentItem.category && (
                 <div className="text-xs font-bold uppercase tracking-widest text-purple-300/90 mb-1">
                   {currentItem.category}
@@ -1095,8 +1186,8 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                   {hearts.map((alive, idx) => {
                     const isBurst = heartBurstIndex === idx;
                     return (
-                      <motion.div key={idx} initial={false} animate={alive ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 0.3 }} transition={{ duration: 0.2 }} className={`relative rounded-xl border px-1.5 py-0.5 ${alive ? "border-rose-400/50 bg-rose-500/20" : "border-slate-700 bg-[#1a3838]"}`}>
-                        <Heart className={`h-3.5 w-3.5 ${alive ? "fill-rose-400 text-rose-300" : "text-[#4a7878]"}`} />
+                      <motion.div key={idx} initial={false} animate={alive ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 0.3 }} transition={{ duration: 0.2 }} className={`relative rounded-xl border px-1.5 py-0.5 ${alive ? "border-rose-400/50 bg-rose-500/20" : "border-slate-700 bg-slate-800"}`}>
+                        <Heart className={`h-3.5 w-3.5 ${alive ? "fill-rose-400 text-rose-300" : "text-slate-600"}`} />
                         <AnimatePresence>
                           {isBurst ? <motion.div initial={{ scale: 0.4, opacity: 0.9 }} animate={{ scale: 1.8, opacity: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45 }} className="absolute inset-0 rounded-xl border-2 border-rose-300" /> : null}
                         </AnimatePresence>
@@ -1104,11 +1195,11 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                     );
                   })}
                 </div>
-                <div className={`text-[11px] font-semibold ${status === "won" ? "text-orange-400" : status === "lost" ? "text-rose-400" : "text-[#8ab8b8]"}`}>
+                <div className={`text-[11px] font-semibold ${status === "won" ? "text-emerald-400" : status === "lost" ? "text-rose-400" : "text-slate-400"}`}>
                   {status === "playing" ? `${t.hangman.errors}: ${wrong.length}/${maxHearts}` : status === "won" ? `🎉 ${t.hangman.won}!` : `💀 ${t.hangman.lost}`}
                 </div>
                 {status === "playing" && (
-                  <div className="text-[11px] font-semibold text-orange-400 mt-0.5">
+                  <div className="text-[11px] font-semibold text-cyan-400 mt-0.5">
                     {t.home?.missingConsonants || "Consonanti"}: {missingConsonants}
                   </div>
                 )}
@@ -1121,17 +1212,17 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
 
               {/* Pulsanti a destra */}
               <div className="flex flex-col items-end gap-2 w-36">
-                <button type="button" onClick={() => setShowAnswer((prev) => !prev)} className="rounded-lg bg-[#2a5050]/40 p-2 transition hover:bg-[#2a5050]/60" title={showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}>
+                <button type="button" onClick={() => setShowAnswer((prev) => !prev)} className="rounded-lg bg-white/10 p-2 transition hover:bg-white/15" title={showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}>
                   {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
-                <button type="button" onClick={goNext} className="rounded-lg px-3 py-2 text-xs font-bold transition bg-cyan-500 text-white hover:bg-orange-400 shadow-lg">
+                <button type="button" onClick={goNext} className="rounded-lg px-3 py-2 text-xs font-bold transition bg-cyan-500 text-white hover:bg-cyan-400 shadow-lg">
                   {t.hangman?.next || "Avanti"} →
                 </button>
               </div>
             </div>
 
             {/* Riga 6 — Lettere (altezza fissa ~80px) */}
-            <div className="flex-none mx-4 mt-2 rounded-3xl border border-[#2a5050]/60 bg-[#163636]/60 p-2.5">
+            <div className="flex-none mx-4 mt-2 rounded-3xl border border-white/10 bg-slate-900/60 p-2.5">
               <SolutionRow masked={masked} showAnswer={showAnswer} />
             </div>
 
@@ -1148,7 +1239,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                       slotSpinning
                         ? "bg-yellow-400 text-black animate-pulse cursor-not-allowed"
                         : status !== "playing"
-                          ? "bg-[#2a5050]/40 text-[#6a9898] cursor-not-allowed"
+                          ? "bg-white/10 text-slate-500 cursor-not-allowed"
                           : "bg-gradient-to-r from-yellow-400 to-orange-400 text-black hover:from-yellow-300 hover:to-orange-300 shadow-yellow-500/30"
                     }`}
                   >
@@ -1163,22 +1254,22 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
           </motion.div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
-            <motion.div animate={boardShake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }} transition={{ duration: 0.4 }} className="rounded-3xl border border-[#2a5050]/60 bg-white/5 p-5 shadow-2xl backdrop-blur-sm md:p-8">
+            <motion.div animate={boardShake ? { x: [0, -10, 10, -7, 7, -3, 3, 0] } : { x: 0 }} transition={{ duration: 0.4 }} className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl backdrop-blur-sm md:p-8">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-5">
                 <div>
                   <p className="text-sm uppercase tracking-[0.25em] text-pink-300/80">{t.hangman.liveGame}</p>
                   <h1 className="text-2xl font-bold md:text-4xl">{t.hangman.title}</h1>
                 </div>
-                <div className="mb-2 flex justify-center"><button onClick={onBack} className="text-xs text-[#8ab8b8] transition hover:text-white">{t.home.backToMenu}</button></div>
+                <div className="mb-2 flex justify-center"><button onClick={onBack} className="text-xs text-slate-400 transition hover:text-white">{t.home.backToMenu}</button></div>
                 <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} onBack={onBack} onLanguageChange={onLanguageChange} currentLanguage={selectedLanguage} t={t} />
               </div>
 
-              <div className="mb-5 rounded-3xl border border-[#2a5050]/60 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4">
+              <div className="mb-5 rounded-3xl border border-white/10 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4">
                 <div>
                   {currentItem.category && (
                   <p className="text-[10px] font-bold uppercase tracking-widest text-purple-300/70 mb-0.5">{currentItem.category}</p>
                 )}
-                <p className="mb-2 text-sm text-[#b0d4d4]">{t.hangman.clue}</p>
+                <p className="mb-2 text-sm text-slate-300">{t.hangman.clue}</p>
                   <p className="text-xl md:text-2xl font-semibold leading-relaxed tracking-wide" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI", sans-serif' }} dangerouslySetInnerHTML={{ __html: twemoji.parse(currentItem.hint, { folder: "svg", ext: ".svg", className: "twemoji-small" }) }} />
                 </div>
               </div>
@@ -1187,8 +1278,8 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 {hearts.map((alive, idx) => {
                   const isBurst = heartBurstIndex === idx;
                   return (
-                    <motion.div key={idx} initial={false} animate={alive ? { scale: [1, 1.08, 1] } : { scale: 1, opacity: 0.45 }} transition={{ duration: 0.35 }} className={`relative rounded-2xl border px-3 py-2 ${alive ? "border-rose-400/40 bg-rose-500/15" : "border-slate-700 bg-[#1a3838] opacity-40"}`}>
-                      <Heart className={`h-5 w-5 ${alive ? "fill-rose-400 text-rose-300" : "text-[#6a9898]"}`} />
+                    <motion.div key={idx} initial={false} animate={alive ? { scale: [1, 1.08, 1] } : { scale: 1, opacity: 0.45 }} transition={{ duration: 0.35 }} className={`relative rounded-2xl border px-3 py-2 ${alive ? "border-rose-400/40 bg-rose-500/15" : "border-slate-700 bg-slate-800 opacity-40"}`}>
+                      <Heart className={`h-5 w-5 ${alive ? "fill-rose-400 text-rose-300" : "text-slate-500"}`} />
                       <AnimatePresence>
                         {isBurst ? <motion.div initial={{ scale: 0.4, opacity: 0.9 }} animate={{ scale: 1.8, opacity: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} className="absolute inset-0 rounded-2xl border-2 border-rose-300" /> : null}
                       </AnimatePresence>
@@ -1212,7 +1303,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 <div className="flex flex-1 flex-col items-end gap-2.5">
                   <button
                     onClick={() => setShowAnswer((prev) => !prev)}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#2a5050]/40 px-3 py-1.5 text-xs transition hover:bg-[#2a5050]/60"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 text-xs transition hover:bg-white/15"
                   >
                     {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     {showAnswer ? t.hangman.hideSolution : t.hangman.showSolution}
@@ -1228,19 +1319,19 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 </div>
               </div>
 
-              <div className="mb-4 rounded-3xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 p-3">
+              <div className="mb-4 rounded-3xl border border-white/10 bg-black/20 p-3">
                 <SolutionRow masked={masked} showAnswer={showAnswer} />
               </div>
-              <div className="rounded-3xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 p-4"><Keyboard guessed={[...guessed]} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} /></div>
+              <div className="rounded-3xl border border-white/10 bg-black/20 p-4"><Keyboard guessed={[...guessed]} wrong={wrong} onGuess={handleGuess} disabled={status !== "playing"} rows={KEYBOARD_LAYOUTS[selectedLanguage]} /></div>
             </motion.div>
 
             <div className="space-y-6">
-              <div className="rounded-3xl border border-[#2a5050]/60 bg-white/5 p-5 shadow-2xl">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl">
                 <h2 className="mb-4 text-xl font-bold">{t.hangman.addItemTitle}</h2>
                 <div className="space-y-3">
-                  <input value={customText} onChange={(event) => setCustomText(event.target.value)} placeholder={t.hangman.itemPlaceholder} className="w-full rounded-2xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 px-4 py-3 outline-none focus:border-pink-400" />
-                  <textarea value={customHint} onChange={(event) => setCustomHint(event.target.value)} placeholder={t.hangman.cluePlaceholder} rows={4} className="w-full resize-none rounded-2xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 px-4 py-3 outline-none focus:border-pink-400" />
-                  <select value={customDifficulty} onChange={(event) => setCustomDifficulty(event.target.value)} className="w-full rounded-2xl border border-[#2a5050]/60 bg-[#0f2e2e]/40 px-4 py-3 outline-none focus:border-pink-400">
+                  <input value={customText} onChange={(event) => setCustomText(event.target.value)} placeholder={t.hangman.itemPlaceholder} className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 outline-none focus:border-pink-400" />
+                  <textarea value={customHint} onChange={(event) => setCustomHint(event.target.value)} placeholder={t.hangman.cluePlaceholder} rows={4} className="w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-4 py-3 outline-none focus:border-pink-400" />
+                  <select value={customDifficulty} onChange={(event) => setCustomDifficulty(event.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 outline-none focus:border-pink-400">
                     <option value="Facile">{t.hangman.easy}</option>
                     <option value="Media">{t.hangman.medium}</option>
                     <option value="Difficile">{t.hangman.hard}</option>
@@ -1249,7 +1340,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-[#2a5050]/60 bg-white/5 p-5 shadow-2xl">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-xl font-bold">{t.hangman.archiveTitle}</h2>
                   <button
@@ -1261,7 +1352,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                       clearRoundState();
                       saveItemsToStorage(selectedLanguage, defaults);
                     }}
-                    className="text-[10px] text-[#6a9898] hover:text-rose-400 transition rounded-lg px-2 py-1 hover:bg-rose-500/10"
+                    className="text-[10px] text-slate-500 hover:text-rose-400 transition rounded-lg px-2 py-1 hover:bg-rose-500/10"
                     title="Cancella lista e torna ai default"
                   >
                     🗑 reset
@@ -1269,15 +1360,15 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                 </div>
                 <div className="max-h-[320px] space-y-2 overflow-auto pr-1">
                   {items.map((item, idx) => (
-                    <button key={`${idx}-${item.difficulty}`} onClick={() => { setCurrentIndex(idx); setPlayMode("sequential"); remainingIndexesRef.current = buildRemainingPool(items.length, idx); clearRoundState(); }} className={`w-full rounded-2xl border px-4 py-3 text-left transition ${idx === currentIndex ? "border-pink-400/40 bg-pink-500/15" : "border-[#2a5050]/60 bg-[#0f2e2e]/40 hover:bg-[#2a5050]/40"}`}>
+                    <button key={`${idx}-${item.difficulty}`} onClick={() => { setCurrentIndex(idx); setPlayMode("sequential"); remainingIndexesRef.current = buildRemainingPool(items.length, idx); clearRoundState(); }} className={`w-full rounded-2xl border px-4 py-3 text-left transition ${idx === currentIndex ? "border-pink-400/40 bg-pink-500/15" : "border-white/10 bg-black/20 hover:bg-white/10"}`}>
                       <div className="flex items-center justify-between">
-                        <div className="text-xs font-bold text-[#8ab8b8] uppercase tracking-wider">{t.hangman.roundLabel} {idx + 1}</div>
+                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.hangman.roundLabel} {idx + 1}</div>
                         <div className="flex items-center gap-1.5">
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-semibold ${["Facile","Easy","Ușor"].includes(item.difficulty) ? "bg-emerald-500/20 text-orange-300" : ["Difficile","Hard","Dificil"].includes(item.difficulty) ? "bg-rose-500/20 text-rose-300" : "bg-amber-500/20 text-amber-300"}`}>{getDifficultyLabel(item.difficulty)}</span>
-                          <span className="text-[10px] text-[#6a9898]">{item.text.replace(/ /g, "").length} {selectedLanguage === "it" ? "lett." : "ltrs"}</span>
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-semibold ${["Facile","Easy","Ușor"].includes(item.difficulty) ? "bg-emerald-500/20 text-emerald-300" : ["Difficile","Hard","Dificil"].includes(item.difficulty) ? "bg-rose-500/20 text-rose-300" : "bg-amber-500/20 text-amber-300"}`}>{getDifficultyLabel(item.difficulty)}</span>
+                          <span className="text-[10px] text-slate-500">{item.text.replace(/ /g, "").length} {selectedLanguage === "it" ? "lett." : "ltrs"}</span>
                         </div>
                       </div>
-                      <div className="mt-1 text-sm text-[#d0eaea] truncate">{item.hint}</div>
+                      <div className="mt-1 text-sm text-slate-200 truncate">{item.hint}</div>
                     </button>
                   ))}
                 </div>
