@@ -24,6 +24,7 @@ const THEME = {
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
 import {
+  ArrowLeft,
   ArrowRight,
   Eye,
   EyeOff,
