@@ -651,6 +651,7 @@ function TopControls({
   fileInputRef,
   handleImportFile,
   onNext,
+  onPrev,
   hasAttempted,
   onBack,
   onLanguageChange,
@@ -703,6 +704,9 @@ function TopControls({
 
       {/* Destra: Avanti o Abbandona */}
       <div className="flex justify-end">
+        <button onClick={onPrev} className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[11px] font-bold text-white transition bg-[#2a6a40]/60 hover:bg-[#2a6a40]">
+          <ArrowLeft className="h-3.5 w-3.5" />{t.hangman?.prev || "Indietro"}
+        </button>
         <button onClick={onNext} className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[11px] font-bold text-white transition ${hasAttempted ? "bg-rose-500/80 hover:bg-rose-500" : "bg-cyan-500/80 hover:bg-cyan-500"}`}>
           <ArrowRight className="h-3.5 w-3.5" />{hasAttempted ? (t.hangman?.abandon || "Abbandona") : (t.hangman?.next || "Avanti")}
         </button>
@@ -905,6 +909,14 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
     if (playMode === "random") nextRandom();
     else nextSequential();
   };
+  const goPrev = () => {
+    const prev = currentIndex - 1 >= 0 ? currentIndex - 1 : items.length - 1;
+    setCurrentIndex(prev);
+    setPlayMode("sequential");
+    remainingIndexesRef.current = buildRemainingPool(items.length, prev);
+    clearRoundState();
+  };
+
 
   const spinSlot = () => {
     if (slotSpinning || status !== "playing") return;
@@ -1162,7 +1174,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
   const canGoNext = true; // sempre attivo: Avanti se non iniziato, Abbandona se iniziato
 
   return (
-    <div className={`relative bg-[#3a1a0a] text-[#fff1ee] ${compactMode ? "h-screen p-0 overflow-hidden" : "min-h-screen p-4 md:p-8"}`}>
+    <div className={`relative bg-[#1a3a2a] text-[#f0fdf4] ${compactMode ? "h-screen p-0 overflow-hidden" : "min-h-screen p-4 md:p-8"}`}>
       <style>{`img.twemoji-small { height: 0.9em; width: 0.9em; vertical-align: -0.12em; display: inline-block; }`}</style>
 
       <AnimatePresence>
@@ -1182,7 +1194,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
           >
             {/* Riga 1 — Bottoni (altezza fissa ~52px) */}
             <div className="flex-none px-4 pt-3 pb-1">
-              <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} onBack={onBack} onLanguageChange={onLanguageChange} currentLanguage={selectedLanguage} t={t} />
+              <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} onPrev={goPrev} hasAttempted={hasAttempted} onBack={onBack} onLanguageChange={onLanguageChange} currentLanguage={selectedLanguage} t={t} />
             </div>
 
             {/* Riga 2 — Progresso + difficoltà (altezza fissa ~28px) */}
@@ -1295,7 +1307,7 @@ export default function HangmanGame({ onBack, selectedLanguage, onLanguageChange
                   <h1 className="text-2xl font-bold md:text-4xl">{t.hangman.title}</h1>
                 </div>
                 <div className="mb-2 flex justify-center"><button onClick={onBack} className="text-xs text-[#d4956a] transition hover:text-white">{t.home.backToMenu}</button></div>
-                <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} hasAttempted={hasAttempted} onBack={onBack} onLanguageChange={onLanguageChange} currentLanguage={selectedLanguage} t={t} />
+                <TopControls onReset={resetRound} onRandom={activateRandomMode} onImport={() => fileInputRef.current?.click()} onDownloadTemplate={downloadTemplateFile} onFullscreen={toggleFullscreen} onToggleSound={() => setSoundOn((prev) => !prev)} fullscreenMode={fullscreenMode} soundOn={soundOn} compactMode={compactMode} onToggleCompact={() => setCompactMode((prev) => !prev)} fileInputRef={fileInputRef} handleImportFile={handleImportFile} onNext={goNext} onPrev={goPrev} hasAttempted={hasAttempted} onBack={onBack} onLanguageChange={onLanguageChange} currentLanguage={selectedLanguage} t={t} />
               </div>
 
               <div className="mb-5 rounded-3xl border border-[#6a3520]/40 bg-gradient-to-r from-fuchsia-600/20 via-purple-600/20 to-cyan-500/20 p-4">

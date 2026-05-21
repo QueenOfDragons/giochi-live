@@ -84,11 +84,13 @@ export const UI_TEXT = {
       archiveTitle: "Archivio live", roundLabel: "Round",
       hiddenSolution: "soluzione nascosta", liveGame: "Gioco stile live",
       title: "Indovina la parola o la frase", downloadTemplate: "Scarica template", next: "Avanti",
+      prev: "Indietro",
       abandon: "Abbandona",
     },
     mastermind: {
       won: "Hai vinto 🎉", lost: "Hai perso 😈",
-      solution: "Soluzione", next: "Avanti", colors: "Colori",
+      solution: "Soluzione", next: "Avanti",
+      prev: "Indietro", colors: "Colori",
       correct: "colore e posizione giusti", present: "colore giusto, posizione sbagliata",
     },
     numbergame: {
@@ -202,11 +204,13 @@ export const UI_TEXT = {
       archiveTitle: "Live archive", roundLabel: "Round",
       hiddenSolution: "hidden solution", liveGame: "Live style game",
       title: "Guess the word or phrase", downloadTemplate: "Download template", next: "Next",
+      prev: "Back",
       abandon: "Abandon",
     },
     mastermind: {
       won: "You won 🎉", lost: "You lost 😈",
-      solution: "Solution", next: "Next", colors: "Colors",
+      solution: "Solution", next: "Next",
+      prev: "Back", colors: "Colors",
       correct: "correct color and position", present: "correct color, wrong position",
     },
     numbergame: {
@@ -324,7 +328,8 @@ export const UI_TEXT = {
     },
     mastermind: {
       won: "Ai câștigat 🎉", lost: "Ai pierdut 😈",
-      solution: "Soluție", next: "Următor", colors: "Culori",
+      solution: "Soluție", next: "Următor",
+      prev: "Înapoi", colors: "Culori",
       correct: "culoare și poziție corecte", present: "culoare corectă, poziție greșită",
     },
     numbergame: {
@@ -438,11 +443,13 @@ export const UI_TEXT = {
       archiveTitle: "Archives live", roundLabel: "Manche",
       hiddenSolution: "solution cachée", liveGame: "Jeu style live",
       title: "Devinez le mot ou la phrase", downloadTemplate: "Télécharger modèle", next: "Suivant",
+      prev: "Précédent",
       abandon: "Abandonner",
     },
     mastermind: {
       won: "Vous avez gagné 🎉", lost: "Vous avez perdu 😈",
-      solution: "Solution", next: "Suivant", colors: "Couleurs",
+      solution: "Solution", next: "Suivant",
+      prev: "Précédent", colors: "Couleurs",
       correct: "couleur et position correctes", present: "couleur correcte, mauvaise position",
     },
     numbergame: {
