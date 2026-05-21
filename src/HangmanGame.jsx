@@ -427,15 +427,13 @@ function RobotArena({ wrongCount, maxHearts, isLost, isWon }) {
           {sadLevel >= 5 && (
             <path d="M48,37 Q47,42 48,50 Q49,55 48,58" stroke="#60a5fa" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.9" />
           )}
-          {/* sopracciglia — corte, dentro la faccia bianca */}
-          <line
-            x1="46" y1={29 + sadLevel*0.5}
-            x2="52" y2={29 - sadLevel*0.8}
-            stroke="#5a2d0c" strokeWidth="2" strokeLinecap="round" />
-          <line
-            x1="58" y1={29 - sadLevel*0.8}
-            x2="64" y2={29 + sadLevel*0.5}
-            stroke="#5a2d0c" strokeWidth="2" strokeLinecap="round" />
+          {/* sopracciglia — arcuate felici, poi tristi */}
+          <path
+            d={`M46,${29 - Math.max(0, 3 - sadLevel)*1.2} Q49,${26 - Math.max(0, 3 - sadLevel)*1.5 + sadLevel*0.5} 52,${29 - Math.max(0, 2 - sadLevel)*0.8 - sadLevel*0.5}`}
+            stroke="#5a2d0c" strokeWidth="2" fill="none" strokeLinecap="round" />
+          <path
+            d={`M58,${29 - Math.max(0, 2 - sadLevel)*0.8 - sadLevel*0.5} Q61,${26 - Math.max(0, 3 - sadLevel)*1.5 + sadLevel*0.5} 64,${29 - Math.max(0, 3 - sadLevel)*1.2}`}
+            stroke="#5a2d0c" strokeWidth="2" fill="none" strokeLinecap="round" />
           {/* becco — sorridente all'inizio, neutro alla fine */}
           <path
             d={[
